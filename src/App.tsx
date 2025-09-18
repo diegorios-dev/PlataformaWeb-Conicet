@@ -1,15 +1,19 @@
-import './App.css'
+import "leaflet/dist/leaflet.css";
+import type { LatLngExpression } from "leaflet";
+import Map from "../src/components/map";
 
-function App() {
-
+export default function App() {
+  const position: LatLngExpression = [-34.6037, -58.3816];
 
   return (
-    <>
+    <div>
       <div>
-          <p>gola</p>
+        <p className="text-9xl">holaaa</p>
       </div>
-    </>
-  )
-}
+      <div>
+        <Map position={position}/>
+      </div>
 
-export default App
+    </div>
+  );
+}
