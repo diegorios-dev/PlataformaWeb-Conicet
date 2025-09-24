@@ -1,14 +1,32 @@
-import { useState } from "react";
-import Map from "./map"; // tu componente de mapa
+import { useState , useEffect } from "react";
+import Map from "./Map"; // tu componente de mapa
+
+import type { Precipitacion } from "../services/sitiosService";
+import  { getPrecipitaciones } from "../services/sitiosService";
 
 type Tool = "pluviometro" | "regla" | "caudalimetro";
 
 const Dashboard = () => {
   const [selectedInstrument, setSelectedInstrument] = useState<Tool>("pluviometro");
+  const [sitio, setSitio] = useState<Precipitacion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+   useEffect(() => {
+    getPrecipitaciones()
+      .then(data => setSitio(data))
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    console.log(sitio)
+  }, [sitio])
+  
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
+
       <div className="w-64 bg-gray-900 text-white p-4 space-y-4">
         <h2 className="text-xl font-bold mb-6">Herramientas</h2>
 

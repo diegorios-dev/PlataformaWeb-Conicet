@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 type Instrument = "pluviometro" | "regla" | "caudalimetro";
@@ -20,31 +20,6 @@ const Map = ({ instrument }: MapProps) => {
     { position: [-41.31, -69.52], label: "Pluviómetro 2" },
   ];
 
-  const reglas: MarkerData[] = [
-    { position: [-41.32, -69.51], label: "Regla 1" },
-    { position: [-41.29, -69.53], label: "Regla 2" },
-  ];
-
-  const caudalimetros: MarkerData[] = [
-    { position: [-41.28, -69.5], label: "Caudalímetro 1" },
-  ];
-
-  let markers: MarkerData[] = [];
-
-  switch (instrument) {
-    case "pluviometro":
-      markers = pluviometros;
-      break;
-    case "regla":
-      markers = reglas;
-      break;
-    case "caudalimetro":
-      markers = caudalimetros;
-      break;
-    default:
-      markers = [];
-  }
-
   return (
     <MapContainer
       center={[-41.3, -69.5]}
@@ -58,7 +33,7 @@ const Map = ({ instrument }: MapProps) => {
 
       {markers.map((m, i) => (
         <Marker key={i} position={m.position}>
-          <Popup>{m.label}</Popup>
+          <Tooltip  permanent>{m.label}</Tooltip >
         </Marker>
       ))}
     </MapContainer>
