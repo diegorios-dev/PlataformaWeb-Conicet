@@ -1,68 +1,97 @@
-import { useState , useEffect } from "react";
-import Map from "./Map"; // tu componente de mapa
+import { useState } from "react";
+import { getUser } from "../services/userService"; // 👈 agregar servicio
+import useSitio from "../hooks/useSitio"
+import MapHTML from "./MapHTML";
+import useInstrument from "../hooks/useInstrument";
+import Dashboard from "./Dashboard";
+import Login  from "./Login";
 
-import type { Precipitacion } from "../services/sitiosService";
-import  { getPrecipitaciones } from "../services/sitiosService";
+const MapContent = () => {
+  const [selectedInstrument, setSelectedInstrument] = useState("nieve");
+  const [showLogin, setShowLogin] = useState(false);
+  const [password, setPassword] = useState("");
+  const [user, setUser] = useState(null);
+  const [showAdminUI, setShowAdminUI] = useState(false);
 
-type Tool = "pluviometro" | "regla" | "caudalimetro";
+  const sitios = useSitio(selectedInstrument)
+  const optionMenu = useInstrument()
 
-const Dashboard = () => {
-  const [selectedInstrument, setSelectedInstrument] = useState<Tool>("pluviometro");
-  const [sitio, setSitio] = useState<Precipitacion[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-   useEffect(() => {
-    getPrecipitaciones()
-      .then(data => setSitio(data))
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    console.log(sitio)
-  }, [sitio])
-  
+  // validar password contra backend
+  const handlePassword = async (e: React.FormEvent) => {
+    e.preventDefault(); // evitar refresh de página
+    try {
+      const data = await getUser(password);
+      setUser(data.user);
+      setShowLogin(false); // cerrar login al validar
+      console.log("Usuario validado:", data.user);
+    } catch (error) {
+      alert("Contraseña inválida");
+      console.error("Error al validar usuario:", error);
+    }
+  };
 
   return (
     <div className="flex h-screen">
 
-      <div className="w-64 bg-gray-900 text-white p-4 space-y-4">
-        <h2 className="text-xl font-bold mb-6">Herramientas</h2>
+      {showLogin ? (
 
-        <button
-          className={`w-full p-2 rounded-lg transition ${
-            selectedInstrument === "pluviometro" ? "bg-blue-600" : "hover:bg-blue-700"}`}
-            onClick={() => setSelectedInstrument("pluviometro")}
-        >
-          Ver Pluviómetros
-        </button>
+        <Login handlePassword={handlePassword} password={password} setShowLogin={setShowLogin} setPassword={setPassword} ></Login>
 
-        <button
-          className={`w-full p-2 rounded-lg transition ${
-            selectedInstrument === "regla" ? "bg-blue-600" : "hover:bg-blue-700"}`}
-          onClick={() => setSelectedInstrument("regla")}
-        >
-          Ver Regla
-        </button>
+      ) : (
+        <>
+          {/* Sidebar */}
+          <div className="w-64 bg-gray-900 text-white p-4 flex flex-col justify-between">
+            <div>
+              <h2 className="text-xl font-bold mb-6">Herramientas</h2>
 
-        <button
-          className={`w-full p-2 rounded-lg transition ${
-            selectedInstrument === "caudalimetro" ? "bg-blue-600" : "hover:bg-blue-700"}`}
-          onClick={() => setSelectedInstrument("caudalimetro")}
-        >
-          Ver Caudalímetros
-        </button>
-      </div>
+              {/* 🔹 Opción extra solo para admins */}
+              {user?.rol === "admin" && (
+                <button
+                  className="w-full mt-4 p-2 rounded-lg bg-purple-600 hover:bg-purple-700"
+                  onClick={() => setShowAdminUI(true)} // ejemplo: mostrar UI admin
+                >
+                  Panel Admin
+                </button>
+              )}
 
-      {/* Main content */}
-      <div className="flex-1">
-        <Map instrument={selectedInstrument} />
-      </div>
+              {optionMenu.map((item, index) => (
+                <button
+                  key={index}
+                  className={`w-full p-2 rounded-lg transition ${selectedInstrument === item.precipitacion
+                    ? "bg-blue-600"
+                    : "hover:bg-blue-700"
+                    }`}
+                  onClick={() => setSelectedInstrument(item.precipitacion)}
+                >
+                  Ver {item.instrumento}
+                </button>
+              ))}
+
+
+            </div>
+
+            <div className="mt-auto">
+              <button
+                className="w-full bg-green-600 p-2 rounded-lg hover:bg-green-700"
+                onClick={() => setShowLogin(true)}
+              >
+                Login
+              </button>
+            </div>
+          </div>
+
+          {showAdminUI ? (
+            <Dashboard setShowAdminUI={setShowAdminUI}></Dashboard>
+          ) : (
+            <div className="flex-1">
+              <MapHTML position={sitios} />
+            </div>
+          )}
+
+        </>
+      )}
     </div>
-
-    
   );
 };
 
-export default Dashboard;
+export default MapContent;

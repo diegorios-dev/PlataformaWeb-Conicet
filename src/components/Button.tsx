@@ -1,27 +1,21 @@
-// src/components/DashboardButton.tsx
-import type { FC, ReactNode } from "react";
+import React from "react";
 
-interface DashboardButtonProps {
-  label: string;            // Texto del botón
-  onClick?: () => void;     // Acción al hacer click
-  icon?: ReactNode;         // Ícono opcional
-  active?: boolean;         // Si está activo o seleccionado
+interface ButtonBackProps {
+  onClick?: () => void;
+  children?: React.ReactNode;
+  className?: string;
 }
 
-const Button: FC<DashboardButtonProps> = ({ label, onClick, icon, active }) => {
-
+const Button: React.FC<ButtonBackProps> = ({ onClick , children = "Volver", className = "" }) => {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`flex items-center gap-2 p-2 rounded-lg transition w-full text-left
-        ${active ? "bg-blue-600 text-white" : "hover:bg-blue-700 text-gray-200"}`}>
-
-      {icon && <span>{icon}</span>}
-      
-      <span>{label}</span>
+      className={`${className}`}
+    >
+      {children}
     </button>
   );
-
 };
 
 export default Button;
