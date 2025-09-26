@@ -1,5 +1,5 @@
 
-const Login = ({handlePassword , password , setShowLogin , setPassword}) => {
+const Login = ({handlePassword , password , hideLoginForm , handleSavePassword}) => {
     return (
                 // 🔹 Vista Login (pantalla completa)
         <div className="flex items-center justify-center w-full h-full bg-gray-900">
@@ -13,7 +13,7 @@ const Login = ({handlePassword , password , setShowLogin , setPassword}) => {
               type="password"
               placeholder="Clave"
               value={password}
-              onChange={(e) => setPassword(e.target.value)} // ✅ guardo en state
+              onChange={handleSavePassword} // ✅ guardo en state
               className="w-full p-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
@@ -27,7 +27,7 @@ const Login = ({handlePassword , password , setShowLogin , setPassword}) => {
             {/* 🔹 Botón volver */}
             <button
               type="button"
-              onClick={() => setShowLogin(false)}
+              onClick={hideLoginForm}
               className="w-full bg-gray-600 p-2 rounded-lg hover:bg-gray-700"
             >
               Volver

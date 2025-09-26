@@ -20,7 +20,7 @@ function useSitio (selectedInstrument : any) {
                 }));
 
                 setSitios(objSitio);
-
+                console.log(objSitio)
             } catch (error) {
                 console.error("Error al traer precipitaciones:", error);
             }
