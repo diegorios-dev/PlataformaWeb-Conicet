@@ -70,7 +70,6 @@ const MapContent = () => {
       </div>
     );
 
-  // 🔹 return mucho más limpio
   return (
     <div className="flex h-screen">
       {showLogin ? (

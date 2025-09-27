@@ -7,8 +7,7 @@ const Dashboard = ({ setShowAdminUI }: any) => {
   const [currentView, setCurrentView] = useState<"menu" | "reportes" | "editReporte" | "usuarios" | "instrumentos">("menu");
 
   const handleShowEditFormReport = (reporte) => {
-    setCurrentView("editReporte")
-
+    console.log(reporte);
   }
 
   return (
