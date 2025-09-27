@@ -1,8 +1,59 @@
+import { useState } from "react";
 import useUsers from "../hooks/useUsers";
+import FormEditUser from "../components/FormEditUser"
 
 const ViewManagementUsers = () => {
-    
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const saveUser = async (user) => {
+    try {
+      const res = await fetch(`/api/users/${user.id}`, {
+        method: "PUT", // o PATCH según tu API
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      if (!res.ok) throw new Error("Error al actualizar usuario");
+
+      const data = await res.json();
+      console.log("Usuario actualizado:", data);
+
+      // opcional: cerrar modal y refrescar lista
+      setShowEditModal(false);
+      // refrescar con tu hook useUsers
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
   const { users, loading } = useUsers();
+
+  const isLoading = loading;
+  const isEmpty = !users || users.length === 0;
+
+
+  if(isLoading){
+    return <p className="p-6">Cargando usuarios...</p>;
+  }
+
+  if (isEmpty) {
+    return <p className="p-6">No hay usuarios registrados.</p>;
+  }
+
+  const handleUser = (option , user) => {
+    if(option === "editar"){
+      setSelectedUser(user);
+      setShowEditModal(true);
+    }
+
+    if(option === "eliminar"){
+        if(confirm(`¿Seguro que querés eliminar a ${user.name}?`)){
+        }
+    }
+  }
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -21,12 +72,6 @@ const ViewManagementUsers = () => {
         </button>
       </div>
 
-      {/* Lista de usuarios */}
-      {loading ? (
-        <p>Cargando usuarios...</p>
-      ) : !users || users.length === 0 ? (
-        <p>No hay usuarios registrados.</p>
-      ) : (
         <table className="w-full bg-white border border-gray-300 rounded-lg shadow-md">
           <thead>
             <tr className="bg-gray-200">
@@ -34,29 +79,44 @@ const ViewManagementUsers = () => {
               <th className="p-2 border">Nombre</th>
               <th className="p-2 border">Rol</th>
               <th className="p-2 border">Contraseñas</th>
+              <th className="p-2 border">Sitio</th>
+              <th className="p-2 border">Zona</th>
               <th className="p-2 border">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => (
-              <tr key={u.id} className="text-center hover:bg-gray-50">
-                <td className="p-2 border">{u.id}</td>
-                <td className="p-2 border">{u.name}</td>
-                <td className="p-2 border">{u.rol}</td>
-                <td className="p-2 border">{u.password}</td>
+            {users.map((user) => (
+              <tr key={user.id} className="text-center hover:bg-gray-50">
+                <td className="p-2 border">{user.id}</td>
+                <td className="p-2 border">{user.name}</td>
+                <td className="p-2 border">{user.rol}</td>
+                <td className="p-2 border">{user.password}</td>
+                <td className="p-2 border">[{user.sitio.latitude}, {user.sitio.longitude}]</td>
+                <td className="p-2 border">{user.zona.locality}</td>
                 <td className="p-2 border">
-                  <button className="px-2 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                  <button className="px-2 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    onClick={() => handleUser("editar",user)}
+                  >
                     Editar
                   </button>
-                  <button className="ml-2 px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600">
+                  <button className="ml-2 px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                    onClick={() => handleUser("eliminar",user)}
+                  >
                     Eliminar
                   </button>
                 </td>
               </tr>
             ))}
+
           </tbody>
         </table>
-      )}
+
+        {showEditModal && (
+          <FormEditUser selectedUser={selectedUser} setSelectedUser={setSelectedUser} setShowEditModal={setShowEditModal} saveUser={saveUser}/>
+        )}
+
+        
+
     </div>
   );
 };
