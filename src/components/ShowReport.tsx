@@ -1,34 +1,28 @@
 import { useEffect, useState } from "react";
-import { getReportes } from "../services/reporteService";
+import useReports from "../hooks/useReports";
 
 const ShowReport = ({handleShowEditFormReport}) => {
 
-  const [reportes, setReportes] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState<any[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await getReportes();
-      setReportes(data);
-    };
-    fetchData();
-  }, []);
+  const reports = useReports()
+
 
   // Filtrar por ID o nota (ya no title porque tu JSON no tiene)
   useEffect(() => {
     if (search.trim() === "") {
-      setFiltered(reportes);
+      setFiltered(reports);
     } else {
       setFiltered(
-        reportes.filter(
+        reports.filter(
           (r) =>
             r.id.toString().includes(search) ||
             r.note?.toLowerCase().includes(search.toLowerCase())
         )
       );
     }
-  }, [search, reportes]);
+  }, [search, reports]);
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">

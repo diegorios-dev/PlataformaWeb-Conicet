@@ -1,17 +1,20 @@
 import { useState } from "react";
 import ShowReport from "../components/ShowReport";
 import FormEditReport from "./FormEditReport";
-// Importar los otros formularios cuando los tengas
+import useNavegation from "../hooks/useNavegation";
 
-const Dashboard = ({ setShowAdminUI }: any) => {
+const Dashboard = () => {
+  
   const [currentView, setCurrentView] = useState<"menu" | "reportes" | "editReporte" | "usuarios" | "instrumentos">("menu");
+  
+  const {goHome} = useNavegation()
 
   const handleShowEditFormReport = (reporte) => {
     console.log(reporte);
   }
 
   return (
-    <div className="flex-1 p-6 bg-gray-100">
+    <div className="flex-1 p-6 bg-gray-100 h-screen">
       <h2 className="text-2xl font-bold mb-4">Panel de Administración</h2>
 
       {currentView === "menu" && (
@@ -57,10 +60,7 @@ const Dashboard = ({ setShowAdminUI }: any) => {
         <div>
           <h3 className="text-lg font-bold">Gestión de Usuarios</h3>
           {/* Tu formulario de usuarios */}
-          <button
-            onClick={() => setCurrentView("menu")}
-            className="mt-4 p-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
-          >
+          <button onClick={() => setCurrentView("menu")} className="mt-4 p-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
             Volver al Menú
           </button>
         </div>
@@ -80,7 +80,7 @@ const Dashboard = ({ setShowAdminUI }: any) => {
       )}
 
       <button
-        onClick={() => setShowAdminUI(false)}
+        onClick={goHome}
         className="mt-6 p-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
       >
         Cerrar Panel Admin
