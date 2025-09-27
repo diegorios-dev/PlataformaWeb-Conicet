@@ -8,3 +8,10 @@ export const getUser = async (password: string) => {
   });  
   return data;
 };
+
+export const getUsers = async () => {
+  const { data } = await axios.get(`${API_URL}/usuarios`);  
+  console.log(data)
+  return data;
+};
+

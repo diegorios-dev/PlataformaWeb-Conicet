@@ -2,15 +2,18 @@ import { useState } from "react";
 import ShowReport from "../components/ShowReport";
 import FormEditReport from "./FormEditReport";
 import useNavegation from "../hooks/useNavegation";
+import ViewManagementUsers from "./ViewManagementUsers";
 
 const Dashboard = () => {
   
-  const [currentView, setCurrentView] = useState<"menu" | "reportes" | "editReporte" | "usuarios" | "instrumentos">("menu");
-  
+  const [currentView, setCurrentView] = useState<"menu" | "reports" | "editReport" | "usuarios" | "instrumentos">("menu");
+  const [selectedReport, setSelectedReport] = useState<any | null>(null);
+
   const {goHome} = useNavegation()
 
   const handleShowEditFormReport = (reporte) => {
-    console.log(reporte);
+    setSelectedReport(reporte);
+    setCurrentView("editReport");
   }
 
   return (
@@ -20,23 +23,17 @@ const Dashboard = () => {
       {currentView === "menu" && (
         <>
           <button
-            className="mt-4 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Ver usuario
-          </button>
-
-          <button
-            onClick={() => setCurrentView("reportes")}
+            onClick={() => setCurrentView("reports")}
             className="mt-4 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Administrar Reportes
-          </button>
+          </button> 
 
           <button
             onClick={() => setCurrentView("usuarios")}
             className="mt-4 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Agregar usuarios
+            Gestion Usuarios
           </button>
 
           <button
@@ -48,22 +45,16 @@ const Dashboard = () => {
         </>
       )}
 
-      {currentView === "reportes" && (
+      {currentView === "reports" && (
         <ShowReport handleShowEditFormReport={handleShowEditFormReport} />
       )}
 
-      {currentView === "editReporte" && (
-        <FormEditReport setCurrentView={setCurrentView}></FormEditReport>
+      {currentView === "editReport" && (
+        <FormEditReport report={selectedReport} setCurrentView={setCurrentView}/>
       )}
 
       {currentView === "usuarios" && (
-        <div>
-          <h3 className="text-lg font-bold">Gestión de Usuarios</h3>
-          {/* Tu formulario de usuarios */}
-          <button onClick={() => setCurrentView("menu")} className="mt-4 p-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
-            Volver al Menú
-          </button>
-        </div>
+        <ViewManagementUsers/>
       )}
 
       {currentView === "instrumentos" && (

@@ -7,8 +7,7 @@ export const getReportes = async () => {
   return data;
 };
 
-
-export const getReportesById = async (id) => {
-  const { data } = await axios.get(`${API_URL}/reportes/${id}`);
-  return data;
+export const updateReporte = async (id: number, data: any) => {
+  const response = await axios.put(`${API_URL}/reportes/${id}`, data);
+  return response.data;
 };
