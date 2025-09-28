@@ -61,19 +61,13 @@ const Dashboard = () => {
         <div>
           <h3 className="text-lg font-bold">Gestión de Instrumentos</h3>
           {/* Tu formulario de instrumentos */}
-          <button
-            onClick={() => setCurrentView("menu")}
-            className="mt-4 p-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
-          >
+          <button onClick={() => setCurrentView("menu")} className="mt-4 p-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
             Volver al Menú
           </button>
         </div>
       )}
 
-      <button
-        onClick={goHome}
-        className="mt-6 p-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-      >
+      <button onClick={goHome} className="mt-6 p-2 bg-red-600 text-white rounded-lg hover:bg-red-700" >
         Cerrar Panel Admin
       </button>
     </div>

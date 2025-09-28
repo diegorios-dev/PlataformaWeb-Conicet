@@ -10,9 +10,12 @@ type UserContextType = {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({ children }: { children: ReactNode }) => {
 
+
+
+export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [password, setPassword] = useState("");
+  
   const {user , handleUserApi } = useUser(password);
 
   const handleSavePassword = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
@@ -30,6 +33,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     </UserContext.Provider>
   );
 };
+
 
 // Hook auxiliar para consumir el contexto fácilmente
 export const useUserContext = () => {

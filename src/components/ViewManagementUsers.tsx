@@ -1,83 +1,51 @@
 import { useState } from "react";
-import {getUsersByWord} from "../services/userService";
-import axios from "axios";
+import {getUsersByWord , saveUser} from "../services/userService";
 import useUsers from "../hooks/useUsers";
 import FormEditUser from "../components/FormEditUser"
 import SearchUser from "../components/searchUser";
 
 const ViewManagementUsers = () => {
+
+  const { users, loading, handleSetUser, filteredUsers } = useUsers();
+
   const [selectedUser, setSelectedUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  const { users, loading } = useUsers();
-  const [searchTerm, setSearchTerm] = useState();
+
   
-  const handleUser = (option , user) => {
+  const isLoading = loading;
+  const isEmpty = !users || users.length === 0;
+  const visibleUsers = filteredUsers.length > 0 ? filteredUsers : users
+
+  const handleOptionUser = (option , user) => {
     if(option === "editar"){
       setSelectedUser(user);
       setShowEditModal(true);
     }
-  
     if(option === "eliminar"){
-        if(confirm(`¿Seguro que querés eliminar a ${user.name}?`)){
-        }
+      if(confirm(`¿Seguro que querés eliminar a ${user.name}?`)){
+      }
     }
+
   }
-  
-  // const search = async () => {
-  //   try {
-  //     const data = await getUsersByWord(searchTerm);
-  //     handleUser(data.user);
-  //     console.log("Usuario validado:", data.user);
-
-  //   } catch (error) {
-  //     alert("Contraseña inválida");
-  //     console.error("Error al validar usuario:", error);
-
-  //   }
-  // }
-
-  const saveUser = async (user) => {
-    try {
-      const payload = {
-        name: user.name,
-        rol: user.rol,
-        password: user.password,
-        latitude: user.site?.latitude,  
-        longitude: user.site?.longitude, 
-        locality: user.zona?.locality,   
-      };
-
-      const res = await fetch(`http://localhost:8000/api/usuario/${user.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload), 
-      });
-
-      if (!res.ok) throw new Error("Error al actualizar usuario");
-
-      const data = await res.json();
-      console.log("Usuario actualizado:", data);
-
-      setShowEditModal(false);
-    } catch (error) {
-      console.error(error);
+    
+    const search = async (word) => {
+      try {
+        const data = await getUsersByWord( word );
+        console.log("Usuario buscado por palabra:", data.user);
+        handleSetUser(data.user);
+      } catch (error) {
+        console.error("Error al validar usuario:", error);
+        alert("Contraseña inválida");
+      }
+    };
+        
+    if(isLoading){
+      return <p className="p-6">Cargando usuarios...</p>;
     }
-  };
 
-
-  const isLoading = loading;
-  const isEmpty = !users || users.length === 0;
-
-
-  if(isLoading){
-    return <p className="p-6">Cargando usuarios...</p>;
-  }
-
-  if (isEmpty) {
-    return <p className="p-6">No hay usuarios registrados.</p>;
-  }
+    if (isEmpty) {
+      return <p className="p-6">No hay usuarios registrados.</p>;
+    }
 
 
   return (
@@ -86,11 +54,12 @@ const ViewManagementUsers = () => {
 
       {/* Botones de acciones */}
       <div className="flex gap-4 mb-6">
+
         <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
           Agregar Usuario
         </button>
 
-        <SearchUser onSearch={(searchTerm)}/>
+        <SearchUser onSearch={(search)}/>
 
       </div>
 
@@ -107,7 +76,8 @@ const ViewManagementUsers = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            
+            {visibleUsers.map((user) => (
               <tr key={user.id} className="text-center hover:bg-gray-50">
                 <td className="p-2 border">{user.id}</td>
                 <td className="p-2 border">{user.name}</td>
@@ -117,13 +87,13 @@ const ViewManagementUsers = () => {
                 <td className="p-2 border">{user.zona.locality}</td>
                 <td className="p-2 border">
                   <button className="px-2 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                    onClick={() => handleUser("editar",user)}
+                    onClick={() => handleOptionUser("editar",user)}
                   >
                     Editar
                   </button>
-                  
+
                   <button className="ml-2 px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-                    onClick={() => handleUser("eliminar",user)}
+                    onClick={() => handleOptionUser("eliminar",user)}
                   >
                     Eliminar
                   </button>

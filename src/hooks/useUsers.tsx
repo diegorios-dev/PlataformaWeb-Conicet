@@ -1,19 +1,19 @@
 import { useState , useEffect } from 'react';
-import { getUsers } from "../services/userService";
+import { getAllUsers } from "../services/userService";
 
 function useUsers() {
 
+    const [filteredUsers, setFilteredUsers] = useState([]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const handleUser = (word) => {
-        setUsers(word)
-    }
+    const handleSetUser = (user) => {
+        setFilteredUsers([user]);
+    };
 
-
-    const fetchUsers = async () => {
+    const fetchAllUsers = async () => {
         try {
-            const res  = await getUsers();
+            const res  = await getAllUsers();
             setUsers(res);
         } catch (error) {
             console.error("Error al obtener usuarios:", error);
@@ -23,12 +23,12 @@ function useUsers() {
     };
 
     useEffect(() => {
-        fetchUsers();
+        fetchAllUsers();
     }, []);
 
     console.log("Usuarios cargados:", users);
 
-    return {users , loading ,handleUser}
+    return {users , loading ,handleSetUser , filteredUsers}
     
 }
 

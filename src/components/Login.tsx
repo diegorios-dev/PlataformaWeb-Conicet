@@ -8,10 +8,8 @@ const Login = () => {
 
     return (
         <div className="flex items-center justify-center w-full h-screen bg-gray-900">
-          <form
-            className="bg-gray-800 p-6 rounded-lg space-y-4 w-80 text-white"
-            onSubmit={handleUserApi}
-          >
+          <form className="bg-gray-800 p-6 rounded-lg space-y-4 w-80 text-white" onSubmit={handleUserApi}>
+
             <h2 className="text-xl font-bold text-center">Iniciar sesión</h2>
 
             <input

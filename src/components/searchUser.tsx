@@ -1,34 +1,31 @@
-import { useState , useEffect } from 'react';
+import { useState } from 'react';
 
 interface SearchUserProps {
-  onSearch: (query: string) => void;
+  onSearch: (word: string) => void;
 }
 
 function SearchUser({ onSearch }: SearchUserProps) {
+  const [word, setWord] = useState("");
 
-
-  const [query, setQuery] = useState("");
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onSearch(query);
-    }, 300);
-    console.log("Query de búsqueda:", query);
-
-    return () => clearTimeout(timer);
-  }, [query, onSearch]);
+  const handleBlur = () => {
+    if (word.trim() !== "") {
+      console.log("Query de búsqueda (onBlur):", word);
+      onSearch(word);
+    }
+  };
 
   return (
     <div>
-        <input
-          type="text"
-          className="border p-2 rounded"
-          placeholder="Buscar usuario..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+      <input
+        type="text"
+        className="border p-2 rounded"
+        placeholder="Buscar usuario..."
+        value={word}
+        onChange={(e) => setWord(e.target.value)}
+        onBlur={handleBlur}
+      />
     </div>
-    
   );
 }
+
 export default SearchUser;
