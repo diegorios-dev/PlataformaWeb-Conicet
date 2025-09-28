@@ -6,29 +6,29 @@ const ViewManagementUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const saveUser = async (user) => {
-    try {
-      const res = await fetch(`/api/users/${user.id}`, {
-        method: "PUT", // o PATCH según tu API
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
+  // const saveUser = async (user) => {
+  //   try {
+  //     const res = await fetch(`/api/users/${user.id}`, {
+  //       method: "PUT", // o PATCH según tu API
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(user),
+  //     });
 
-      if (!res.ok) throw new Error("Error al actualizar usuario");
+  //     if (!res.ok) throw new Error("Error al actualizar usuario");
 
-      const data = await res.json();
-      console.log("Usuario actualizado:", data);
+  //     const data = await res.json();
+  //     console.log("Usuario actualizado:", data);
 
-      // opcional: cerrar modal y refrescar lista
-      setShowEditModal(false);
-      // refrescar con tu hook useUsers
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  
+  //     // opcional: cerrar modal y refrescar lista
+  //     setShowEditModal(false);
+  //     // refrescar con tu hook useUsers
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
   const { users, loading } = useUsers();
 
   const isLoading = loading;
@@ -61,14 +61,10 @@ const ViewManagementUsers = () => {
 
       {/* Botones de acciones */}
       <div className="flex gap-4 mb-6">
-        <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-          Modificar Usuario
-        </button>
-        <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+        <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+
+        >
           Agregar Usuario
-        </button>
-        <button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-          Borrar Usuario
         </button>
       </div>
 
@@ -91,7 +87,7 @@ const ViewManagementUsers = () => {
                 <td className="p-2 border">{user.name}</td>
                 <td className="p-2 border">{user.rol}</td>
                 <td className="p-2 border">{user.password}</td>
-                <td className="p-2 border">[{user.sitio.latitude}, {user.sitio.longitude}]</td>
+                <td className="p-2 border">[{user.site.latitude}, {user.site.longitude}]</td>
                 <td className="p-2 border">{user.zona.locality}</td>
                 <td className="p-2 border">
                   <button className="px-2 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600"

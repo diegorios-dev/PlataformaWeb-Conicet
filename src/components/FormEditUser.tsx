@@ -19,6 +19,20 @@ const FormEditUser = ({selectedUser , setSelectedUser , setShowEditModal , saveU
                 onChange={(e) => setSelectedUser({...selectedUser, rol: e.target.value})}
               />
 
+              <input 
+                type="text" 
+                className="border p-2 w-full mb-2"
+                value={selectedUser?.password || ""}
+                onChange={(e) => setSelectedUser({...selectedUser, password: e.target.value})}
+              />
+
+              <input 
+                type="text" 
+                className="border p-2 w-full mb-2"
+                value={selectedUser?.sitio.latitude || ""}
+                onChange={(e) => setSelectedUser({...selectedUser, password: e.target.value})}
+              />
+
               <div className="flex justify-end gap-2">
                 <button onClick={() => setShowEditModal(false)} className="px-3 py-1 bg-gray-400 text-white rounded">
                   Cancelar
