@@ -1,4 +1,6 @@
 import { useState } from "react";
+import {getUsersByWord} from "../services/userService";
+import axios from "axios";
 import useUsers from "../hooks/useUsers";
 import FormEditUser from "../components/FormEditUser"
 import SearchUser from "../components/searchUser";
@@ -6,7 +8,33 @@ import SearchUser from "../components/searchUser";
 const ViewManagementUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const { users, loading } = useUsers();
   const [searchTerm, setSearchTerm] = useState();
+  
+  const handleUser = (option , user) => {
+    if(option === "editar"){
+      setSelectedUser(user);
+      setShowEditModal(true);
+    }
+  
+    if(option === "eliminar"){
+        if(confirm(`¿Seguro que querés eliminar a ${user.name}?`)){
+        }
+    }
+  }
+  
+  // const search = async () => {
+  //   try {
+  //     const data = await getUsersByWord(searchTerm);
+  //     handleUser(data.user);
+  //     console.log("Usuario validado:", data.user);
+
+  //   } catch (error) {
+  //     alert("Contraseña inválida");
+  //     console.error("Error al validar usuario:", error);
+
+  //   }
+  // }
 
   const saveUser = async (user) => {
     try {
@@ -14,9 +42,9 @@ const ViewManagementUsers = () => {
         name: user.name,
         rol: user.rol,
         password: user.password,
-        latitude: user.site?.latitude,   // 👈 flatten
-        longitude: user.site?.longitude, // 👈 flatten
-        locality: user.zona?.locality,   // si necesitás zona
+        latitude: user.site?.latitude,  
+        longitude: user.site?.longitude, 
+        locality: user.zona?.locality,   
       };
 
       const res = await fetch(`http://localhost:8000/api/usuario/${user.id}`, {
@@ -24,7 +52,7 @@ const ViewManagementUsers = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload), // 👈 mandás el objeto plano
+        body: JSON.stringify(payload), 
       });
 
       if (!res.ok) throw new Error("Error al actualizar usuario");
@@ -38,7 +66,6 @@ const ViewManagementUsers = () => {
     }
   };
 
-  const { users, loading } = useUsers();
 
   const isLoading = loading;
   const isEmpty = !users || users.length === 0;
@@ -52,17 +79,6 @@ const ViewManagementUsers = () => {
     return <p className="p-6">No hay usuarios registrados.</p>;
   }
 
-  const handleUser = (option , user) => {
-    if(option === "editar"){
-      setSelectedUser(user);
-      setShowEditModal(true);
-    }
-
-    if(option === "eliminar"){
-        if(confirm(`¿Seguro que querés eliminar a ${user.name}?`)){
-        }
-    }
-  }
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -74,9 +90,7 @@ const ViewManagementUsers = () => {
           Agregar Usuario
         </button>
 
-        <SearchUser onSearch={(searchTerm) => {
-          console.log("Término de búsqueda:", searchTerm);
-        }} />
+        <SearchUser onSearch={(searchTerm)}/>
 
       </div>
 

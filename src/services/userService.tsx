@@ -15,3 +15,8 @@ export const getUsers = async () => {
   return data;
 };
 
+export const getUsersByWord = async ({word}) => {
+  const { data } = await axios.post(`${API_URL}/usuarios/${word}`);
+  console.log(data)
+  return data;
+};

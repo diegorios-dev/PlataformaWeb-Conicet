@@ -6,6 +6,11 @@ function useUsers() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const handleUser = (word) => {
+        setUsers(word)
+    }
+
+
     const fetchUsers = async () => {
         try {
             const res  = await getUsers();
@@ -23,7 +28,7 @@ function useUsers() {
 
     console.log("Usuarios cargados:", users);
 
-    return {users , loading }
+    return {users , loading ,handleUser}
     
 }
 
