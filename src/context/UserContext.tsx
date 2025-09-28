@@ -14,6 +14,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
+  
   const [password, setPassword] = useState("");
   
   const {user , handleUserApi } = useUser(password);

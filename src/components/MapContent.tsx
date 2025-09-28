@@ -10,8 +10,10 @@ import ViewOptionMenu from "./viewOptionMenu";
 const MapContent = () => {
 
   const [selectedInstrument, setSelectedInstrument] = useState("Lluvia");
+
   const sitios = useSitio(selectedInstrument);
   const optionMenu = useInstrument();
+  
   const {user} = useUserContext();
   const {goLogin , goAdminUi} = useNavegation()
 

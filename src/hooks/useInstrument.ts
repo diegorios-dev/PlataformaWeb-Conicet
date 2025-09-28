@@ -12,7 +12,7 @@ function useInstrument () {
         const data = await getInstruments();
         const objInstrument = data.map(item => ({
           instrumento: item.name,
-          precipitacion: item.precipitacion.type,
+          precipitacion: item.precipitation.type,
         }));
         setOptionMenu(objInstrument);
       } catch (error) {
