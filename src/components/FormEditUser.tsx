@@ -29,9 +29,45 @@ const FormEditUser = ({selectedUser , setSelectedUser , setShowEditModal , saveU
               <input 
                 type="text" 
                 className="border p-2 w-full mb-2"
-                value={selectedUser?.sitio.latitude || ""}
-                onChange={(e) => setSelectedUser({...selectedUser, password: e.target.value})}
-              />
+                value={selectedUser?.site.latitude  || ""}
+                onChange={(e) =>
+                    setSelectedUser({
+                    ...selectedUser,
+                    site: {
+                        ...selectedUser.site,  // preserva lo que ya tiene site
+                        latitude: e.target.value, 
+                    },
+                    })}             
+               />
+
+
+              <input 
+                type="text" 
+                className="border p-2 w-full mb-2"
+                value={selectedUser?.site.longitude  || ""}
+                onChange={(e) =>
+                    setSelectedUser({
+                        ...selectedUser,
+                        site: {
+                            ...selectedUser.site,  
+                            longitude: e.target.value, 
+                        },
+                    })}
+               />
+
+                <input 
+                    type="text" 
+                    className="border p-2 w-full mb-2"
+                    value={selectedUser?.zona.locality  || ""}
+                    onChange={(e) =>
+                        setSelectedUser({
+                        ...selectedUser,
+                        zona: {
+                            ...selectedUser.zona,  // preserva lo que ya tiene site
+                            locality: e.target.value, 
+                        },
+                    })}             
+                />
 
               <div className="flex justify-end gap-2">
                 <button onClick={() => setShowEditModal(false)} className="px-3 py-1 bg-gray-400 text-white rounded">
