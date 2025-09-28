@@ -8,28 +8,35 @@ const ViewManagementUsers = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState();
 
-  // const saveUser = async (user) => {
-  //   try {
-  //     const res = await fetch(`/api/users/${user.id}`, {
-  //       method: "PUT", // o PATCH según tu API
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(user),
-  //     });
+  const saveUser = async (user) => {
+    try {
+      const payload = {
+        name: user.name,
+        rol: user.rol,
+        password: user.password,
+        latitude: user.site?.latitude,   // 👈 flatten
+        longitude: user.site?.longitude, // 👈 flatten
+        locality: user.zona?.locality,   // si necesitás zona
+      };
 
-  //     if (!res.ok) throw new Error("Error al actualizar usuario");
+      const res = await fetch(`http://localhost:8000/api/usuario/${user.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload), // 👈 mandás el objeto plano
+      });
 
-  //     const data = await res.json();
-  //     console.log("Usuario actualizado:", data);
+      if (!res.ok) throw new Error("Error al actualizar usuario");
 
-  //     // opcional: cerrar modal y refrescar lista
-  //     setShowEditModal(false);
-  //     // refrescar con tu hook useUsers
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+      const data = await res.json();
+      console.log("Usuario actualizado:", data);
+
+      setShowEditModal(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const { users, loading } = useUsers();
 
@@ -100,6 +107,7 @@ const ViewManagementUsers = () => {
                   >
                     Editar
                   </button>
+                  
                   <button className="ml-2 px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
                     onClick={() => handleUser("eliminar",user)}
                   >
