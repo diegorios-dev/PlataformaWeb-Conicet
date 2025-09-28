@@ -1,10 +1,12 @@
 import { useState } from "react";
 import useUsers from "../hooks/useUsers";
 import FormEditUser from "../components/FormEditUser"
+import SearchUser from "../components/searchUser";
 
 const ViewManagementUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState();
 
   // const saveUser = async (user) => {
   //   try {
@@ -61,11 +63,14 @@ const ViewManagementUsers = () => {
 
       {/* Botones de acciones */}
       <div className="flex gap-4 mb-6">
-        <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-
-        >
+        <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
           Agregar Usuario
         </button>
+
+        <SearchUser onSearch={(searchTerm) => {
+          console.log("Término de búsqueda:", searchTerm);
+        }} />
+
       </div>
 
         <table className="w-full bg-white border border-gray-300 rounded-lg shadow-md">
