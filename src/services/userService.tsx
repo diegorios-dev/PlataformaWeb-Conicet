@@ -15,9 +15,9 @@ export const getAllUsers = async () => {
   return data;
 };
 
-export const getUsersByWord = async (word) => {
-  const { data } = await axios.get(`${API_URL}/usuario/${word}`);
-  console.log(data)
+export const getUsersByWord = async (word = "") => {
+  const { data } = await axios.get(`${API_URL}/usuario?word=${encodeURIComponent(word)}`);
+  console.log(data);
   return data;
 };
 

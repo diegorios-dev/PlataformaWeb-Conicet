@@ -6,7 +6,7 @@ import SearchUser from "../Dashboard/searchUser";
 
 const ViewManagementUsers = () => {
 
-  const { users, loading, handleSetUser, filteredUsers } = useUsers();
+  const { users, loading, handleSetUser, fetchUsers } = useUsers();
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -14,7 +14,10 @@ const ViewManagementUsers = () => {
   
   const isLoading = loading;
   const isEmpty = !users || users.length === 0;
-  const visibleUsers = filteredUsers.length > 0 ? filteredUsers : users
+
+  const visibleUsers = users
+  
+  console.log(visibleUsers)
 
   const handleOptionUser = (option , user) => {
     if(option === "editar"){
@@ -30,15 +33,19 @@ const ViewManagementUsers = () => {
     
     const search = async (word) => {
       try {
-        const data = await getUsersByWord( word );
-        console.log("Usuario buscado por palabra:", data.user);
-        handleSetUser(data.user);
+        if (!word || word.trim() === "") {
+          // si no hay palabra -> traer todos
+          await fetchUsers();
+        } else {
+          const data = await getUsersByWord(word);
+          handleSetUser(data.users);
+        }
       } catch (error) {
-        console.error("Error al validar usuario:", error);
-        alert("Contraseña inválida");
+        console.error("Error al buscar usuarios:", error);
+        alert("No se pudo buscar usuarios");
       }
     };
-        
+
     if(isLoading){
       return <p className="p-6">Cargando usuarios...</p>;
     }
@@ -59,7 +66,8 @@ const ViewManagementUsers = () => {
           Agregar Usuario
         </button>
 
-        <SearchUser onSearch={(search)}/>
+        <SearchUser onSearch={search} />
+
 
       </div>
 

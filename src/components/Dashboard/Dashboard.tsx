@@ -4,13 +4,8 @@ import useNavegation from "../../hooks/useNavegation";
 const Dashboard = () => {
   
   const [currentView, setCurrentView] = useState<"menu" | "instrumentos">("menu");
-  
-  const {goHome , goReports , goConfigUsers} = useNavegation()
 
-  // const handleShowEditFormReport = (reporte) => {
-  //   setSelectedReport(reporte);
-  //   setCurrentView("editReport");
-  // }
+  const {goHome , goReports , goConfigUsers} = useNavegation()
 
   return (
     <div className="flex-1 p-6 bg-gray-100 h-screen">
