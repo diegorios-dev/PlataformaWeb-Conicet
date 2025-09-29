@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
-import { updateReporte } from "../services/reporteService";
+import { updateReporte } from "../../services/reporteService";
+import { useUserContext } from "../../context/UserContext";
+import useNavegation from "../../hooks/useNavegation";
 
-const FormEditReport = ({ report, setCurrentView }) => {
+const FormEditReport = () => {
+  
+  const {report} = useUserContext();
+  const {goReports} = useNavegation()
 
   console.log(report)
 
@@ -51,7 +56,6 @@ const FormEditReport = ({ report, setCurrentView }) => {
 
       await updateReporte(report.id, payload);
       alert("Reporte actualizado con éxito ✅");
-      setCurrentView("reportes"); // volver al listado
     } catch (error) {
       console.error("Error al actualizar:", error);
       alert("❌ Hubo un problema al actualizar el reporte");
@@ -132,7 +136,7 @@ const FormEditReport = ({ report, setCurrentView }) => {
         </button>
         <button
           type="button"
-          onClick={() => setCurrentView("reportes")}
+          onClick={goReports}
           className="p-2 bg-gray-600 text-white rounded hover:bg-gray-700"
         >
           Cancelar

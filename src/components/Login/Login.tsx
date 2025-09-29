@@ -1,5 +1,5 @@
-import { useUserContext } from "../context/UserContext";
-import useNavegation from "../hooks/useNavegation";
+import { useUserContext } from "../../context/UserContext";
+import useNavegation from "../../hooks/useNavegation";
 
 const Login = () => {
 

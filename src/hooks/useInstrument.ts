@@ -1,27 +1,19 @@
-import { useEffect , useState} from "react";
-import { getInstruments } from "../services/instrumentService";
-
+import { useEffect, useState} from "react";
+import { OPTION_INSTRUMENTS } from "../constants/optionInstruments";
 
 function useInstrument () {
-  const [optionMenu, setOptionMenu] = useState([]);
+  const [optionsMenu, setOptionsMenu] = useState([]);
 
-  // traer instrumentos
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getInstruments();
-        const objInstrument = data.map(item => ({
-          instrumento: item.name,
-          precipitacion: item.precipitation.type,
-        }));
-        setOptionMenu(objInstrument);
-      } catch (error) {
-        console.error("Error al traer instrumentos:", error);
-      }
-    };
-    fetchData();
+    setOptionsMenu(OPTION_INSTRUMENTS); 
   }, []);
-  return optionMenu
+
+  useEffect(() => {
+    console.log(optionsMenu)
+  }, [optionsMenu])
+  
+
+  return optionsMenu
 }
 
 export default useInstrument

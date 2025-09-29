@@ -6,16 +6,22 @@ type UserContextType = {
   password: string;
   handleUserApi: (e: React.FormEvent) => Promise<void>;
   handleSavePassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSelectReport : any ; 
+  report : any 
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 
-
-
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   
   const [password, setPassword] = useState("");
+
+  const [report, setReport] = useState<any | null>(null);
+
+  const handleSelectReport = (report : any) => {
+    setReport(report)
+  }
   
   const {user , handleUserApi } = useUser(password);
 
@@ -27,7 +33,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         user,
         password,
         handleSavePassword , 
-        handleUserApi
+        handleUserApi , 
+        handleSelectReport , 
+        report
       }}
     >
       {children}

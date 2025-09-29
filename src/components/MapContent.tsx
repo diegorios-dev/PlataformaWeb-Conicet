@@ -4,17 +4,18 @@ import MapHTML from "./MapHTML";
 import useInstrument from "../hooks/useInstrument";
 import { useUserContext } from "../context/UserContext";
 import useNavegation from "../hooks/useNavegation";
-import ViewOptionMenu from "./viewOptionMenu";
-
+import ViewOptionMenu from "./ViewOptionMenu";
 
 const MapContent = () => {
 
   const [selectedInstrument, setSelectedInstrument] = useState("Lluvia");
 
   const sitios = useSitio(selectedInstrument);
-  const optionMenu = useInstrument();
+
+  const optionsMenu = useInstrument();
   
   const {user} = useUserContext();
+
   const {goLogin , goAdminUi} = useNavegation()
 
 
@@ -29,7 +30,7 @@ const MapContent = () => {
           </button>
         )}
 
-        <ViewOptionMenu optionMenu={optionMenu} setSelectedInstrument={setSelectedInstrument} selectedInstrument={selectedInstrument}/>
+        <ViewOptionMenu optionMenu={optionsMenu} setSelectedInstrument={setSelectedInstrument} selectedInstrument={selectedInstrument}/>
         
       </div>
 

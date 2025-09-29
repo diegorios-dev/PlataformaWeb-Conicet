@@ -13,7 +13,7 @@ const ViewOptionMenu = ({optionMenu , setSelectedInstrument , selectedInstrument
                 }`}
                 onClick={() => setSelectedInstrument(item.precipitacion)}
             >
-                Ver {item.instrumento}
+                {item.instrumento}
             </button>
             ))}
         </div>

@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import useReports from "../hooks/useReports";
+import useReports from "../../hooks/useReports";
+import useNavegation from "../../hooks/useNavegation";
 
-const ShowReport = ({handleShowEditFormReport}) => {
-
+const ShowReport = () => {
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState<any[]>([]);
-
+  
+  const {goEditReport} = useNavegation()
   const reports = useReports()
+  
 
-
-  // Filtrar por ID o nota (ya no title porque tu JSON no tiene)
   useEffect(() => {
     if (search.trim() === "") {
       setFiltered(reports);
@@ -23,6 +23,8 @@ const ShowReport = ({handleShowEditFormReport}) => {
       );
     }
   }, [search, reports]);
+
+
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -63,7 +65,7 @@ const ShowReport = ({handleShowEditFormReport}) => {
             <p>Zona: {reporte.site.zona.locality}</p>
 
             <button className="mt-3 p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              onClick={() => handleShowEditFormReport(reporte)}
+              onClick={() => goEditReport(reporte)}
             >
               Editar
             </button>

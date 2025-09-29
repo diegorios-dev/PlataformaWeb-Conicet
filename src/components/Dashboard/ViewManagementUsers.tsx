@@ -1,8 +1,8 @@
 import { useState } from "react";
-import {getUsersByWord , saveUser} from "../services/userService";
-import useUsers from "../hooks/useUsers";
-import FormEditUser from "../components/FormEditUser"
-import SearchUser from "../components/searchUser";
+import {getUsersByWord , saveUser} from "../../services/userService";
+import useUsers from "../../hooks/useUsers";
+import FormEditUser from "../Dashboard/FormEditUser"
+import SearchUser from "../Dashboard/searchUser";
 
 const ViewManagementUsers = () => {
 
