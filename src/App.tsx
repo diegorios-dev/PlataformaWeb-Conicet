@@ -4,12 +4,12 @@ import { Routes, Route} from "react-router-dom";
 import Login from "./components/Login/Login";
 import { UserProvider } from "./context/UserContext";
 import Dashboard from "./components/Dashboard/Dashboard";
-import ShowReport from "./components/Dashboard/ShowReport";
-import ViewManagementUsers from "./components/Dashboard/ViewManagementUsers";
-import FormEditReport from "./components/Dashboard/FormEditReport";
+import ShowReport from "./components/Dashboard/Report/ShowReport";
+import ViewManagementUsers from "./components/Dashboard/User/ViewManagementUsers";
+import FormEditReport from "./components/Dashboard/Report/FormEditReport";
+import FormAddUser from "./components/Dashboard/User/FormAddUser";
 
 export default function App() {
-
   return (
     <div>
       <UserProvider>
@@ -20,6 +20,7 @@ export default function App() {
           <Route path="/dashboard/administration/report" element={<ShowReport/>} />
           <Route path="/dashboard/administration/report/edit" element={<FormEditReport/>} />
           <Route path="/dashboard/administration/user" element={<ViewManagementUsers/>} />
+          <Route path="/dashboard/administration/user/add" element={<FormAddUser/>} />
         </Routes>
       </UserProvider>
     </div>

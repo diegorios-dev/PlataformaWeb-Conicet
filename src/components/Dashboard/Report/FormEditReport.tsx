@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { updateReporte } from "../../services/reporteService";
-import { useUserContext } from "../../context/UserContext";
-import useNavegation from "../../hooks/useNavegation";
+import { updateReporte } from "../../../services/reporteService";
+import { useUserContext } from "../../../context/UserContext";
+import useNavegation from "../../../hooks/useNavegation";
 
 const FormEditReport = () => {
   

@@ -1,8 +1,9 @@
 import { useState } from "react";
-import {getUsersByWord , saveUser} from "../../services/userService";
-import useUsers from "../../hooks/useUsers";
-import FormEditUser from "../Dashboard/FormEditUser"
-import SearchUser from "../Dashboard/searchUser";
+import {getUsersByWord , saveUser} from "../../../services/userService";
+import useUsers from "../../../hooks/useUsers";
+import FormEditUser from "./FormEditUser"
+import SearchUser from "./searchUser";
+import useNavegation from "../../../hooks/useNavegation";
 
 const ViewManagementUsers = () => {
 
@@ -11,7 +12,8 @@ const ViewManagementUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  
+  const {goAddUser} = useNavegation()
+
   const isLoading = loading;
   const isEmpty = !users || users.length === 0;
 
@@ -62,7 +64,9 @@ const ViewManagementUsers = () => {
       {/* Botones de acciones */}
       <div className="flex gap-4 mb-6">
 
-        <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+        <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        onClick={goAddUser}
+        >
           Agregar Usuario
         </button>
 

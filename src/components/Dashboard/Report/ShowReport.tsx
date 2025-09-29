@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import useReports from "../../hooks/useReports";
-import useNavegation from "../../hooks/useNavegation";
+import useReports from "../../../hooks/useReports";
+import useNavegation from "../../../hooks/useNavegation";
 
 const ShowReport = () => {
   const [search, setSearch] = useState("");

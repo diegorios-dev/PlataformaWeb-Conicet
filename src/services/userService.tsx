@@ -21,7 +21,20 @@ export const getUsersByWord = async (word = "") => {
   return data;
 };
 
+export const postNewUser = async (newUser) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/user/register`, newUser);
+    console.log("Usuario creado:", data);
+    return data;
+  } catch (error) {
+    console.error("Error al crear usuario:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+
  export const saveUser = async (user) => {
+
   const payload = {
     name: user.name,
     rol: user.rol,
@@ -39,4 +52,5 @@ export const getUsersByWord = async (word = "") => {
     console.error("Error al actualizar usuario:", error);
     throw error;
   }
+  
 };

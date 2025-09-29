@@ -21,10 +21,14 @@ const useNavegation = () => {
     navigate("/dashboard/administration/report/edit")
   } 
 
+  const goAddUser = () => {
+    navigate("/dashboard/administration/user/add")
+  }
+
 
     return (
         {
-            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport
+            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser
         }
     )
 }
