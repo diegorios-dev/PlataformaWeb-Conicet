@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { postNewUser } from "../../../services/userService";
-
+import useNavegation from "../../../hooks/useNavegation";
 
 const FormAddUser = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +11,7 @@ const FormAddUser = () => {
     site: { latitude: "", longitude: "" },
     precipitation : { type : ""}
   });
-
+  const { goBack } = useNavegation();
   const handleChange = (e) => {
     const { id, value } = e.target;
 
@@ -52,7 +52,14 @@ const FormAddUser = () => {
   };
 
   return (
+    <div> 
+      <div className="p-8">
+        <button onClick={goBack}  className="px-6 py-2 bg-blue-900 text-white rounded-lg shadow-md hover:bg-blue-950 transition font-semibold text-base">
+          Volver
+        </button>
+      </div>
     <div className="max-w-md mx-auto mt-8">
+     
       <h1 className="text-2xl font-bold mb-6 text-center">Agregar Usuario</h1>
 
       <form
@@ -197,6 +204,7 @@ const FormAddUser = () => {
           </button>
         </div>
       </form>
+    </div>
     </div>
   );
 };

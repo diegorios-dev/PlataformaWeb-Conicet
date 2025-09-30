@@ -24,11 +24,12 @@ const useNavegation = () => {
   const goAddUser = () => {
     navigate("/dashboard/administration/user/add")
   }
+   const goBack = () => navigate(-1);
 
 
     return (
         {
-            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser
+            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack
         }
     )
 }
