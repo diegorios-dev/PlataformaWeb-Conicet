@@ -1,5 +1,5 @@
 import "leaflet/dist/leaflet.css";
-import MapContent from "./components/MapContent";
+import Home from "./components/Home";
 import { Routes, Route} from "react-router-dom";
 import Login from "./components/Login/Login";
 import { UserProvider } from "./context/UserContext";
@@ -14,7 +14,7 @@ export default function App() {
     <div>
       <UserProvider>
         <Routes>
-          <Route path="/" element={<MapContent />} />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login/>} />
           <Route path="/dashboard" element={<Dashboard/>} />
           <Route path="/dashboard/administration/report" element={<ShowReport/>} />

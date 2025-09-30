@@ -4,18 +4,18 @@ import useUser from "../hooks/useUser";
 type UserContextType = {
   user: any;
   password: string;
-  handleUserApi: (e: React.FormEvent) => Promise<void>;
+  fetchGetUserByPassword: (e: React.FormEvent) => Promise<void>;
   handleSavePassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSelectReport : any ; 
-  report : any 
+  report : any ; 
+  isLogin : any 
+
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  
-  const [password, setPassword] = useState("");
 
   const [report, setReport] = useState<any | null>(null);
 
@@ -23,19 +23,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setReport(report)
   }
   
-  const {user , handleUserApi } = useUser(password);
+  const {user , fetchGetUserByPassword , isLogin , password , handleSavePassword } = useUser();
 
-  const handleSavePassword = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
 
   return (
     <UserContext.Provider
       value={{
         user,
         password,
-        handleSavePassword , 
-        handleUserApi , 
-        handleSelectReport , 
-        report
+        fetchGetUserByPassword,
+        handleSavePassword ,
+        handleSelectReport,
+        report,
+        isLogin
       }}
     >
       {children}
@@ -44,11 +44,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 };
 
 
-// Hook auxiliar para consumir el contexto fácilmente
 export const useUserContext = () => {
-
   const ctx = useContext(UserContext);
-
   if (!ctx) {
     throw new Error("useUserContext debe usarse dentro de <UserProvider>");
   }

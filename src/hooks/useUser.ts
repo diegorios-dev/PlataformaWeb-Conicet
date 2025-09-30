@@ -1,31 +1,38 @@
 import { useState } from 'react';
-import { getUserByPassword } from "../services/userService";
+import { getUserByPassword } from '../services/userService';
 
-type User = {
-  rol: string;
-};
-
-function useUser(password: string) {
-  
+function useUser() {
   const [user, setUser] = useState<User | null>(null);
+  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [password, setPassword] = useState("");
 
-  const handleUserApi = async (e: React.FormEvent) => {
-      e.preventDefault();
+  const validateLogin = (userData: User | null) => {
+    setIsLogin(userData?.rol === "admin");
+  };
 
-      try {
-        const data = await getUserByPassword(password);
-        setUser(data.user);
-        console.log("Usuario validado:", data.user);
-      } catch (error) {
-        alert("Contraseña inválida");
-        console.error("Error al validar usuario:", error);
-      }
+  const handleSavePassword = (e) => {
+    setPassword(e.target.value)
+  }
 
+  const fetchGetUserByPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const data = await getUserByPassword(password);
+      const fetchedUser = data?.user ?? null;
+      setUser(fetchedUser);
+      validateLogin(fetchedUser);
+    } catch (error) {
+      alert("Contraseña inválida");
+      console.error("Error al validar usuario:", error);
+    }
   };
 
   return {
-    handleUserApi,
-    user
+    user,
+    isLogin,
+    password,
+    handleSavePassword,
+    fetchGetUserByPassword,
   };
 }
 
