@@ -5,7 +5,7 @@ const Dashboard = () => {
   
   const [currentView, setCurrentView] = useState<"menu" | "instrumentos">("menu");
 
-  const {goHome , goReports , goConfigUsers, goBack} = useNavegation()
+  const {goHome , goReports , goConfigUsers, goBack, goAddZona} = useNavegation()
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -40,10 +40,11 @@ const Dashboard = () => {
               </button>
 
               <button
-                onClick={() => setCurrentView("instrumentos")}
-                className="w-full py-3 px-4 bg-green-500 text-white font-semibold rounded-lg shadow hover:bg-green-600 transition focus:outline-none focus:ring-2 focus:ring-green-300"
+                onClick={goAddZona}
+                className="w-full py-3 px-4 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-300"
               >
-                Agregar una zona
+                Agregar Zona
+
               </button>
             </div>
           )}

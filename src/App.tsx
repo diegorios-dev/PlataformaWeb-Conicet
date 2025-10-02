@@ -21,6 +21,7 @@ export default function App() {
           <Route path="/dashboard/administration/report/edit" element={<FormEditReport/>} />
           <Route path="/dashboard/administration/user" element={<ViewManagementUsers/>} />
           <Route path="/dashboard/administration/user/add" element={<FormAddUser/>} />
+          <Route path="/components/Dashboard/Zona/FormAddZona.tsx"></Route>
         </Routes>
       </UserProvider>
     </div>

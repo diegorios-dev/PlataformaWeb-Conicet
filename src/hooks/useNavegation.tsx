@@ -14,9 +14,11 @@ const useNavegation = () => {
 
   const goReports = () => navigate("/dashboard/administration/report") 
 
-  const goConfigUsers = () => navigate("/dashboard/administration/user") 
+  const goConfigUsers = () => navigate("/dashboard/administration/user")
 
-  const goEditReport = (report) => {
+  const goAddZona = () => navigate("/components/Dashboard/Zona/FormAddZona.tsx")
+
+  const goEditReport = (report: any) => {
     handleSelectReport(report)
     navigate("/dashboard/administration/report/edit")
   } 
@@ -29,7 +31,7 @@ const useNavegation = () => {
 
     return (
         {
-            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack
+            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona
         }
     )
 }
