@@ -8,6 +8,7 @@ import ShowReport from "./components/Dashboard/Report/ShowReport";
 import ViewManagementUsers from "./components/Dashboard/User/ViewManagementUsers";
 import FormEditReport from "./components/Dashboard/Report/FormEditReport";
 import FormAddUser from "./components/Dashboard/User/FormAddUser";
+import FormAddZona from "./components/Dashboard/Zona/FormAddZona";
 
 export default function App() {
   return (
@@ -21,7 +22,7 @@ export default function App() {
           <Route path="/dashboard/administration/report/edit" element={<FormEditReport/>} />
           <Route path="/dashboard/administration/user" element={<ViewManagementUsers/>} />
           <Route path="/dashboard/administration/user/add" element={<FormAddUser/>} />
-          <Route path="/components/Dashboard/Zona/FormAddZona.tsx"></Route>
+          <Route path="/components/Dashboard/Zona/FormAddZona.tsx" element={<FormAddZona />} />
         </Routes>
       </UserProvider>
     </div>
