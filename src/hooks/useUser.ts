@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getUserByPassword } from '../services/userService';
+import { login } from '../services/userService';
 
 function useUser() {
   const [user, setUser] = useState<User | null>(null);
@@ -17,7 +17,8 @@ function useUser() {
   const fetchGetUserByPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const data = await getUserByPassword(password);
+      const data = await login(password);
+      console.log(data)
       const fetchedUser = data?.user ?? null;
       setUser(fetchedUser);
       validateLogin(fetchedUser);
