@@ -4,31 +4,30 @@ const ViewOptionMenu = (
     {optionMenu , handleSetOptionMenu , selectedInstrument , isLogin , goAdminUi}
 ) => {
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4 p-6">
             {isLogin && (
                 <button
                     onClick={goAdminUi}
-                    className="w-full mt-2 py-2 px-4 rounded bg-blue-600 hover:bg-blue-500 text-white font-semibold transition duration-200"
+                    className="w-full py-3 px-5 rounded-full font-semibold transition duration-200 shadow-sm border bg-blue-700 hover:shadow-md text-white border-blue-700 hover:bg-blue-800"
                 >
                     Panel Admin
-                </button>
-            )}
+                </button>    )}
 
             {optionMenu.map((item, index) => (
                 <button
                     key={index}
-                    className={`w-full py-2 px-4 rounded border font-medium transition duration-200
-                        ${selectedInstrument === item.precipitacion
-                            ? "bg-gray-200  text-gray-900"
-                            : "bg-white border-gray-300 text-gray-800 hover:bg-gray-100"
+                    className={`w-full py-3 px-5 rounded-full font-semibold transition duration-200 shadow-sm border bg-gray-300
+                        ${
+                            selectedInstrument === item.precipitacion
+                                ? "bg-gradient-to-r from-gray-100 to-gray-300 text-blue-700 border-blue-700 ring-2 ring-blue-300"
+                                : "bg-white border-gray-300 text-gray-800 hover:bg-gray-50 hover:border-blue-400"
                         }`}
                     onClick={() => handleSetOptionMenu(item.precipitacion)}
                 >
-                    {item.instrumento}
+                    <span className="text-lg">{item.instrumento}</span>
                 </button>
             ))}
         </div>
-
     )
 }
 

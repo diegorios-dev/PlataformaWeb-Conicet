@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { postNewZona, getAllZonas } from "../../../services/zonaService";
 import useNavegation from "../../../hooks/useNavegation";
+import BackButton from "../../BackButton";
+import { Plus, MapPin } from "lucide-react";
 
 type Zona = {
     id: number;
@@ -43,45 +45,56 @@ const FormAddZona = () => {
     };
 
     return (
-        <div>
-            <div className="p-8">
-                <button 
-                    onClick={goBack}  
-                    className="px-6 py-2 bg-blue-900 text-white rounded-lg shadow-md hover:bg-blue-950 transition font-semibold text-base"
-                >
-                    Volver
-                </button>
+        <div className="min-h-screen w-full bg-gray-50 flex flex-col items-center py-8">
+            <div className="w-full max-w-md">
+                <BackButton />
             </div>
-            
-            <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 bg-white shadow-md rounded-lg" >
-                <input
-                    type="text"
-                    name="locality"
-                    value={formData.locality}
-                    onChange={handleChange}
-                    placeholder="Localidad que deseas agregar"
-                    className="w-full border border-gray-300 p-2 rounded-lg mb-4"
-                    required
-                />
-                
-                <button 
-                    type="submit" 
-                    className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition"
+
+            <form
+                onSubmit={handleSubmit}
+                className="bg-white  rounded-lg shadow-lg max-w-md w-full p-6 mt-6"
+            >
+                <div className="relative mb-6 ">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    <input
+                        type="text"
+                        name="locality"
+                        value={formData.locality}
+                        onChange={handleChange}
+                        placeholder="Localidad que deseas agregar"
+                        className="w-full pl-10 border border-gray-300 rounded-full p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                        required
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white py-3 rounded-full hover:bg-blue-700 transition flex items-center justify-center gap-2 font-semibold"
                 >
-                    aniadir Zona
+                    <Plus size={18} />
+                    Añadir Zona
                 </button>
             </form>
 
-            <div className="mb-6">
-                <div className="flex justify-center mt-8">
-                    <div className="max-h-60 w-96 bg-gray-100 rounded-lg shadow-md overflow-y-auto flex flex-col items-center">
-                        <h2 className="text-lg font-semibold mb-2 border-b ">Zonas Cargadas</h2>
-                        {zonas.map((zona) => (
-                            <div key={zona.id} className="w-full p-2 border-b text-center">
-                                <h3>{zona.locality}</h3>
+            <div className="w-full max-w-md mt-10">
+                <div className="bg-white rounded-lg shadow-lg overflow-y-auto max-h-64 flex flex-col items-center px-4 py-6">
+                    <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-600 border-b w-full pb-2 justify-center">
+                        <MapPin size={20} />
+                        Zonas Cargadas
+                    </h2>
+                    {zonas.length === 0 ? (
+                        <p className="text-gray-500 mt-4">No hay zonas cargadas.</p>
+                    ) : (
+                        zonas.map((zona) => (
+                            <div
+                                key={zona.id}
+                                className="w-full py-2 border-b last:border-b-0 flex items-center gap-2 justify-center text-gray-700"
+                            >
+                                <MapPin size={16} className="text-blue-500" />
+                                <span className="font-medium">{zona.locality}</span>
                             </div>
-                        ))}
-                    </div>
+                        ))
+                    )}
                 </div>
             </div>
         </div>
