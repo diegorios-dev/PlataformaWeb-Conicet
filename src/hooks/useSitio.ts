@@ -9,18 +9,18 @@ function useSitio (selectedInstrument : any) {
             
             try {
                 const data = await getSitio(selectedInstrument);
-                
                 const objSitio = data.map(item => ({
                     coordenadas: [
                         parseFloat(item.report.site.latitude),
                         parseFloat(item.report.site.longitude),
                     ],
                     cantidad: parseFloat(item.amount),
+                    idSitio: item.report.site.id,
                     tipo: item.united_measure.abbreviation,
                 }));
 
                 setSitios(objSitio);
-                console.log(objSitio)
+                // console.log("objSitio:", objSitio);
             } catch (error) {
                 console.error("Error al traer precipitaciones:", error);
             }
@@ -29,7 +29,6 @@ function useSitio (selectedInstrument : any) {
         fetchData();
 
     }, [selectedInstrument]);
-    
     return sitios;
 }
 

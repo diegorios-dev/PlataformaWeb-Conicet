@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { updateReporte } from "../../../services/reporteService";
+import { updateReporte } from "../../../services/reportService";
 import { useUserContext } from "../../../context/UserContext";
 import useNavegation from "../../../hooks/useNavegation";
 import {
