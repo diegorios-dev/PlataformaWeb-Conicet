@@ -117,28 +117,21 @@ const MapHTML = ({ position }: MapHTMLProps) => {
         />
 
       {position.map((coords, index) => {
+
       const siteData = siteReports.get(coords.idSitio);
       const totalAmount = siteData?.totalAmount || 0;
       const lastReportAmount = siteData?.lastReportAmount || 0;
       const yearLabel = selectedYear ? selectedYear.toString() : "Todos los años";
+      
       
       return (
         <Marker key={index} position={coords.coordenadas}>
         <Popup>
           <div className="font-sans p-2 min-w-[200px]">
           <div className="text-base font-bold mb-2.5 text-blue-600 border-b-2 border-gray-200 pb-2">
-            📍 Sitio #{coords.idSitio}
+            📍 Sitio : ({coords.coordenadas})
           </div>
           
-          <div className="mb-2">
-            <span className="text-xs text-gray-500 uppercase font-semibold">
-            Tipo:
-            </span>{' '}
-            <span className="text-sm text-gray-700">
-            {coords.tipo}
-            </span>
-          </div>
-
           {loading ? (
             <div className="p-3 text-center text-gray-500 italic">
             Cargando reportes...
