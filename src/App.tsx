@@ -9,6 +9,10 @@ import ViewManagementUsers from "./components/Dashboard/User/ViewManagementUsers
 import FormEditReport from "./components/Dashboard/Report/FormEditReport";
 import FormAddUser from "./components/Dashboard/User/FormAddUser";
 import FormAddZona from "./components/Dashboard/Zona/FormAddZona";
+import ShowHistograma from "./components/histograma/ShowHistograma";
+import HistogramaLluvia from "./components/histograma/HistogramaLluvia";
+import HistogramaNieve from "./components/histograma/HistogramaNieve";
+import HistogramaCaudalimetro from "./components/histograma/HistogramaCaudalimetro";
 import HeatMapView from "./components/MapHeatView";
 
 export default function App() {
@@ -23,7 +27,11 @@ export default function App() {
           <Route path="/dashboard/administration/report/edit" element={<FormEditReport/>} />
           <Route path="/dashboard/administration/user" element={<ViewManagementUsers/>} />
           <Route path="/dashboard/administration/user/add" element={<FormAddUser/>} />
-          <Route path="/components/Dashboard/Zona/FormAddZona.tsx" element={<FormAddZona />} />
+          <Route path="/dashboard/Zona/FormAddZona.tsx" element={<FormAddZona />} />
+          <Route path="/histograma" element={<ShowHistograma />} />
+          <Route path="/histograma/lluvia" element={<HistogramaLluvia />} />
+          <Route path="/histograma/nieve" element={<HistogramaNieve />} />
+          <Route path="/histograma/caudalimetro" element={<HistogramaCaudalimetro />} />
           <Route path="/components/MapHeatView.tsx" element={<HeatMapView />} />
         </Routes>
       </UserProvider>

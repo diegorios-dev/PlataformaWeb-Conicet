@@ -1,12 +1,7 @@
 
-
 export const OPTION_INSTRUMENTS = [
-    {
-        instrumento : "Ver Precipitacion" ,
-        precipitacion : "lluvia"
-    },
-    {
-        instrumento : "Ver Regla" ,
-        precipitacion : "Nieve"
-    }
-]
+  { instrumento: "Ver Precipitación", precipitacion: "lluvia" },
+  { instrumento: "Ver Regla", precipitacion: "nieve" },
+];
+
+
