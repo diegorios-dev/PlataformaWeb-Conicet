@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { useFetchData } from "../../hooks/useFetchData";
 import { getHistograma } from "../../services/reportService";
+import BackButton from "../BackButton";
 
 export default function HistogramaLluvia() {
   const [periodo, setPeriodo] = useState("mes");
@@ -9,10 +10,16 @@ export default function HistogramaLluvia() {
   const [month, setMonth] = useState(10);
 
   // Función que llama al servicio
-  const fetchData = useCallback(
-    () => getHistograma(periodo, year, month),
-    [periodo, year, month]
-  );
+  const fetchData = useCallback(() => {
+    // Solo enviar year y month según el periodo
+    if (periodo === "dia") {
+      return getHistograma(periodo, year, month);
+    } else if (periodo === "mes") {
+      return getHistograma(periodo, year, null);
+    } else {
+      return getHistograma(periodo, null, null);
+    }
+  }, [periodo, year, month]);
 
   const { data, loading, error } = useFetchData(fetchData);
 
@@ -33,6 +40,9 @@ export default function HistogramaLluvia() {
 
   return (
     <div className="w-4/5 mx-auto my-10">
+      <div className="p-10">
+        <BackButton />
+      </div>
       <h2 className="text-center text-2xl font-semibold mb-6">Histograma de Lluvia</h2>
 
       {/* Filtros */}
@@ -92,10 +102,10 @@ export default function HistogramaLluvia() {
         <div className="bg-white rounded-lg shadow p-6">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={data}>
-              <XAxis dataKey={periodo === "dia" ? "dia" : periodo === "mes" ? "mes" : "año"} />
+              <XAxis dataKey="label" />
               <YAxis label={{ value: "mm", angle: -90, position: "insideLeft" }} />
               <Tooltip />
-              <Bar dataKey="lluvia" fill="#38bdf8" radius={[5, 5, 0, 0]} />
+              <Bar dataKey="value" fill="#38bdf8" radius={[5, 5, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

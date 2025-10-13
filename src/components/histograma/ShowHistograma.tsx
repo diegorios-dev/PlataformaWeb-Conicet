@@ -1,5 +1,6 @@
 
 import { useNavigate } from "react-router-dom";
+import BackButton from "../BackButton";
 
 export default function ShowHistograma() {
 
@@ -7,6 +8,9 @@ export default function ShowHistograma() {
 
   return (
     <div className="flex flex-col items-center mt-12 gap-8 min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-10 max-w-md mx-auto">
+      <div className="p-10">
+        <BackButton />
+      </div>
       <h1 className="text-3xl font-bold text-gray-800 mb-2 text-center tracking-wide">
         Dashboard de Histogramas
       </h1>

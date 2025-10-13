@@ -25,7 +25,7 @@ const MapHTML = ({ position }: MapHTMLProps) => {
 
   // Generar años disponibles (desde 2023 hasta el año actual)
   const currentYear = new Date().getFullYear();
-  const availableYears = Array.from({ length: currentYear - 2022 }, (_, i) => 2023 + i);
+  const availableYears = Array.from({ length: currentYear - 2013 }, (_, i) => 2014 + i);
 
   useEffect(() => {
     const fetchAllReports = async () => {

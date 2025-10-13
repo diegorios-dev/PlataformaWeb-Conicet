@@ -12,11 +12,26 @@ export const updateReporte = async (id: number, data: any) => {
   return response.data;
 };
 
-export async function getHistograma(groupBy = "month", year = null, month = null) {
+export async function getHistograma(
+  groupBy: string = "month", 
+  year: number | null = null, 
+  month: number | null = null
+) {
   let url = `http://localhost:8000/api/histograma?type=${groupBy}&precipitation=lluvia`;
+  
+  if (groupBy === "dia" && year && month) {
+    url += `&year=${year}&month=${month}`;
+  } else if (groupBy === "mes" && year) {
+    url += `&year=${year}`;
+  } else if (year) {
+    url += `&year=${year}`;
+  }
+  
+  if (month && groupBy !== "dia") {
+    url += `&month=${month}`;
+  }
 
-  if (year) url += `&year=${year}`;
-  if (month) url += `&month=${month}`;
+  console.log(url);
 
   const res = await fetch(url);
   if (!res.ok) throw new Error("Error al traer datos de lluvia");
@@ -24,14 +39,72 @@ export async function getHistograma(groupBy = "month", year = null, month = null
   const json = await res.json();
 
   // Adaptar la data al formato que usa el gráfico
-  return json.map((item) => {
+  return json.map((item: any) => {
     if (groupBy === "dia") {
-      return { mes: item.date, lluvia: item.amount };
+      return { label: item.date, value: parseFloat(item.amount) };
     } else if (groupBy === "mes") {
       const label = `${item.year}-${String(item.month).padStart(2, "0")}`;
-      return { mes: label, lluvia: item.amount };
+      return { label, value: parseFloat(item.amount) };
     } else if (groupBy === "año") {
-      return { mes: item.year.toString(), lluvia: item.amount };
+      return { label: item.year.toString(), value: parseFloat(item.amount) };
+    }
+  });
+}
+
+export async function getHistogramaNieve(
+  groupBy: string = "month", 
+  year: number | null = null, 
+  month: number | null = null
+) {
+  let url = `http://localhost:8000/api/histograma?type=${groupBy}&precipitation=nieve`;
+  console.log(url);
+
+  if (year) url += `&year=${year}`;
+  if (month) url += `&month=${month}`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Error al traer datos de nieve");
+
+  const json = await res.json();
+
+  // Adaptar la data al formato que usa el gráfico
+  return json.map((item: any) => {
+    if (groupBy === "dia") {
+      return { label: item.date, value: parseFloat(item.amount) };
+    } else if (groupBy === "mes") {
+      const label = `${item.year}-${String(item.month).padStart(2, "0")}`;
+      return { label, value: parseFloat(item.amount) };
+    } else if (groupBy === "año") {
+      return { label: item.year.toString(), value: parseFloat(item.amount) };
+    }
+  });
+}
+
+export async function getHistogramaCaudalimetro(
+  groupBy: string = "month", 
+  year: number | null = null, 
+  month: number | null = null
+) {
+  let url = `http://localhost:8000/api/histograma?type=${groupBy}&precipitation=caudalimetro`;
+  console.log(url);
+
+  if (year) url += `&year=${year}`;
+  if (month) url += `&month=${month}`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Error al traer datos de caudalímetro");
+
+  const json = await res.json();
+
+  // Adaptar la data al formato que usa el gráfico
+  return json.map((item: any) => {
+    if (groupBy === "dia") {
+      return { label: item.date, value: parseFloat(item.amount) };
+    } else if (groupBy === "mes") {
+      const label = `${item.year}-${String(item.month).padStart(2, "0")}`;
+      return { label, value: parseFloat(item.amount) };
+    } else if (groupBy === "año") {
+      return { label: item.year.toString(), value: parseFloat(item.amount) };
     }
   });
 }
