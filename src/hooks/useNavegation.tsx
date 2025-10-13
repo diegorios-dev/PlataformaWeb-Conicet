@@ -18,6 +18,8 @@ const useNavegation = () => {
 
   const goAddZona = () => navigate("/dashboard/Zona/FormAddZona.tsx")
 
+  const goHeatMap = () => navigate("/components/MapHeatView.tsx")
+
   const goAHistograma = () => navigate("/histograma")
 
 
@@ -34,7 +36,7 @@ const useNavegation = () => {
 
     return (
         {
-            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona , goAHistograma
+            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona , goAHistograma, goHeatMap
         }
     )
 }

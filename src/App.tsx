@@ -13,6 +13,7 @@ import ShowHistograma from "./components/histograma/ShowHistograma";
 import HistogramaLluvia from "./components/histograma/HistogramaLluvia";
 import HistogramaNieve from "./components/histograma/HistogramaNieve";
 import HistogramaCaudalimetro from "./components/histograma/HistogramaCaudalimetro";
+import HeatMapView from "./components/MapHeatView";
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/histograma/lluvia" element={<HistogramaLluvia />} />
           <Route path="/histograma/nieve" element={<HistogramaNieve />} />
           <Route path="/histograma/caudalimetro" element={<HistogramaCaudalimetro />} />
+          <Route path="/components/MapHeatView.tsx" element={<HeatMapView />} />
         </Routes>
       </UserProvider>
     </div>
