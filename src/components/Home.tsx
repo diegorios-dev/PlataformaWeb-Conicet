@@ -11,7 +11,7 @@ const Home = () => {
   const [selectOptionMenu, setSelectOptionMenu] = useState("Lluvia");
   const pointsMap = useSitio(selectOptionMenu);
   const { isLogin } = useUserContext();
-  const { goLogin, goAdminUi } = useNavegation();
+  const { goLogin, goAdminUi, goHeatMap } = useNavegation();
 
   const handleSetOptionMenu = (option) => {
     setSelectOptionMenu(option);
@@ -32,6 +32,14 @@ const Home = () => {
             goAdminUi={goAdminUi}
             isLogin={isLogin}
           />
+        </div>
+        <div className="flex flex-col gap-4 p-6">
+          <button
+            className="`w-full py-3 px-5 rounded-full font-semibold transition duration-200 shadow-sm border bg-gray-200  bg-gradient-to-r from-gray-100 to-gray-300 text-blue-700  ring-blue-300"
+            onClick={goHeatMap}
+          >
+            Ver Mapa de Calor
+          </button>
         </div>
         <div className="mt-12">
             <button

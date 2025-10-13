@@ -9,6 +9,7 @@ import ViewManagementUsers from "./components/Dashboard/User/ViewManagementUsers
 import FormEditReport from "./components/Dashboard/Report/FormEditReport";
 import FormAddUser from "./components/Dashboard/User/FormAddUser";
 import FormAddZona from "./components/Dashboard/Zona/FormAddZona";
+import HeatMapView from "./components/MapHeatView";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/dashboard/administration/user" element={<ViewManagementUsers/>} />
           <Route path="/dashboard/administration/user/add" element={<FormAddUser/>} />
           <Route path="/components/Dashboard/Zona/FormAddZona.tsx" element={<FormAddZona />} />
+          <Route path="/components/MapHeatView.tsx" element={<HeatMapView />} />
         </Routes>
       </UserProvider>
     </div>
