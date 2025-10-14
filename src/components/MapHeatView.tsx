@@ -21,19 +21,6 @@ const HeatMapView = () => {
         setLoading(true);
         const data = await getReportes();
         console.log("Datos completos de API:", data);
-
-        data.forEach((report, index) => {
-          console.log(`Reporte ${index}:`, {
-            id: report.id,
-            type: report.type,
-            hasRegular: !!report.report_regular,
-            hasSite: !!report.site,
-            precipitation: report.precipitation,
-            site: report.site,
-            regular: report.report_regular,
-          });
-        });
-
         setReportes(data);
       } catch (error) {
         console.error("Error al cargar reportes:", error);
@@ -57,48 +44,34 @@ const HeatMapView = () => {
     return () => map.remove();
   }, []);
 
+  // Mapear datos - SOLO necesitas: site (coordenadas), report_regular (amount), y tipo
   const pluvData = reportes
     .filter((report) => {
       const hasRegular = report.report_regular;
       const hasSite = report.site;
       const hasCoords = hasSite && report.site.latitude && report.site.longitude;
-      const hasPrecipitation = report.precipitation;
 
-      if (!hasRegular || !hasCoords || !hasPrecipitation) {
-        console.log("Reporte filtrado:", {
-          id: report.id,
-          hasRegular,
-          hasSite,
-          hasCoords,
-          hasPrecipitation,
-          precipitation: report.precipitation,
-          site: report.site,
-        });
-      }
-
-      return hasRegular && hasCoords && hasPrecipitation;
+      return hasRegular && hasCoords;
     })
     .map((report) => ({
       lat: parseFloat(report.site.latitude),
       lng: parseFloat(report.site.longitude),
       valor: parseFloat(report.report_regular.amount),
-      // Cambiado: ahora usa el tipo de precipitación
-      tipo: report.precipitation.type || "lluvia",
-      nombre: report.site.name || "Sin nombre",
+      // Mapear precipitation_id: 1 = lluvia, 2 = nieve           !!!! esto lo hardcodee lo de lluvia = 1 nieve = 2
+      tipo: report.site.precipitation_id === 2 ? "nieve" : "lluvia",
+      nombre: report.site.name || `Sitio ${report.site.id}`,
       fecha: report.date,
       note: report.note,
       unidad: report.report_regular.united_measure?.abbreviation || "mm",
       reportId: report.id,
     }));
 
-  console.log("Datos mapeados para el mapa:", pluvData);
+  console.log("Datos mapeados:", pluvData);
 
   useEffect(() => {
     if (!mapInstance || loading) return;
 
-    console.log("pluvData.length:", pluvData.length);
-    console.log("selectedTipo:", selectedTipo);
-
+    // Limpiar capas anteriores
     if (heatLayer) {
       mapInstance.removeLayer(heatLayer);
     }
@@ -111,19 +84,21 @@ const HeatMapView = () => {
       return;
     }
 
-    // Filtrar por tipo de precipitación (lluvia/nieve)
+    // Filtrar por tipo (por ahora todos son 'lluvia')
     const filteredData = pluvData.filter((d) => d.tipo === selectedTipo);
-
-    console.log("Datos filtrados:", filteredData);
 
     if (filteredData.length === 0) {
       console.log(`No hay datos para el tipo: ${selectedTipo}`);
       return;
     }
 
+    // Crear datos para heatmap
     const maxValor = Math.max(...filteredData.map((d) => d.valor));
     const heatData = filteredData.map((d) => [d.lat, d.lng, d.valor / maxValor]);
 
+    console.log("HeatData generado:", heatData);
+
+    // Crear capa de calor
     const newHeat = L.heatLayer(heatData, {
       radius: 30,
       blur: 20,
@@ -150,11 +125,13 @@ const HeatMapView = () => {
 
     setHeatLayer(newHeat);
 
+    // Ajustar vista del mapa
     if (filteredData.length > 0) {
       const bounds = L.latLngBounds(filteredData.map((d) => [d.lat, d.lng]));
       mapInstance.fitBounds(bounds, { padding: [50, 50] });
     }
 
+    // Crear marcadores invisibles con tooltips
     const newMarkers = filteredData.map((d) => {
       const circle = L.circleMarker([d.lat, d.lng], {
         radius: 15,
@@ -162,45 +139,56 @@ const HeatMapView = () => {
         fillOpacity: 0,
       });
 
+       // SVG icons // despues se puede mandar al css todo este chorizo
+      const mapPinIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
+      
+      const dropletIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>`;
+      
+      const snowflakeIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"></line><path d="m17 7-5 5-5-5"></path><path d="m17 17-5-5-5 5"></path><line x1="2" y1="12" x2="22" y2="12"></line><path d="m7 7 5 5-5 5"></path><path d="m17 7-5 5 5 5"></path></svg>`;
+      
+      const calendarIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
+      
+      const noteIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+
+
       const tooltipContent = `
-        <div class="font-sans text-sm bg-white rounded-lg shadow-lg p-3 min-w-[200px] border border-gray-200">
-          <div class="flex items-center gap-2 mb-2 font-bold text-gray-800 text-base">
-            <span>${d.nombre}</span>
+        <div class="font-sans text-xs bg-white p-3 min-w-[200px] ">
+          <div class="font-bold text-gray-900 mb-2 text-base">
+        ${d.nombre}
           </div>
-          <div class="flex items-center gap-2 text-gray-600 text-xs mb-1">
-            <span>📍</span>
-            <span>Lat: ${d.lat.toFixed(4)} | Lng: ${d.lng.toFixed(4)}</span>
+          <div class="flex items-center gap-2 text-gray-500 text-xs mb-1">
+        ${mapPinIcon}
+        <span>Lat: ${d.lat.toFixed(4)} | Lng: ${d.lng.toFixed(4)}</span>
           </div>
-          <div class="flex items-center gap-2 text-gray-600 mb-1">
-            <span>${selectedTipo === "lluvia" ? "🌧️" : "❄️"}</span>
-            <span>
-              ${selectedTipo === "lluvia" ? "Lluvia" : "Nieve"}: <b class="text-blue-700">${
-        d.valor
-      } ${d.unidad}</b>
-            </span>
+          <div class="flex items-center gap-2 text-gray-500 mb-1">
+        ${selectedTipo === "lluvia" ? dropletIcon : snowflakeIcon}
+        <span>
+          ${selectedTipo === "lluvia" ? "Lluvia" : "Nieve"}: <strong class="text-blue-900">${d.valor} ${d.unidad}</strong>
+        </span>
           </div>
-          <div class="flex items-center gap-2 text-gray-600 text-xs mb-1">
-            <span>🗓️</span>
-            <span>Fecha: ${d.fecha}</span>
+          <div class="flex items-center gap-2 text-gray-500 text-xs mb-1">
+        ${calendarIcon}
+        <span>Fecha: ${d.fecha}</span>
           </div>
           ${
-            d.note
-              ? `<div class="flex items-start gap-2 text-gray-600 text-xs mt-2 pt-2 border-t border-gray-200">
-                  <span>📝</span>
-                  <span class="flex-1">${d.note}</span>
-                </div>`
-              : ""
+        d.note
+          ? `<div class="flex items-start gap-2 text-gray-500 text-xs mt-2 pt-2 border-t border-gray-200">
+          ${noteIcon}
+          <span class="flex-1">${d.note}</span>
+            </div>`
+          : ""
           }
         </div>
       `;
 
-      circle.bindTooltip(tooltipContent, {
+     circle.bindTooltip(tooltipContent, {
         direction: "top",
-        offset: [0, -10],
+        offset: [0, -15],
         permanent: false,
-        opacity: 0.95,
+        
+        opacity: 1,
         sticky: true,
-        className: "",
+        className: "custom-tooltip",
       });
 
       circle.addTo(mapInstance);
@@ -211,54 +199,72 @@ const HeatMapView = () => {
   }, [selectedTipo, mapInstance, loading, pluvData.length]);
 
   return (
-    <div className="h-[100vh] w-[100vw] flex flex-col m-10">
-      <div className="m-2">
-        <BackButton />
-      </div>
-
-      {/* Filtros */}
-      <div className="absolute top-6 z-[1000] flex gap-4 mt-20 p-20">
-        <button
-          onClick={() => setSelectedTipo("lluvia")}
-          className={`px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all ${
-            selectedTipo === "lluvia"
-              ? "bg-blue-700 scale-105"
-              : "bg-blue-400 hover:bg-blue-500"
-          }`}
-        >
-          <Droplet className="w-6 h-6 inline-block" /> Lluvia
-        </button>
-
-        <button
-          onClick={() => setSelectedTipo("nieve")}
-          className={`px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all ${
-            selectedTipo === "nieve"
-              ? "bg-cyan-700 scale-105"
-              : "bg-cyan-400 hover:bg-cyan-500"
-          }`}
-        >
-          <Snowflake className="w-6 h-6 inline-block" /> Nieve
-        </button>
-      </div>
-
-      {/* Indicador de carga */}
-      {loading && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[1000] p-6 rounded-xl shadow-lg">
-          <BeatLoader color="#3b82f6" size={15} />
+    <div className="h-screen w-full bg-gradient-to-br from-blue-100 via-white to-cyan-100 flex flex-col items-center py-1 px-1">
+      <div className="w-full max-w-6xl flex flex-col gap-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <BackButton />
+          <h2 className="text-2xl font-bold text-blue-900">
+            Mapa de Calor de Precipitación
+          </h2>
+          <div className="w-20"></div> {/* Spacer para centrar el título */}
         </div>
-      )}
 
-      {/* Mensaje si no hay datos */}
-      {!loading && pluvData.filter((d) => d.tipo === selectedTipo).length === 0 && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[1000] bg-white p-6 rounded-xl shadow-lg">
-          <p className="text-lg font-bold text-gray-700">
-            No hay datos de {selectedTipo} disponibles
-          </p>
+        {/* Filtros */}
+        <div className="flex gap-6 justify-center items-center">
+          <button
+            onClick={() => setSelectedTipo("lluvia")}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all ${
+              selectedTipo === "lluvia"
+                ? "bg-blue-700 scale-105"
+                : "bg-blue-400 hover:bg-blue-500"
+            }`}
+          >
+            <Droplet className="w-6 h-6" /> Lluvia
+          </button>
+          <button
+            onClick={() => setSelectedTipo("nieve")}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all ${
+              selectedTipo === "nieve"
+                ? "bg-cyan-700 scale-105"
+                : "bg-cyan-400 hover:bg-cyan-500"
+            }`}
+          >
+            <Snowflake className="w-6 h-6" /> Nieve
+          </button>
         </div>
-      )}
 
-      <div className="relative rounded-2xl shadow-2xl w-[70vw] max-w-[1400px] h-[70vh] flex flex-col">
-        <div id="heatmap" className="flex-1 rounded-3xl w-full h-full" />
+        {/* Indicador de carga */}
+        {loading && (
+          <div className="flex justify-center items-center h-[60vh]">
+            <div className="bg-white p-8 rounded-xl shadow-xl flex flex-col items-center">
+              <BeatLoader color="#3b82f6" size={15} />
+              <span className="mt-4 text-gray-700 font-italic">
+                Cargando datos...
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Mensaje si no hay datos */}
+        {!loading &&
+          pluvData.filter((d) => d.tipo === selectedTipo).length === 0 && (
+            <div className="flex justify-center items-center h-[60vh]">
+              <div className="bg-white p-8 rounded-xl shadow-xl">
+                <p className="text-lg font-bold text-gray-700">
+                  No hay datos de {selectedTipo} disponibles
+                </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Total de reportes cargados: {pluvData.length}
+                </p>
+              </div>
+            </div>
+          )}
+
+        {/* Mapa */}
+        <div className="relative rounded-2xl shadow-2xl w-full h-[70vh] overflow-hidden bg-white">
+          <div id="heatmap" className="w-full h-full" />
+        </div>
       </div>
     </div>
   );

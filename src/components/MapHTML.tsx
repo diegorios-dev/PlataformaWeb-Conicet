@@ -1,6 +1,8 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { getReportsForSite } from "../services/sitiosService";
 import { useEffect, useState } from "react";
+import { MapPin, Droplet, CalendarDays } from "lucide-react";
+import { BeatLoader } from "react-spinners";
 
 interface Coord {
   coordenadas: [number, number];
@@ -87,27 +89,32 @@ const MapHTML = ({ position }: MapHTMLProps) => {
   console.log("position:", position);
 
   return (
-    <div style={{ position: "relative", height: "100vh", width: "100%" }}>
+    <div className="relative h-screen w-full">
       {/* Selector de año */}
-      <div className="absolute top-5 right-5 z-[1000] bg-white p-3 rounded-lg shadow-md flex items-center gap-2.5">
-        <label htmlFor="year-filter" className="font-semibold text-sm text-gray-800">
-          📅 Filtrar por año:
-        </label>
+      <div className="absolute top-5 right-5 z-[1000] bg-white p-3 rounded-lg shadow-md flex items-center gap-3">
+      
+      <label htmlFor="year-filter" className="font-semibold text-sm text-gray-800">
+        Filtrar por año:
+      </label>
+      <div className="relative">
         <select
-          id="year-filter"
-          value={selectedYear || "all"}
-          onChange={(e) => {
-        const value = e.target.value;
-        setSelectedYear(value === "all" ? null : parseInt(value));
-        setLoading(true);
-          }}
-          className="px-3 py-1.5 rounded-md border border-gray-300 text-sm cursor-pointer bg-gray-50 font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        id="year-filter"
+        value={selectedYear || "all"}
+        onChange={(e) => {
+          const value = e.target.value;
+          setSelectedYear(value === "all" ? null : parseInt(value));
+          setLoading(true);
+        }}
+        className="pl-10 pr-8 py-2 rounded-md border border-gray-300 text-sm cursor-pointer bg-gray-50 font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
         >
-          <option value="all">Todos los años</option>
-          {availableYears.map(year => (
-        <option key={year} value={year}>{year}</option>
-          ))}
+        <option value="all">Todos los años</option>
+        {availableYears.map(year => (
+          <option key={year} value={year}>{year}</option>
+        ))}
         </select>
+        <CalendarDays className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-800 pointer-events-none" />
+        <svg className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg>
+      </div>
       </div>
 
       <MapContainer key={JSON.stringify(center)} center={center} zoom={6} style={{ height: "100vh", width: "100%" }}>
@@ -127,35 +134,47 @@ const MapHTML = ({ position }: MapHTMLProps) => {
       return (
         <Marker key={index} position={coords.coordenadas}>
         <Popup>
-          <div className="font-sans p-2 min-w-[200px]">
-          <div className="text-base font-bold mb-2.5 text-blue-600 border-b-2 border-gray-200 pb-2">
-            📍 Sitio : ({coords.coordenadas})
-          </div>
-          
-          {loading ? (
-            <div className="p-3 text-center text-gray-500 italic">
-            Cargando reportes...
-            </div>
-          ) : (
-            <div className="bg-gray-100 p-2.5 rounded-md mt-2.5">
-            <div className="mb-1.5">
-              <span className="text-[13px] text-emerald-600 font-bold">
-              💧 Total acumulado ({yearLabel}):
-              </span>{' '}
-              <span className="text-[15px] font-bold text-emerald-700">
-              {totalAmount.toFixed(2)} mm
+          <div className="font-sans p-2 min-w-[220px] bg-white rounded-xl ">
+            <div className="flex items-center gap-2 mb-3 pb-2  ">
+              <MapPin className="w-5 h-5 text-blue-500" />
+              <span className="text-base font-semibold text-gray-900">
+                Sitio: <span className="text-gray-500">({coords.coordenadas.join(", ")})</span>
               </span>
             </div>
-            <div>
-              <span className="text-xs text-gray-500">
-              Último reporte:
-              </span>{' '}
-              <span className="text-sm text-gray-700">
-              {lastReportAmount.toFixed(2)} mm
-              </span>
-            </div>
-            </div>
-          )}
+
+            {loading ? (
+              <div className="py-4 text-center text-gray-400 italic text-sm">
+                <BeatLoader className="inline-block" size={10} color="#3b82f6" />
+                Cargando reportes...
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Droplet className="w-4 h-4 text-emerald-600" />
+                  <span className="text-sm text-gray-700 font-medium">
+                    Total acumulado
+                  </span>
+                  <span className="ml-auto text-sm text-emerald-700 font-bold">
+                    {totalAmount.toFixed(2)} mm
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="w-4 h-4 text-gray-500" />
+                  <span className="text-xs text-gray-500">
+                    Último reporte
+                  </span>
+                  <span className="ml-auto text-xs text-gray-700 font-semibold">
+                    {lastReportAmount.toFixed(2)} mm
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+                  <CalendarDays className="w-4 h-4 text-blue-400" />
+                  <span className="text-xs text-gray-500">
+                    Año: <span className="font-medium text-gray-700">{yearLabel}</span>
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </Popup>
         </Marker>

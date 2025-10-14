@@ -6,6 +6,7 @@ import BackButton from "../BackButton";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import "jspdf-autotable";
+import {FileText} from "lucide-react";
 
 export default function HistogramaLluvia() {
   const [periodo, setPeriodo] = useState("mes");
@@ -114,9 +115,10 @@ export default function HistogramaLluvia() {
         <button
           onClick={generatePDF}
           disabled={!data || loading}
-          className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="px-4 py-2 bg-sky-300 text-white rounded-full hover:bg-sky-400 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
         >
-          Generar PDF
+          <FileText />
+          <span>Generar PDF</span>
         </button>
       </div>
 

@@ -16,7 +16,8 @@ const Home = () => {
   const { goLogin, goAdminUi, goHeatMap } = useNavegation();
 
   const OPTION_COMPLEMENTS = [
-    { option: "Ver Histograma", onClick: goAHistograma }
+    { option: "Ver Histograma", onClick: goAHistograma },
+    { option: "Ver Mapa de Calor", onClick: goHeatMap },
   ];
 
   return (
@@ -46,15 +47,6 @@ const Home = () => {
           <ViewComplementMenu complements={OPTION_COMPLEMENTS} />
           
         </div>
-        <div className="flex flex-col gap-4 p-6">
-          <button
-            className="`w-full py-3 px-5 rounded-full font-semibold transition duration-200 shadow-sm border bg-gray-200  bg-gradient-to-r from-gray-100 to-gray-300 text-blue-700  ring-blue-300"
-            onClick={goHeatMap}
-          >
-            Ver Mapa de Calor
-          </button>
-        </div>
-
         <div className="mt-12">
           <button
             className="w-full rounded-full bg-green-700 p-5 font-bold text-xl shadow-xl hover:bg-green-800 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-green-400/60 border border-green-700 flex items-center justify-center gap-3"
