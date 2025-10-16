@@ -3,13 +3,14 @@ import useSitio from "../hooks/useSitio";
 import MapHTML from "./MapHTML";
 import { useUserContext } from "../context/UserContext";
 import useNavegation from "../hooks/useNavegation";
-import ViewOptionMenu from "./ViewOptionMenu";
-import ViewComplementMenu from "./ViewComplementMenu";
-import { OPTION_INSTRUMENTS} from "../constants/optionInstruments";
+import ViewOptionMenu from "./Menu/ViewOptionMenu";
+import ViewComplementMenu from "./Menu/ViewComplementMenu";
+import { OPTION_INSTRUMENTS } from "../constants/optionInstruments";
 import { LogIn, Wrench } from "lucide-react";
+import img from "../assets/logo-CONICET_opt.png";
 
 const Home = () => {
-  const {goAHistograma} = useNavegation();
+  const { goAHistograma } = useNavegation();
   const [selectOptionMenu, setSelectOptionMenu] = useState("lluvia");
   const pointsMap = useSitio(selectOptionMenu);
   const { isLogin } = useUserContext();
@@ -21,36 +22,52 @@ const Home = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-blue-50 to-green-100">
-      <aside className="w-96 min-w-[24rem] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white p-10 flex flex-col justify-between shadow-2xl border-gray-700 backdrop-blur-lg">
-        <div>
-          <h2 className="flex items-center gap-3 text-4xl font-extrabold mb-12 tracking-tight border-b-2 border-gray-600 pb-6 drop-shadow-lg">
-            <Wrench className="w-8 h-8" />
-            Herramientas
-          </h2>
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      <aside className="w-96 bg-white border-r border-gray-200 flex flex-col justify-between text-[17px]">
+        <div className="p-10">
+          {/* Header */}
+          <div className="flex justify-center">
+            <img src={img} alt="Logo Conicet" className="max-w-[180px] mb-6" />
+          </div>
 
-          {isLogin && (
-            <button
-              onClick={goAdminUi}
-              className="w-full mb-4 py-3 px-5 rounded-full font-semibold transition duration-200 shadow-sm border bg-blue-700 hover:shadow-md text-white border-blue-700 hover:bg-blue-800"
-            >
-              Panel Admin
-            </button>
-          )}
+          {/* Sección análisis */}
+          <div className="mb-12">
+            <h3 className="text-base font-semibold text-gray-500 mb-5 tracking-wider uppercase">
+              Análisis
+            </h3>
 
-          <ViewOptionMenu
-            instruments={OPTION_INSTRUMENTS}
-            selectedInstrument={selectOptionMenu}
-            onSelectInstrument={setSelectOptionMenu}
-          />
+            {isLogin && (
+              <button
+                onClick={goAdminUi}
+                className="flex items-center gap-3 w-full px-6 py-4 rounded-lg text-lg font-semibold bg-blue-500 text-white hover:bg-blue-600 transition mb-4"
+              >
+                <Wrench className="w-6 h-6" />
+                Panel Admin
+              </button>
+            )}
 
-          <ViewComplementMenu complements={OPTION_COMPLEMENTS} />
-          
+            <ViewOptionMenu
+              instruments={OPTION_INSTRUMENTS}
+              selectedInstrument={selectOptionMenu}
+              onSelectInstrument={setSelectOptionMenu}
+            />
+          </div>
+
+          {/* Sección visualización */}
+          <div>
+            <h3 className="text-base font-semibold text-gray-500 mb-5 tracking-wider uppercase">
+              Visualización
+            </h3>
+            <ViewComplementMenu complements={OPTION_COMPLEMENTS} />
+          </div>
         </div>
-        <div className="mt-12">
+
+        {/* Login */}
+        <div className="p-10 border-t border-gray-200">
           <button
-            className="w-full rounded-full bg-green-700 p-5 font-bold text-xl shadow-xl hover:bg-green-800 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-green-400/60 border border-green-700 flex items-center justify-center gap-3"
             onClick={goLogin}
+            className="w-full flex items-center justify-center gap-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 rounded-lg text-lg transition"
           >
             <LogIn className="w-6 h-6" />
             Login
@@ -58,10 +75,9 @@ const Home = () => {
         </div>
       </aside>
 
-      <main className="flex-1 flex items-center justify-center p-3">
-        <div className="w-full h-full rounded-3xl shadow-xl overflow-hidden bg-white/80 backdrop-blur-md">
-          <MapHTML position={pointsMap} />
-        </div>
+      {/* Contenido principal */}
+      <main className="flex-1 bg-gray-50 flex items-center justify-center">
+        <MapHTML position={pointsMap} />
       </main>
     </div>
   );

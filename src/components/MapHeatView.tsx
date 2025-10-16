@@ -199,19 +199,15 @@ const HeatMapView = () => {
   }, [selectedTipo, mapInstance, loading, pluvData.length]);
 
   return (
-    <div className="h-screen w-full bg-gradient-to-br from-blue-100 via-white to-cyan-100 flex flex-col items-center py-1 px-1">
-      <div className="w-full max-w-6xl flex flex-col gap-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <BackButton />
-          <h2 className="text-2xl font-bold text-blue-900">
-            Mapa de Calor de Precipitación
-          </h2>
-          <div className="w-20"></div> {/* Spacer para centrar el título */}
-        </div>
+    <div className="h-screen w-full bg-gradient-to-br from-blue-100 via-white to-cyan-100 flex flex-col items-center">
 
-        {/* Filtros */}
-        <div className="flex gap-6 justify-center items-center">
+      <div className="w-full flex flex-col">
+
+      <div className="w-full flex justify-center ">
+        <div className="flex justify-between w-11/12 absolute z-50">
+
+          <BackButton />
+
           <button
             onClick={() => setSelectedTipo("lluvia")}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all ${
@@ -222,6 +218,7 @@ const HeatMapView = () => {
           >
             <Droplet className="w-6 h-6" /> Lluvia
           </button>
+
           <button
             onClick={() => setSelectedTipo("nieve")}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all ${
@@ -232,7 +229,11 @@ const HeatMapView = () => {
           >
             <Snowflake className="w-6 h-6" /> Nieve
           </button>
+
         </div>
+
+      </div>
+
 
         {/* Indicador de carga */}
         {loading && (
@@ -259,13 +260,16 @@ const HeatMapView = () => {
                 </p>
               </div>
             </div>
-          )}
+          )
+        }
 
         {/* Mapa */}
-        <div className="relative rounded-2xl shadow-2xl w-full h-[70vh] overflow-hidden bg-white">
+        <div className="relative rounded-2xl shadow-2xl w-full h-[99vh] overflow-hidden bg-white z-10">
           <div id="heatmap" className="w-full h-full" />
         </div>
+        
       </div>
+
     </div>
   );
 };

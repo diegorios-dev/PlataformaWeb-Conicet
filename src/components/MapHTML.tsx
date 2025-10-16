@@ -2,7 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { getReportsForSite } from "../services/sitiosService";
 import { useEffect, useState } from "react";
 import { MapPin, Droplet, CalendarDays } from "lucide-react";
-import { BeatLoader } from "react-spinners";
+import LoadingPage from "../components/LoadingPage";
 
 interface Coord {
   coordenadas: [number, number];
@@ -21,6 +21,7 @@ interface SiteData {
 }
 
 const MapHTML = ({ position }: MapHTMLProps) => {
+
   const [siteReports, setSiteReports] = useState<Map<number, SiteData>>(new Map());
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState<number | null>(new Date().getFullYear()); // null = todos los años
@@ -81,7 +82,7 @@ const MapHTML = ({ position }: MapHTMLProps) => {
   }, [position, selectedYear]);
 
   if (!position || position.length === 0) {
-    return <p>No hay posiciones para mostrar</p>;
+    return <LoadingPage/>
   }
 
   const center: [number, number] = position[0].coordenadas;
@@ -98,15 +99,16 @@ const MapHTML = ({ position }: MapHTMLProps) => {
       </label>
       <div className="relative">
         <select
-        id="year-filter"
-        value={selectedYear || "all"}
-        onChange={(e) => {
-          const value = e.target.value;
-          setSelectedYear(value === "all" ? null : parseInt(value));
-          setLoading(true);
-        }}
-        className="pl-10 pr-8 py-2 rounded-md border border-gray-300 text-sm cursor-pointer bg-gray-50 font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-        >
+          id="year-filter"
+          value={selectedYear || "all"}
+          onChange={(e) => {
+            const value = e.target.value;
+            setSelectedYear(value === "all" ? null : parseInt(value));
+            setLoading(true);
+          }}
+          className="pl-10 pr-8 py-2 rounded-md border border-gray-300 text-sm cursor-pointer bg-gray-50 font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+          >
+
         <option value="all">Todos los años</option>
         {availableYears.map(year => (
           <option key={year} value={year}>{year}</option>
@@ -117,69 +119,75 @@ const MapHTML = ({ position }: MapHTMLProps) => {
       </div>
       </div>
 
-      <MapContainer key={JSON.stringify(center)} center={center} zoom={6} style={{ height: "100vh", width: "100%" }}>
+        <MapContainer
+          key={JSON.stringify(center)}
+          center={center}
+          zoom={6}
+          style={{ height: "100vh", width: "100%" }}
+          maxBounds={[
+            [-90, -180],
+            [90, 180]
+          ]}
+          maxBoundsViscosity={1.0} // Evita que el usuario mueva el mapa fuera de los límites
+          worldCopyJump={false}    // Previene duplicaciones horizontales
+        >
         <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        noWrap={true}
         />
 
       {position.map((coords, index) => {
 
-      const siteData = siteReports.get(coords.idSitio);
-      const totalAmount = siteData?.totalAmount || 0;
-      const lastReportAmount = siteData?.lastReportAmount || 0;
-      const yearLabel = selectedYear ? selectedYear.toString() : "Todos los años";
-      
-      
-      return (
-        <Marker key={index} position={coords.coordenadas}>
-        <Popup>
-          <div className="font-sans p-2 min-w-[220px] bg-white rounded-xl ">
-            <div className="flex items-center gap-2 mb-3 pb-2  ">
-              <MapPin className="w-5 h-5 text-blue-500" />
-              <span className="text-base font-semibold text-gray-900">
-                Sitio: <span className="text-gray-500">({coords.coordenadas.join(", ")})</span>
-              </span>
-            </div>
+        const siteData = siteReports.get(coords.idSitio);
+        const totalAmount = siteData?.totalAmount || 0;
+        const lastReportAmount = siteData?.lastReportAmount || 0;
+        const yearLabel = selectedYear ? selectedYear.toString() : "Todos los años";
 
-            {loading ? (
-              <div className="py-4 text-center text-gray-400 italic text-sm">
-                <BeatLoader className="inline-block" size={10} color="#3b82f6" />
-                Cargando reportes...
+        // 🧠 Si no hay reportes (o todos los valores son 0), no renderizamos el marcador
+        if (!siteData || (totalAmount === 0 && lastReportAmount === 0)) {
+          return null;
+        }
+
+        return (
+          <Marker key={index} position={coords.coordenadas}>
+            <Popup>
+              <div className="font-sans p-2 min-w-[220px] bg-white rounded-xl">
+                <div className="flex items-center gap-2 mb-3 pb-2">
+                  <MapPin className="w-5 h-5 text-blue-500" />
+                  <span className="text-base font-semibold text-gray-900">
+                    Sitio: <span className="text-gray-500">({coords.coordenadas.join(", ")})</span>
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Droplet className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm text-gray-700 font-medium">Total acumulado</span>
+                    <span className="ml-auto text-sm text-blue-700 font-bold">
+                      {totalAmount.toFixed(2)} mm
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CalendarDays className="w-4 h-4 text-gray-500" />
+                    <span className="text-xs text-gray-500">Último reporte</span>
+                    <span className="ml-auto text-xs text-gray-700 font-semibold">
+                      {lastReportAmount.toFixed(2)} mm
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+                    <CalendarDays className="w-4 h-4 text-blue-400" />
+                    <span className="text-xs text-gray-500">
+                      Año: <span className="font-medium text-gray-700">{yearLabel}</span>
+                    </span>
+                  </div>
+                </div>
               </div>
-            ) : (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Droplet className="w-4 h-4 text-emerald-600" />
-                  <span className="text-sm text-gray-700 font-medium">
-                    Total acumulado
-                  </span>
-                  <span className="ml-auto text-sm text-emerald-700 font-bold">
-                    {totalAmount.toFixed(2)} mm
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CalendarDays className="w-4 h-4 text-gray-500" />
-                  <span className="text-xs text-gray-500">
-                    Último reporte
-                  </span>
-                  <span className="ml-auto text-xs text-gray-700 font-semibold">
-                    {lastReportAmount.toFixed(2)} mm
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
-                  <CalendarDays className="w-4 h-4 text-blue-400" />
-                  <span className="text-xs text-gray-500">
-                    Año: <span className="font-medium text-gray-700">{yearLabel}</span>
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-        </Popup>
-        </Marker>
-      );
+            </Popup>
+          </Marker>
+        );
       })}
+
     </MapContainer>
     </div>
   );
