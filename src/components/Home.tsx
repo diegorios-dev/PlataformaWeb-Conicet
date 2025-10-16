@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import useSitio from "../hooks/useSitio";
 import MapHTML from "./MapHTML";
 import { useUserContext } from "../context/UserContext";
@@ -12,7 +12,7 @@ import img from "../assets/logo-CONICET_opt.png";
 const Home = () => {
   const { goAHistograma } = useNavegation();
   const [selectOptionMenu, setSelectOptionMenu] = useState("lluvia");
-  const pointsMap = useSitio(selectOptionMenu);
+  const sitios = useSitio(selectOptionMenu); // datos originales
   const { isLogin } = useUserContext();
   const { goLogin, goAdminUi, goHeatMap } = useNavegation();
 
@@ -21,17 +21,17 @@ const Home = () => {
     { option: "Ver Mapa de Calor", onClick: goHeatMap },
   ];
 
+  // 🧠 Memorizar los puntos para no cambiar referencia en cada render
+  const pointsMap = useMemo(() => sitios, [sitios]);
+
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
       <aside className="w-96 bg-white border-r border-gray-200 flex flex-col justify-between text-[17px]">
         <div className="p-10">
-          {/* Header */}
           <div className="flex justify-center">
             <img src={img} alt="Logo Conicet" className="max-w-[180px] mb-6" />
           </div>
 
-          {/* Sección análisis */}
           <div className="mb-12">
             <h3 className="text-base font-semibold text-gray-500 mb-5 tracking-wider uppercase">
               Análisis
@@ -54,7 +54,6 @@ const Home = () => {
             />
           </div>
 
-          {/* Sección visualización */}
           <div>
             <h3 className="text-base font-semibold text-gray-500 mb-5 tracking-wider uppercase">
               Visualización
@@ -63,7 +62,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Login */}
         <div className="p-10 border-t border-gray-200">
           <button
             onClick={goLogin}
@@ -75,7 +73,6 @@ const Home = () => {
         </div>
       </aside>
 
-      {/* Contenido principal */}
       <main className="flex-1 bg-gray-50 flex items-center justify-center">
         <MapHTML position={pointsMap} />
       </main>

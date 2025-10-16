@@ -29,6 +29,7 @@ function useSitio (selectedInstrument : any) {
         fetchData();
 
     }, [selectedInstrument]);
+    
     return sitios;
 }
 
