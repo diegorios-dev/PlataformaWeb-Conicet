@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { postNewZona, getAllZonas } from "../../../services/zonaService";
 import useNavegation from "../../../hooks/useNavegation";
 import BackButton from "../../BackButton";
-import { Plus, MapPin } from "lucide-react";
+import { Plus, MapPin, CheckCircle2, AlertCircle, Loader2, MapPinned, Trash2 } from "lucide-react";
 
 type Zona = {
     id: number;
@@ -15,16 +15,35 @@ const FormAddZona = () => {
         locality: "",
         site: { latitude: "", longitude: "" },
     });
+    const [loading, setLoading] = useState(false);
+    const [loadingZonas, setLoadingZonas] = useState(true);
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState("");
     
     const { goBack } = useNavegation();
 
     useEffect(() => {
-        getAllZonas()
-            .then((zonas) => {
-                setZonas(zonas);
-            })
-            .catch((err) => console.error("Error fetching zonas:", err));
+        fetchZonas();
     }, []);
+
+    useEffect(() => {
+        if (success) {
+            const timer = setTimeout(() => setSuccess(false), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [success]);
+
+    const fetchZonas = async () => {
+        try {
+            const zonasData = await getAllZonas();
+            setZonas(zonasData);
+        } catch (err) {
+            console.error("Error fetching zonas:", err);
+            setError("Error al cargar las zonas");
+        } finally {
+            setLoadingZonas(false);
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -32,69 +51,197 @@ const FormAddZona = () => {
             ...prevData,
             [name]: value,
         }));
+        setError("");
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (!formData.locality.trim()) {
+            setError("Por favor ingresa una localidad");
+            return;
+        }
+
+        setLoading(true);
+        setError("");
+
         try {
             await postNewZona(formData);
-            goBack();
+            setSuccess(true);
+            setFormData({ locality: "", site: { latitude: "", longitude: "" } });
+            await fetchZonas();
+            
+            setTimeout(() => {
+                setSuccess(false);
+            }, 2000);
         } catch (error) {
             console.error("Error creating zona:", error);
+            setError("Error al crear la zona. Por favor intenta nuevamente.");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen w-full bg-gray-50 flex flex-col items-center py-8">
-            <div className="w-full max-w-md">
-                <BackButton />
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+            {/* Header */}
+            <div className=" backdrop-blur-sm  ">
+                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+                    <BackButton />
+                    <div className="flex items-center gap-3">
+                        <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl shadow-lg">
+                            <MapPinned className="w-5 h-5 text-white" />
+                        </div>
+                        <h1 className="text-xl font-bold text-slate-800">Gestión de Zonas</h1>
+                    </div>
+                    <div className="w-20"></div>
+                </div>
             </div>
 
-            <form
-                onSubmit={handleSubmit}
-                className="bg-white  rounded-lg shadow-lg max-w-md w-full p-6 mt-6"
-            >
-                <div className="relative mb-6 ">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                    <input
-                        type="text"
-                        name="locality"
-                        value={formData.locality}
-                        onChange={handleChange}
-                        placeholder="Localidad que deseas agregar"
-                        className="w-full pl-10 border border-gray-300 rounded-full p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-                        required
-                    />
-                </div>
+            {/* Contenido Principal */}
+            <div className="flex items-start justify-center p-6 md:p-8">
+                <div className="w-full max-w-4xl space-y-6">
+                    
+                    {/* Formulario de agregar zona */}
+                    <div className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6 md:p-8">
+                        <div className="mb-6">
+                            <h2 className="text-2xl font-bold text-slate-800 mb-2">Agregar Nueva Zona</h2>
+                            <p className="text-sm text-slate-600">Registra una nueva localidad en el sistema</p>
+                        </div>
 
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white py-3 rounded-full hover:bg-blue-700 transition flex items-center justify-center gap-2 font-semibold"
-                >
-                    <Plus size={18} />
-                    Añadir Zona
-                </button>
-            </form>
-
-            <div className="w-full max-w-md mt-10">
-                <div className="bg-white rounded-lg shadow-lg overflow-y-auto max-h-64 flex flex-col items-center px-4 py-6">
-                    <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-600 border-b w-full pb-2 justify-center">
-                        <MapPin size={20} />
-                        Zonas Cargadas
-                    </h2>
-                    {zonas.length === 0 ? (
-                        <p className="text-gray-500 mt-4">No hay zonas cargadas.</p>
-                    ) : (
-                        zonas.map((zona) => (
-                            <div
-                                key={zona.id}
-                                className="w-full py-2 border-b last:border-b-0 flex items-center gap-2 justify-center text-gray-700"
-                            >
-                                <MapPin size={16} className="text-blue-500" />
-                                <span className="font-medium">{zona.locality}</span>
+                        {/* Mensajes de estado */}
+                        {success && (
+                            <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3 mb-6">
+                                <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
+                                <p className="text-sm font-medium text-green-800">¡Zona agregada exitosamente!</p>
                             </div>
-                        ))
-                    )}
+                        )}
+
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3 mb-6">
+                                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                                <p className="text-sm font-medium text-red-800">{error}</p>
+                            </div>
+                        )}
+
+                        <div className="space-y-6">
+                            {/* Input de localidad */}
+                            <div>
+                                <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
+                                    <MapPin size={18} className="text-slate-500" />
+                                    Nombre de la Localidad
+                                </label>
+                                <input
+                                    type="text"
+                                    name="locality"
+                                    value={formData.locality}
+                                    onChange={handleChange}
+                                    placeholder="Ej: Palermo, Buenos Aires"
+                                    className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition"
+                                    required
+                                />
+                            </div>
+
+                            {/* Botón agregar */}
+                            <button
+                                type="button"
+                                onClick={handleSubmit}
+                                disabled={loading || !formData.locality.trim()}
+                                className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg group"
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 size={20} className="animate-spin" />
+                                        Agregando zona...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Plus size={20} className="transition-transform group-hover:rotate-90" />
+                                        Agregar Zona
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+
+               
+                    <div className="bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                 
+                        <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-200 px-6 py-4">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-blue-100 p-2 rounded-lg">
+                                        <MapPin size={20} className="text-blue-600" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-slate-800">Zonas Registradas</h3>
+                                        <p className="text-xs text-slate-600">
+                                            {zonas.length} {zonas.length === 1 ? 'zona disponible' : 'zonas disponibles'}
+                                        </p>
+                                    </div>
+                                </div>
+                                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                    {zonas.length}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Contenido de la lista */}
+                        <div className="max-h-96 overflow-y-auto">
+                            {loadingZonas ? (
+                                <div className="flex flex-col items-center justify-center py-12">
+                                    <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-3" />
+                                    <p className="text-sm text-slate-600">Cargando zonas...</p>
+                                </div>
+                            ) : zonas.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-12">
+                                    <div className="bg-slate-100 rounded-full p-6 mb-4">
+                                        <MapPin className="w-10 h-10 text-slate-400" />
+                                    </div>
+                                    <h4 className="text-lg font-semibold text-slate-700 mb-2">No hay zonas registradas</h4>
+                                    <p className="text-sm text-slate-500">Agrega tu primera zona usando el formulario</p>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-slate-100">
+                                    {zonas.map((zona, index) => (
+                                        <div
+                                            key={zona.id}
+                                            className="group px-6 py-4 hover:bg-slate-50 transition-colors duration-150 flex items-center justify-between"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className="bg-blue-100 group-hover:bg-blue-200 p-2 rounded-lg transition-colors">
+                                                    <MapPin size={18} className="text-blue-600" />
+                                                </div>
+                                                <div>
+                                                    <span className="font-semibold text-slate-800 block">{zona.locality}</span>
+                                                    <span className="text-xs text-slate-500">ID: {zona.id}</span>
+                                                </div>
+                                            </div>
+                                            <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-medium">
+                                                #{index + 1}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+            
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <div className="flex items-start gap-3">
+                            <div className="bg-blue-100 p-2 rounded-lg flex-shrink-0">
+                                <AlertCircle className="w-5 h-5 text-blue-600" />
+                            </div>
+                            <div>
+                                <h4 className="text-sm font-semibold text-blue-900 mb-1">Información importante</h4>
+                                <p className="text-xs text-blue-800">
+                                    Las zonas registradas se utilizan para clasificar y organizar los reportes de precipitación. 
+                                    Asegúrate de ingresar nombres claros y específicos para facilitar la búsqueda.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

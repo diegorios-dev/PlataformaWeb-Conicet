@@ -33,7 +33,10 @@ const HeatMapView = () => {
   }, []);
 
   useEffect(() => {
-    const map = L.map("heatmap").setView([-41.13, -71.31], 8);
+    const map = L.map("heatmap", {
+      scrollWheelZoom: true,  // Asegurar que el zoom con scroll esté habilitado
+      zoomControl: true,
+    }).setView([-41.13, -71.31], 8);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "© OpenStreetMap contributors",
@@ -198,80 +201,124 @@ const HeatMapView = () => {
     setMarkers(newMarkers);
   }, [selectedTipo, mapInstance, loading, pluvData.length]);
 
-  return (
-    <div className="h-screen w-full bg-gradient-to-br from-blue-100 via-white to-cyan-100 flex flex-col items-center p-3 my-3">
-
-      <div className="w-full flex flex-col">
-
-      <div className="w-full flex justify-center ">
-        <div className="flex justify-between w-11/12 absolute z-50">
-
-          <BackButton />
-
-          <button
-            onClick={() => setSelectedTipo("lluvia")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all ${
-              selectedTipo === "lluvia"
-                ? "bg-blue-700 scale-105"
-                : "bg-blue-400 hover:bg-blue-500"
-            }`}
-          >
-            <Droplet className="w-6 h-6" /> Lluvia
-          </button>
-
-          <button
-            onClick={() => setSelectedTipo("nieve")}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all ${
-              selectedTipo === "nieve"
-                ? "bg-cyan-700 scale-105"
-                : "bg-cyan-400 hover:bg-cyan-500"
-            }`}
-          >
-            <Snowflake className="w-6 h-6" /> Nieve
-          </button>
-
-        </div>
-
-      </div>
-
-
-        {/* Indicador de carga */}
-        {loading && (
-          <div className="flex justify-center items-center h-[60vh]">
-            <div className="bg-white p-8 rounded-xl shadow-xl flex flex-col items-center">
-              <BeatLoader color="#3b82f6" size={15} />
-              <span className="mt-4 text-gray-700 font-italic">
-                Cargando datos...
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Mensaje si no hay datos */}
-        {!loading &&
-          pluvData.filter((d) => d.tipo === selectedTipo).length === 0 && (
-            <div className="flex justify-center items-center h-[60vh]">
-              <div className="bg-white p-8 rounded-xl shadow-xl">
-                <p className="text-lg font-bold text-gray-700">
-                  No hay datos de {selectedTipo} disponibles
-                </p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Total de reportes cargados: {pluvData.length}
-                </p>
-              </div>
-            </div>
-          )
-        }
-
-        {/* Mapa */}
-        <div className="relative rounded-2xl shadow-2xl w-full h-[99vh] overflow-hidden bg-white z-10">
+ 
+return (
+  <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/50 flex flex-col items-center">
+    
+    <div className="w-full h-screen flex flex-col relative">
+      
+  
+      <div className="absolute inset-0 w-full h-full">
+        <div className="w-full h-full">
           <div id="heatmap" className="w-full h-full" />
         </div>
-        
       </div>
 
-    </div>
-  );
-};
 
+      <div className="absolute top-6 left-0 right-0 z-[999] flex justify-center">
+        <div className="flex items-center justify-between w-full max-w-7xl gap-4 px-6">
+          
+          
+          <div className=" ">
+            <BackButton />
+          </div>
+
+   
+          <div className="flex gap-4">
+            <button
+              onClick={() => setSelectedTipo("lluvia")}
+              className={`group relative flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 overflow-hidden ${
+                selectedTipo === "lluvia"
+                  ? "backdrop-blur-xl bg-blue-500/30 border-2 border-blue-400/50 shadow-lg shadow-blue-500/20 scale-105"
+                  : "backdrop-blur-xl bg-white/40 border border-white/60 hover:bg-blue-400/20 hover:border-blue-300/50 hover:shadow-lg"
+              }`}
+            >
+           
+              <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ${selectedTipo === "lluvia" ? "opacity-0" : ""}`} />
+              
+              <Droplet className={`w-5 h-5 transition-colors ${
+                selectedTipo === "lluvia" ? "text-blue-700" : "text-blue-600"
+              }`} />
+              <span className={`relative z-10 ${
+                selectedTipo === "lluvia" ? "text-blue-900" : "text-slate-700"
+              }`}>
+                Lluvia
+              </span>
+              
+          
+              {selectedTipo === "lluvia" && (
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-600 rounded-full" />
+              )}
+            </button>
+
+            <button
+              onClick={() => setSelectedTipo("nieve")}
+              className={`group relative flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 overflow-hidden ${
+                selectedTipo === "nieve"
+                  ? "backdrop-blur-xl bg-cyan-500/30 border-2 border-cyan-400/50 shadow-lg shadow-cyan-500/20 scale-105"
+                  : "backdrop-blur-xl bg-white/40 border border-white/60 hover:bg-cyan-400/20 hover:border-cyan-300/50 hover:shadow-lg"
+              }`}
+            >
+      
+              <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ${selectedTipo === "nieve" ? "opacity-0" : ""}`} />
+              
+              <Snowflake className={`w-5 h-5 transition-colors ${
+                selectedTipo === "nieve" ? "text-cyan-700" : "text-cyan-600"
+              }`} />
+              <span className={`relative z-10 ${
+                selectedTipo === "nieve" ? "text-cyan-900" : "text-slate-700"
+              }`}>
+                Nieve
+              </span>
+              
+           
+              {selectedTipo === "nieve" && (
+                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-cyan-600 rounded-full" />
+              )}
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+
+      {loading && (
+        <div className="absolute inset-0 z-[998] flex justify-center items-center bg-slate-900/20 backdrop-blur-sm">
+          <div className="backdrop-blur-2xl bg-white/60 border border-white/80 p-10 rounded-3xl shadow-2xl flex flex-col items-center">
+            <BeatLoader color="#3b82f6" size={15} />
+            <span className="mt-6 text-slate-700 font-medium tracking-wide">
+              Cargando datos meteorológicos...
+            </span>
+          </div>
+        </div>
+      )}
+
+ 
+      {!loading &&
+        pluvData.filter((d) => d.tipo === selectedTipo).length === 0 && (
+          <div className="absolute inset-0 z-[998] flex justify-center items-center bg-slate-900/20 backdrop-blur-sm">
+            <div className="backdrop-blur-2xl bg-white/60 border border-white/80 p-10 rounded-3xl shadow-2xl max-w-md text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                <Droplet className="w-8 h-8 text-slate-400" />
+              </div>
+              <p className="text-xl font-semibold text-slate-800 mb-2">
+                Sin datos disponibles
+              </p>
+              <p className="text-sm text-slate-500">
+                No hay registros de {selectedTipo} en este momento
+              </p>
+              <p className="text-xs text-slate-400 mt-4">
+                Total de reportes: {pluvData.length}
+              </p>
+            </div>
+          </div>
+        )
+      }
+      
+    </div>
+
+  </div>
+);
+
+};
 export default HeatMapView;

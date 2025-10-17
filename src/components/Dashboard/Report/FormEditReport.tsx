@@ -3,19 +3,24 @@ import { updateReporte } from "../../../services/reportService";
 import { useUserContext } from "../../../context/UserContext";
 import useNavegation from "../../../hooks/useNavegation";
 import {
-  
   Save,
   X,
   FileText,
   MapPin,
   Droplets,
-  LocateFixed,
-  MapIcon
+  Calendar,
+  AlertCircle,
+  CheckCircle2,
+  Loader2,
+  Edit3,
+  Snowflake,
+  Droplet
 } from "lucide-react";
 import BackButton from "../../BackButton";
+
 const FormEditReport = () => {
   const { report } = useUserContext();
-  const { goReports} = useNavegation();
+  const { goReports } = useNavegation();
 
   const [formData, setFormData] = useState({
     note: report.note || "",
@@ -26,22 +31,29 @@ const FormEditReport = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // console.log(formData)
-  }, [formData]);
+    if (success) {
+      const timer = setTimeout(() => setSuccess(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
     });
+    setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
     try {
       const payload = {
@@ -59,135 +71,259 @@ const FormEditReport = () => {
       };
 
       await updateReporte(report.id, payload);
-      alert("Reporte actualizado con éxito ✅");
+      setSuccess(true);
+      setTimeout(() => {
+        goReports();
+      }, 1500);
     } catch (error) {
-      alert("❌ Hubo un problema al actualizar el reporte");
+      setError("Hubo un problema al actualizar el reporte. Por favor, intenta nuevamente.");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen  bg-neutral-50 flex flex-col">
-      <div className="flex items-center justify-between px-20 py-6  border-neutral-200 bg-white">
-        <BackButton />
-        
-      </div>
-      <div className="flex flex-1 items-center justify-center">
-        
-        <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 border border-neutral-200">
-          <div className="mb-6">
-            <span className="text-lg font-semibold text-neutral-700">
-              Editar Reporte
-            </span>
-          </div>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="mb-4">
-              <h2 className="text-2xl font-bold text-neutral-900 flex items-center gap-2">
-                <FileText size={22} className="text-neutral-500" />
-                Reporte #{report.id}
-              </h2>
-              <span className="block text-sm text-neutral-500 mt-1">
-                Fecha: {report.date}
-              </span>
-            </div>
+  const isPrecipitacionLluvia = report.site?.precipitation_id === 1;
 
-            <label className="block">
-              <span className="text-neutral-700 font-medium flex items-center gap-2 mb-1">
-                <FileText size={18} className="text-neutral-400" />
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+  
+      <div className=" backdrop-blur-sm  ">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <BackButton />
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl shadow-lg">
+              <Edit3 className="w-5 h-5 text-white" />
+            </div>
+            <h1 className="text-xl font-bold text-slate-800">Editar Reporte</h1>
+          </div>
+          <div className="w-20"></div>
+        </div>
+      </div>
+
+     
+      <div className="flex items-center justify-center p-6 md:p-8">
+        <div className="w-full max-w-3xl">
+          
+      
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6 mb-6">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-lg font-bold">
+                    #{report.id}
+                  </span>
+                  {report.report_regular && (
+                    <span className="bg-green-100 text-green-700 border border-green-300 px-3 py-1 rounded-md text-sm font-semibold">
+                      Regular
+                    </span>
+                  )}
+                  {!report.report_regular && (
+                    <span className="bg-red-100 text-red-700 border border-red-300 px-3 py-1 rounded-md text-sm font-semibold">
+                      Rotura
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 text-slate-600">
+                  <Calendar size={16} />
+                  <span className="text-sm font-medium">{report.date}</span>
+                </div>
+              </div>
+              <div className={`p-3 rounded-xl ${isPrecipitacionLluvia ? 'bg-blue-100' : 'bg-cyan-100'}`}>
+                {isPrecipitacionLluvia ? (
+                  <Droplet className="w-6 h-6 text-blue-600" />
+                ) : (
+                  <Snowflake className="w-6 h-6 text-cyan-600" />
+                )}
+              </div>
+            </div>
+          </div>
+
+
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
+            
+      
+            {success && (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <p className="text-sm font-medium text-green-800">¡Reporte actualizado exitosamente!</p>
+              </div>
+            )}
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                <p className="text-sm font-medium text-red-800">{error}</p>
+              </div>
+            )}
+
+    
+            <div>
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
+                <FileText size={18} className="text-slate-500" />
                 Nota
-              </span>
-              <input
-                type="text"
+              </label>
+              <textarea
                 name="note"
                 value={formData.note}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-neutral-300 rounded-full bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-400 text-neutral-900 transition"
-                placeholder="Escribe una nota..."
-                autoComplete="off"
+                rows={3}
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition resize-none"
+                placeholder="Escribe una nota descriptiva..."
               />
-            </label>
+            </div>
 
-            <label className="block">
-              <span className="text-neutral-700 font-medium flex items-center gap-2 mb-1">
-                <Droplets size={18} className="text-neutral-400" />
-                Cantidad caída
-              </span>
-              <input
-                type="text"
-                name="amount"
-                value={formData.amount}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-neutral-300 rounded-full bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-400 text-neutral-900 transition"
-                placeholder="Ej: 12.5"
-                autoComplete="off"
-              />
-            </label>
-    <div className="flex gap-4">
-      <label className="flex-1 block">
-        <span className="text-neutral-700 font-medium mb-1 block">
-          Latitud
-        </span>
-        <input
-          type="text"
-          name="latitude"
-          value={formData.latitude}
-          onChange={handleChange}
-          className="w-full px-4 py-3 border border-neutral-300 rounded-full bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-400 text-neutral-900 transition"
-          placeholder="Ej: -34.6037"
-          autoComplete="off"
-        />
-      </label>
-      <label className="flex-1 block">
-        <span className="text-neutral-700 font-medium mb-1 block">
-          Longitud
-        </span>
-        <input
-          type="text"
-          name="longitude"
-          value={formData.longitude}
-          onChange={handleChange}
-          className="w-full px-4 py-3 border border-neutral-300 rounded-full bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-400 text-neutral-900 transition"
-          placeholder="Ej: -58.3816"
-          autoComplete="off"
-        />
-      </label>
-    </div>
-            <label className="block">
-              <span className="text-neutral-700 font-medium flex items-center gap-2 mb-1">
-                <MapIcon size={18} className="text-neutral-400" />
-                Zona
-              </span>
+          
+            <div>
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
+                <Droplets size={18} className="text-slate-500" />
+                Cantidad de precipitación
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  step="0.1"
+                  name="amount"
+                  value={formData.amount}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition"
+                  placeholder="Ej: 12.5"
+                />
+                {report.report_regular && (
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-500">
+                    {report.report_regular.united_measure.abbreviation}
+                  </span>
+                )}
+              </div>
+            </div>
+
+       
+            <div>
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-3">
+                <MapPin size={18} className="text-slate-500" />
+                Coordenadas
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-slate-600 mb-1.5 block">
+                    Latitud
+                  </label>
+                  <input
+                    type="text"
+                    name="latitude"
+                    value={formData.latitude}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition font-mono text-sm"
+                    placeholder="-34.6037"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-600 mb-1.5 block">
+                    Longitud
+                  </label>
+                  <input
+                    type="text"
+                    name="longitude"
+                    value={formData.longitude}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition font-mono text-sm"
+                    placeholder="-58.3816"
+                  />
+                </div>
+              </div>
+            </div>
+
+       
+            <div>
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
+                <MapPin size={18} className="text-slate-500" />
+                Zona / Localidad
+              </label>
               <input
                 type="text"
                 name="locality"
                 value={formData.locality}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-neutral-300 rounded-full bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-400 text-neutral-900 transition"
-                placeholder="Ej: Palermo"
-                autoComplete="off"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition"
+                placeholder="Ej: Palermo, Buenos Aires"
               />
-            </label>
+            </div>
 
-            <div className="flex gap-4 mt-8">
+       
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+              <h4 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">
+                Resumen de cambios
+              </h4>
+              <div className="space-y-2 text-sm">
+                {formData.note !== report.note && (
+                  <div className="flex items-start gap-2 text-slate-600">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <span>Nota modificada</span>
+                  </div>
+                )}
+                {formData.amount !== report.report_regular?.amount && (
+                  <div className="flex items-start gap-2 text-slate-600">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <span>Cantidad actualizada</span>
+                  </div>
+                )}
+                {(formData.latitude !== report.site?.latitude || formData.longitude !== report.site?.longitude) && (
+                  <div className="flex items-start gap-2 text-slate-600">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <span>Coordenadas modificadas</span>
+                  </div>
+                )}
+                {formData.locality !== report.site.zona?.locality && (
+                  <div className="flex items-start gap-2 text-slate-600">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <span>Localidad actualizada</span>
+                  </div>
+                )}
+                {formData.note === report.note && 
+                 formData.amount === report.report_regular?.amount && 
+                 formData.latitude === report.site?.latitude && 
+                 formData.longitude === report.site?.longitude && 
+                 formData.locality === report.site.zona?.locality && (
+                  <div className="text-slate-500 italic">Sin cambios realizados</div>
+                )}
+              </div>
+            </div>
+
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-700 disabled:opacity-50 transition"
+                type="button"
+                onClick={handleSubmit}
+                disabled={loading || success}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg group"
               >
-                <Save size={18} />
-                {loading ? "Guardando..." : "Guardar"}
+                {loading ? (
+                  <>
+                    <Loader2 size={20} className="animate-spin" />
+                    Guardando cambios...
+                  </>
+                ) : success ? (
+                  <>
+                    <CheckCircle2 size={20} />
+                    ¡Guardado!
+                  </>
+                ) : (
+                  <>
+                    <Save size={20} className="transition-transform group-hover:scale-110" />
+                    Guardar Cambios
+                  </>
+                )}
               </button>
               <button
                 type="button"
                 onClick={goReports}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-neutral-200 text-neutral-700 rounded-full font-semibold hover:bg-neutral-300 transition"
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border border-slate-200 group"
               >
-                <X size={18} />
+                <X size={20} className="transition-transform group-hover:rotate-90" />
                 Cancelar
               </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
@@ -195,6 +331,3 @@ const FormEditReport = () => {
 };
 
 export default FormEditReport;
- 
-
-

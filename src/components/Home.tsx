@@ -43,7 +43,7 @@ const Home = () => {
   const pointsMap = useMemo(() => sitios, [sitios]);
 
   return (
-    <div className="flex h-screen bg-gray-50 relative">
+    <div className="flex h-full bg-gray-50 relative">
       {/* Mensaje de bienvenida */}
      { /*showWelcome && (
         <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">

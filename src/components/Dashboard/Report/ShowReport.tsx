@@ -1,124 +1,296 @@
 import { useEffect, useState } from "react";
 import useReports from "../../../hooks/useReports";
 import useNavegation from "../../../hooks/useNavegation";
-import { ArrowLeft, Pencil, Search } from "lucide-react";
+import { ArrowLeft, Pencil, Search, Filter, Droplet, Snowflake, FileText, AlertTriangle, MapPin } from "lucide-react";
+import BackButton from "../../BackButton";
 const ShowReport = () => {
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState<any[]>([]);
+  const [filterType, setFilterType] = useState<"all" | "regular" | "rotura">("all");
+  const [filterPrecipitation, setFilterPrecipitation] = useState<"all" | "lluvia" | "nieve">("all");
 
-  const { goEditReport, goBack } = useNavegation();
+  const { goEditReport} = useNavegation();
   const reports = useReports();
 
   useEffect(() => {
-    if (search.trim() === "") {
-      setFiltered(reports);
-    } else {
-      setFiltered(
-        reports.filter(
-          (r) =>
-            r.id.toString().includes(search) ||
-            r.note?.toLowerCase().includes(search.toLowerCase())
-        )
+    let result = reports;
+
+    if (filterType !== "all") {
+      result = result.filter((r) => {
+        if (filterType === "regular") return r.report_regular !== null;
+        if (filterType === "rotura") return r.report_regular === null;
+        return true;
+      });
+    }
+
+    if (filterPrecipitation !== "all") {
+      result = result.filter((r) => {
+        if (filterPrecipitation === "lluvia") return r.site?.precipitation_id === 1;
+        if (filterPrecipitation === "nieve") return r.site?.precipitation_id === 2;
+        return true;
+      });
+    }
+
+    if (search.trim() !== "") {
+      result = result.filter(
+        (r) =>
+          r.id.toString().includes(search) ||
+          r.note?.toLowerCase().includes(search.toLowerCase())
       );
     }
-  }, [search, reports]);
+
+    setFiltered(result);
+  }, [search, reports, filterType, filterPrecipitation]);
 
   return (
-    <div className="min-h-screen bg-blue-50 p-4 w-full">
-      <div className="w-full mx-auto p-10">
-      <div className="mb-6 flex justify-between items-center">
-        <button
-        onClick={goBack}
-        className="px-4 py-2 bg-blue-900 text-white rounded-full shadow-lg hover:bg-blue-950 transition font-semibold text-base flex items-center gap-2"
-        >
-        <ArrowLeft size={20} />
-        Volver
-        </button>
-        <h2 className="text-3xl font-black text-blue-900 tracking-tight">
-        Modificar Reportes
-        </h2>
-      </div>
-      <div className="bg-white rounded-3xl shadow-2xl border border-blue-200 p-10 w-full">
-        {/* Buscador */}
-        <div className="relative mb-8">
-        <input
-          type="text"
-          placeholder="Buscar reporte por ID o nota..."
-          className="w-full p-4 pl-12 border-2 border-blue-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-700 transition text-lg shadow"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400" size={22} />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4 md:p-6 lg:p-8">
+      <div className="w-full max-w-7xl mx-auto">
+        <BackButton />
+        {/* Header */}
+        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+         
+          
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+              <Filter className="w-5 h-5 text-white" />
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-800">
+              Modificar Reportes
+            </h1>
+          </div>
         </div>
 
-        {/* Listado en 2 columnas */}
-        <ul className="grid grid-cols-1 md:grid-cols-2 gap-8 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-blue-50 pr-2">
-        {filtered.map((reporte) => (
-          <li
-          key={reporte.id}
-          className="p-8 border border-blue-100 rounded-2xl bg-white shadow-xl transition group hover:shadow-2xl hover:border-blue-300"
-          >
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-            <div className="flex-1">
-            <p className="font-bold text-blue-800 text-xl mb-1 flex items-center gap-2">
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-mono">ID: {reporte.id}</span>
-            </p>
-            <p className="text-gray-700 mb-1">
-              Fecha: <span className="font-medium">{reporte.date}</span>
-            </p>
-            <p className="text-gray-700 mb-1">
-              Nota: <span className="italic">{reporte.note}</span>
-            </p>
-            <p className="text-gray-700 mb-1">
-              Audio: <span className="text-blue-700 underline">{reporte.audio}</span>
-            </p>
-            {reporte.report_regular && (
-              <p className="text-gray-800 font-medium mb-1">
-              Cantidad: <span className="font-semibold">{reporte.report_regular.amount}</span>
-              <span className="ml-1 text-blue-800">{reporte.report_regular.united_measure.abbreviation}</span>
-              </p>
-            )}
-            <div className="flex flex-col gap-2 text-base text-gray-600 bg-blue-50 rounded-xl px-2 py-2 border border-blue-100 shadow mt-4 md:mt-0">
-              <p>
-              Latitud: <span className="font-mono">{reporte.site.latitude}</span>
-              </p>
-              <p>
-              Longitud: <span className="font-mono">{reporte.site.longitude}</span>
-              </p>
-              <p>
-              Zona: <span className="font-semibold text-blue-800">{reporte.site.zona.locality}</span>
-              </p>
+        {/* Controles de búsqueda y filtros */}
+        <div className="bg-white/80 backdrop-blur-sm border border-slate-200 rounded-2xl shadow-lg p-6 mb-6">
+          
+          {/* Buscador */}
+          <div className="relative mb-6">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <input
+              type="text"
+              placeholder="Buscar por ID o nota..."
+              className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-slate-700 placeholder:text-slate-400"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          {/* Filtros en grid responsive */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            {/* Filtro: Tipo de Reporte */}
+            <div>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">
+                <FileText className="w-4 h-4" />
+                Tipo de Reporte
+              </label>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setFilterType("all")}
+                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all ${
+                    filterType === "all"
+                      ? "bg-slate-700 text-white shadow-md"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  Todos
+                </button>
+                <button
+                  onClick={() => setFilterType("regular")}
+                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+                    filterType === "regular"
+                      ? "bg-green-600 text-white shadow-md"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  <FileText className="w-4 h-4" />
+                  Regular
+                </button>
+                <button
+                  onClick={() => setFilterType("rotura")}
+                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+                    filterType === "rotura"
+                      ? "bg-red-600 text-white shadow-md"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  <AlertTriangle className="w-4 h-4" />
+                  Rotura
+                </button>
+              </div>
             </div>
-            </div>
-            <div className="md:w-48 flex-shrink-0 flex justify-center items-center">
-            {reporte.image ? (
-              <img
-              src={"../../../../" + reporte.image}
-              alt="Reporte"
-              className="rounded-xl border border-blue-200 shadow w-full h-auto max-h-40 object-cover"
-              />
-            ) : (
-              <span className="text-gray-400 italic">Sin imagen</span>
-            )}
+
+            {/* Filtro: Precipitación */}
+            <div>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">
+                <Droplet className="w-4 h-4" />
+                Precipitación
+              </label>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setFilterPrecipitation("all")}
+                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all ${
+                    filterPrecipitation === "all"
+                      ? "bg-slate-700 text-white shadow-md"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  Todos
+                </button>
+                <button
+                  onClick={() => setFilterPrecipitation("lluvia")}
+                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+                    filterPrecipitation === "lluvia"
+                      ? "bg-blue-600 text-white shadow-md"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  <Droplet className="w-4 h-4" />
+                  Lluvia
+                </button>
+                <button
+                  onClick={() => setFilterPrecipitation("nieve")}
+                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+                    filterPrecipitation === "nieve"
+                      ? "bg-cyan-600 text-white shadow-md"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  <Snowflake className="w-4 h-4" />
+                  Nieve
+                </button>
+              </div>
             </div>
           </div>
-          <div className="flex justify-end">
-            <button
-            className="mt-6 px-2 py-2 bg-blue-900 text-white rounded-full shadow hover:bg-blue-950 transition font-semibold tracking-wide text-base group-hover:scale-105 flex items-center gap-2"
-            onClick={() => goEditReport(reporte)}
-            >
-            <Pencil size={18} />
-            Editar
-            </button>
+
+          {/* Contador de resultados */}
+          <div className="mt-6 pt-6 border-t border-slate-200">
+            <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-700 bg-blue-50 px-4 py-2 rounded-lg">
+              <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
+              {filtered.length} {filtered.length === 1 ? "reporte encontrado" : "reportes encontrados"}
+            </span>
           </div>
-          </li>
-        ))}
-        </ul>
-      </div>
+        </div>
+
+        {/* Lista de reportes */}
+        {filtered.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-white/60 backdrop-blur-sm border border-slate-200 rounded-2xl">
+            <div className="bg-slate-100 rounded-full p-6 mb-4">
+              <Search className="w-10 h-10 text-slate-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-700 mb-2">No se encontraron reportes</h3>
+            <p className="text-sm text-slate-500">Intenta ajustar los filtros o la búsqueda</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {filtered.map((reporte) => (
+              <div
+                key={reporte.id}
+                className="group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-slate-300 transition-all duration-300"
+              >
+                {/* Header de la tarjeta */}
+                <div className="bg-gradient-to-r from-slate-50 to-blue-50 p-4 border-b border-slate-200 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-bold">
+                      #{reporte.id}
+                    </span>
+                    {reporte.report_regular && (
+                      <span className="bg-green-100 text-green-700 border border-green-300 px-2.5 py-0.5 rounded-md text-xs font-semibold">
+                        Regular
+                      </span>
+                    )}
+                    {!reporte.report_regular && (
+                      <span className="bg-red-100 text-red-700 border border-red-300 px-2.5 py-0.5 rounded-md text-xs font-semibold flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3" />
+                        Rotura
+                      </span>
+                    )}
+                  </div>
+                  {reporte.site?.precipitation_id === 1 ? (
+                    <div className="bg-blue-100 p-2 rounded-lg">
+                      <Droplet className="w-5 h-5 text-blue-600" />
+                    </div>
+                  ) : (
+                    <div className="bg-cyan-100 p-2 rounded-lg">
+                      <Snowflake className="w-5 h-5 text-cyan-600" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Contenido */}
+                <div className="p-5">
+                  <div className="flex gap-4 mb-4">
+                    {/* Información */}
+                    <div className="flex-1 space-y-3">
+                      <div className="flex items-start gap-2">
+                        <span className="text-slate-500 text-sm font-medium min-w-[60px]">Fecha:</span>
+                        <span className="text-slate-700 text-sm font-semibold">{reporte.date}</span>
+                      </div>
+                      
+                      {reporte.note && (
+                        <div className="flex items-start gap-2">
+                          <span className="text-slate-500 text-sm font-medium min-w-[60px]">Nota:</span>
+                          <span className="text-slate-600 text-sm italic line-clamp-2">{reporte.note}</span>
+                        </div>
+                      )}
+
+                      {reporte.report_regular && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                          <span className="text-blue-900 font-bold text-lg">
+                            {reporte.report_regular.amount} {reporte.report_regular.united_measure.abbreviation}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Imagen */}
+                    <div className="w-28 h-28 flex-shrink-0">
+                      {reporte.image ? (
+                        <img
+                          src={"../../../../" + reporte.image}
+                          alt="Reporte"
+                          className="w-full h-full object-cover rounded-xl border-2 border-slate-200 shadow-sm"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-slate-100 border-2 border-slate-200 rounded-xl flex items-center justify-center">
+                          <span className="text-slate-400 text-xs">Sin imagen</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Ubicación */}
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4">
+                    <div className="flex items-start gap-2 mb-2">
+                      <MapPin className="w-4 h-4 text-slate-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm font-semibold text-slate-700">{reporte.site.zona.locality}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
+                      <div>
+                        <span className="font-medium">Lat:</span> <span className="font-mono">{reporte.site.latitude}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">Lng:</span> <span className="font-mono">{reporte.site.longitude}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Botón editar */}
+                  <button
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg group/btn"
+                    onClick={() => goEditReport(reporte)}
+                  >
+                    <Pencil size={18} className="transition-transform group-hover/btn:rotate-12" />
+                    Editar Reporte
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
 };
-
 
 export default ShowReport;
