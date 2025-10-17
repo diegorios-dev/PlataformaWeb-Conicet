@@ -6,25 +6,23 @@ type UserContextType = {
   password: string;
   fetchGetUserByPassword: (e: React.FormEvent) => Promise<void>;
   handleSavePassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSelectReport : any ; 
-  report : any ; 
-  isLogin : any 
-
+  handleSelectReport: any;
+  report: any;
+  isLogin: any;
+  handleLogout: () => void;
+  getUsername: () => string;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-
   const [report, setReport] = useState<any | null>(null);
 
-  const handleSelectReport = (report : any) => {
-    setReport(report)
-  }
-  
-  const {user , fetchGetUserByPassword , isLogin , password , handleSavePassword } = useUser();
+  const handleSelectReport = (report: any) => {
+    setReport(report);
+  };
 
+  const { user, fetchGetUserByPassword, isLogin, password, handleSavePassword, handleLogout, getUsername } = useUser();
 
   return (
     <UserContext.Provider
@@ -32,17 +30,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         user,
         password,
         fetchGetUserByPassword,
-        handleSavePassword ,
+        handleSavePassword,
         handleSelectReport,
         report,
-        isLogin
+        isLogin,
+        handleLogout,
+        getUsername,
       }}
     >
       {children}
     </UserContext.Provider>
   );
 };
-
 
 export const useUserContext = () => {
   const ctx = useContext(UserContext);

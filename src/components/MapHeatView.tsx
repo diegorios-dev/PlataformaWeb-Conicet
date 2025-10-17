@@ -199,7 +199,7 @@ const HeatMapView = () => {
   }, [selectedTipo, mapInstance, loading, pluvData.length]);
 
   return (
-    <div className="h-screen w-full bg-gradient-to-br from-blue-100 via-white to-cyan-100 flex flex-col items-center">
+    <div className="h-screen w-full bg-gradient-to-br from-blue-100 via-white to-cyan-100 flex flex-col items-center p-3 my-3">
 
       <div className="w-full flex flex-col">
 

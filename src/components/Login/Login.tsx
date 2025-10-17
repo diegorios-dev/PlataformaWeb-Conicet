@@ -2,15 +2,19 @@ import { useEffect } from "react";
 import { useUserContext } from "../../context/UserContext";
 import useNavegation from "../../hooks/useNavegation";
 import { Lock, LogIn, ArrowLeft } from "lucide-react";
-import img from "../../assets/logo-CONICET_opt.png"
+import img from "../../assets/logo-CONICET_opt.png";
 
 const Login = () => {
   const { password, handleSavePassword, fetchGetUserByPassword, isLogin } = useUserContext();
   const { goHome } = useNavegation();
 
   useEffect(() => {
-    if (isLogin) goHome();
-  }, [isLogin]);
+    if (isLogin) {
+      // Marcar que es un login nuevo
+      sessionStorage.setItem('newLogin', 'true');
+      goHome();
+    }
+  }, [isLogin, goHome]);
 
   return (
     <div className="flex h-screen">
