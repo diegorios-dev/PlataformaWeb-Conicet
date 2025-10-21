@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { postNewZona, getAllZonas } from "../../../services/zonaService";
 import useNavegation from "../../../hooks/useNavegation";
 import BackButton from "../../BackButton";
-import { Plus, MapPin, CheckCircle2, AlertCircle, Loader2, MapPinned, Trash2 } from "lucide-react";
+import { Plus, MapPin, CheckCircle2, AlertCircle, Loader2, MapPinned, X } from "lucide-react";
 
 type Zona = {
     id: number;
     locality: string;
 };
+
+type ModalType = 'success' | 'error' | null;
 
 const FormAddZona = () => {
     const [zonas, setZonas] = useState<Zona[]>([]);
@@ -17,8 +19,9 @@ const FormAddZona = () => {
     });
     const [loading, setLoading] = useState(false);
     const [loadingZonas, setLoadingZonas] = useState(true);
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState("");
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalType, setModalType] = useState<ModalType>(null);
+    const [modalMessage, setModalMessage] = useState("");
     
     const { goBack } = useNavegation();
 
@@ -26,23 +29,31 @@ const FormAddZona = () => {
         fetchZonas();
     }, []);
 
-    useEffect(() => {
-        if (success) {
-            const timer = setTimeout(() => setSuccess(false), 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [success]);
-
     const fetchZonas = async () => {
         try {
             const zonasData = await getAllZonas();
             setZonas(zonasData);
         } catch (err) {
             console.error("Error fetching zonas:", err);
-            setError("Error al cargar las zonas");
+            showModal('error', "Error al cargar las zonas");
         } finally {
             setLoadingZonas(false);
         }
+    };
+
+    const showModal = (type: ModalType, message: string) => {
+        setModalType(type);
+        setModalMessage(message);
+        setModalOpen(true);
+        
+        // Auto-cerrar después de 3 segundos
+        setTimeout(() => {
+            setModalOpen(false);
+        }, 3000);
+    };
+
+    const closeModal = () => {
+        setModalOpen(false);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,32 +62,26 @@ const FormAddZona = () => {
             ...prevData,
             [name]: value,
         }));
-        setError("");
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
         if (!formData.locality.trim()) {
-            setError("Por favor ingresa una localidad");
+            showModal('error', "Por favor ingresa una localidad");
             return;
         }
 
         setLoading(true);
-        setError("");
 
         try {
             await postNewZona(formData);
-            setSuccess(true);
+            showModal('success', "¡Zona agregada exitosamente!");
             setFormData({ locality: "", site: { latitude: "", longitude: "" } });
             await fetchZonas();
-            
-            setTimeout(() => {
-                setSuccess(false);
-            }, 2000);
         } catch (error) {
             console.error("Error creating zona:", error);
-            setError("Error al crear la zona. Por favor intenta nuevamente.");
+            showModal('error', "Error al crear la zona. Por favor intenta nuevamente.");
         } finally {
             setLoading(false);
         }
@@ -84,8 +89,73 @@ const FormAddZona = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+            {/* Modal de notificaciones */}
+            {modalOpen && (
+                <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4">
+                    <div 
+                        className="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity"
+                        onClick={closeModal}
+                    ></div>
+                    
+                    <div className={`relative bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full transform transition-all duration-300 ${
+                        modalOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+                    }`}>
+                        <button
+                            onClick={closeModal}
+                            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                            <X size={20} />
+                        </button>
+                        
+                        <div className="flex items-start gap-4">
+                            <div className={`p-3 rounded-full ${
+                                modalType === 'success' 
+                                    ? 'bg-green-100' 
+                                    : 'bg-red-100'
+                            }`}>
+                                {modalType === 'success' ? (
+                                    <CheckCircle2 className="w-6 h-6 text-green-600" />
+                                ) : (
+                                    <AlertCircle className="w-6 h-6 text-red-600" />
+                                )}
+                            </div>
+                            
+                            <div className="flex-1 pt-1">
+                                <h3 className={`text-lg font-bold mb-1 ${
+                                    modalType === 'success' 
+                                        ? 'text-green-900' 
+                                        : 'text-red-900'
+                                }`}>
+                                    {modalType === 'success' ? 'Éxito' : 'Error'}
+                                </h3>
+                                <p className={`text-sm ${
+                                    modalType === 'success' 
+                                        ? 'text-green-700' 
+                                        : 'text-red-700'
+                                }`}>
+                                    {modalMessage}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div className="mt-6 flex justify-end">
+                            <button
+                                onClick={closeModal}
+                                className={`px-4 py-2 rounded-lg font-semibold text-white transition-colors ${
+                                    modalType === 'success'
+                                        ? 'bg-green-600 hover:bg-green-700'
+                                        : 'bg-red-600 hover:bg-red-700'
+                                }`}
+                            >
+                                Entendido
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Header */}
-            <div className=" backdrop-blur-sm  ">
+            <div className="backdrop-blur-sm">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                     <BackButton />
                     <div className="flex items-center gap-3">
@@ -109,21 +179,6 @@ const FormAddZona = () => {
                             <p className="text-sm text-slate-600">Registra una nueva localidad en el sistema</p>
                         </div>
 
-                        {/* Mensajes de estado */}
-                        {success && (
-                            <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3 mb-6">
-                                <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
-                                <p className="text-sm font-medium text-green-800">¡Zona agregada exitosamente!</p>
-                            </div>
-                        )}
-
-                        {error && (
-                            <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3 mb-6">
-                                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                                <p className="text-sm font-medium text-red-800">{error}</p>
-                            </div>
-                        )}
-
                         <div className="space-y-6">
                             {/* Input de localidad */}
                             <div>
@@ -136,7 +191,7 @@ const FormAddZona = () => {
                                     name="locality"
                                     value={formData.locality}
                                     onChange={handleChange}
-                                    placeholder="Ej: Palermo, Buenos Aires"
+                                    placeholder="Ej: Ing. Jacobacci"
                                     className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition"
                                     required
                                 />
@@ -164,9 +219,8 @@ const FormAddZona = () => {
                         </div>
                     </div>
 
-               
+                    {/* Lista de zonas */}
                     <div className="bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
-                 
                         <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-200 px-6 py-4">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
@@ -227,7 +281,7 @@ const FormAddZona = () => {
                         </div>
                     </div>
 
-            
+                    {/* Información */}
                     <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                         <div className="flex items-start gap-3">
                             <div className="bg-blue-100 p-2 rounded-lg flex-shrink-0">

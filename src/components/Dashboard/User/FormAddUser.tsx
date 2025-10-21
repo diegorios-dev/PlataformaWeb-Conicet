@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { postNewUser } from "../../../services/userService";
+import { getAllSitios } from "../../../services/sitiosService";
+import { getAllZonas } from "../../../services/zonaService";
 import useNavegation from "../../../hooks/useNavegation";
 import BackButton from "../../BackButton";
 import {
@@ -9,7 +11,8 @@ import {
   MapPin,
   Locate,
   CloudRain,
-  Snowflake
+  Snowflake,
+  ArrowRight
 } from "lucide-react";
 
 const FormAddUser = () => {
@@ -17,38 +20,58 @@ const FormAddUser = () => {
     name: "",
     password: "",
     rol: "",
-    zona: { locality: "" },
-    site: { latitude: "", longitude: "" },
-    precipitation: { type: "" }
+    site_id: "",
+    zona_id: ""
   });
-  const { goBack } = useNavegation();
+  
+  const [sitios, setSitios] = useState([]);
+  const [zonas, setZonas] = useState([]);
+  const [zonaSeleccionada, setZonaSeleccionada] = useState(null);
+  
+  const { goBack, goAddSite } = useNavegation();
+
+  // Cargar sitios y zonas al montar el componente
+  useEffect(() => {
+    fetchSitios();
+    fetchZonas();
+  }, []);
+
+  const fetchSitios = async () => {
+    try {
+      const data = await getAllSitios();
+      setSitios(data);
+    } catch (error) {
+      console.error("Error al cargar sitios:", error);
+    }
+  };
+
+  const fetchZonas = async () => {
+    try {
+      const data = await getAllZonas();
+      setZonas(data);
+    } catch (error) {
+      console.error("Error al cargar zonas:", error);
+    }
+  };
+
   const handleChange = (e) => {
     const { id, value } = e.target;
 
-    if (id === "zone") {
-      setFormData((prev) => ({
-        ...prev,
-        zona: { ...prev.zona, locality: value },
-      }));
-    } else if (id === "site-x") {
-      setFormData((prev) => ({
-        ...prev,
-        site: { ...prev.site, latitude: value },
-      }));
-    } else if (id === "site-y") {
-      setFormData((prev) => ({
-        ...prev,
-        site: { ...prev.site, longitude: value },
-      }));
-    } else if (id === "precipitation") {
-      setFormData((prev) => ({
-        ...prev,
-        precipitation: { ...prev.precipitation, type: value },
-      }));
+    if (id === "site_id") {
+      const sitioSeleccionado = sitios.find(s => s.id === parseInt(value));
+      
+      if (sitioSeleccionado) {
+        setFormData(prev => ({
+          ...prev,
+          site_id: value,
+          zona_id: sitioSeleccionado.zona_id
+        }));
+        setZonaSeleccionada(sitioSeleccionado.zona);
+      }
     } else {
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
-        [id]: value,
+        [id]: value
       }));
     }
   };
@@ -56,7 +79,15 @@ const FormAddUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Datos a enviar:", formData);
-    await postNewUser(formData);
+    
+    try {
+      await postNewUser(formData);
+      alert("Usuario creado exitosamente");
+      goBack();
+    } catch (error) {
+      console.error("Error al crear usuario:", error);
+      alert("Error al crear usuario. Revisa la consola para más detalles.");
+    }
   };
 
   return (
@@ -64,7 +95,7 @@ const FormAddUser = () => {
       <div className="p-8">
         <BackButton />
       </div>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto pb-8">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800 flex items-center justify-center gap-2">
           <User className="w-7 h-7 text-blue-500" />
           Agregar Usuario
@@ -78,10 +109,7 @@ const FormAddUser = () => {
             <div>
               {/* Nombre */}
               <div className="mb-6">
-                <label
-                  className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2"
-                  htmlFor="name"
-                >
+                <label className="block text-gray-600 text-sm font-medium mb-2" htmlFor="name">
                   Nombre
                 </label>
                 <input
@@ -90,129 +118,123 @@ const FormAddUser = () => {
                   placeholder="Ingrese el nombre"
                   value={formData.name}
                   onChange={handleChange}
+                  required
                   className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
                 />
               </div>
+
               {/* Password */}
               <div className="mb-6">
-                <label
-                  className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2"
-                  htmlFor="password"
-                >
+                <label className="block text-gray-600 text-sm font-medium mb-2" htmlFor="password">
                   Contraseña
                 </label>
                 <input
                   id="password"
                   type="password"
-                  placeholder="Ingrese la contraseña"
+                  placeholder="Ingrese la contraseña (mínimo 6 caracteres)"
                   value={formData.password}
                   onChange={handleChange}
+                  required
+                  minLength={6}
                   className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
                 />
               </div>
+
               {/* Rol */}
               <div className="mb-6">
-                <label
-                  className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2"
-                  htmlFor="rol"
-                >
+                <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="rol">
                   <Shield className="w-5 h-5 text-blue-400" />
                   Rol
                 </label>
-                <input
+                <select
                   id="rol"
-                  type="text"
-                  placeholder="Ingrese el rol"
                   value={formData.rol}
                   onChange={handleChange}
+                  required
                   className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
-                />
+                >
+                  <option value="">Seleccione un rol</option>
+                  <option value="admin">Administrador</option>
+                  <option value="user">Usuario</option>
+                </select>
               </div>
             </div>
+
             {/* Columna 2 */}
             <div>
-              {/* Zona */}
-              <div className="mb-6">
-                <label
-                  className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2"
-                  htmlFor="zone"
-                >
-                  <MapPin className="w-5 h-5 text-blue-400" />
-                  Zona
-                </label>
-                <select
-                  id="zone"
-                  value={formData.zona.locality}
-                  onChange={handleChange}
-                  className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
-                >
-                  <option value="">Seleccione una zona</option>
-                  <option value="Bariloche">Bariloche</option>
-                  <option value="Esquel">Esquel</option>
-                  <option value="Río Gallegos">Río Gallegos</option>
-                  <option value="Ushuaia">Ushuaia</option>
-                  <option value="El Calafate">El Calafate</option>
-                  <option value="San Martín de los Andes">San Martín de los Andes</option>
-                  <option value="Viedma">Viedma</option>
-                  <option value="Trelew">Trelew</option>
-                  <option value="Puerto Madryn">Puerto Madryn</option>
-                  <option value="Comodoro Rivadavia">Comodoro Rivadavia</option>
-                </select>
-              </div>
               {/* Sitio */}
               <div className="mb-6">
-                <label
-                  className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2"
-                  htmlFor="site-x"
-                >
+                <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="site_id">
                   <Locate className="w-5 h-5 text-blue-400" />
-                  Sitio (Coordenadas)
+                  Sitio
                 </label>
-                <div className="flex gap-3">
-                  <input
-                    id="site-x"
-                    type="text"
-                    placeholder="Coordenada X"
-                    value={formData.site.latitude}
+                <div className="flex gap-2">
+                  <select
+                    id="site_id"
+                    value={formData.site_id}
                     onChange={handleChange}
-                    className="w-1/2 py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
-                  />
-                  <input
-                    id="site-y"
-                    type="text"
-                    placeholder="Coordenada Y"
-                    value={formData.site.longitude}
-                    onChange={handleChange}
-                    className="w-1/2 py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
-                  />
+                    required
+                    className="flex-1 py-3 px-4 w-full rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
+                  >
+                    <option value="">Seleccione un sitio</option>
+                    {sitios.map(sitio => (
+                      <option key={sitio.id} value={sitio.id}>
+                        {sitio.zona?.locality} ({sitio.latitude}) , ({sitio.longitude})
+                        {sitio.precipitation && ` (${sitio.precipitation.type})`}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
-              {/* Herramienta */}
+
+              {/* Botón para crear nuevo sitio */}
               <div className="mb-6">
-                <label
-                  className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2"
-                  htmlFor="herramienta"
+                <button
+                  type="button"
+                  onClick={goAddSite}
+                  className="w-full py-3 px-4 bg-green-50 hover:bg-green-100 text-green-700 rounded-full border-2 border-green-200 hover:border-green-300 transition flex items-center justify-center gap-2 font-medium"
                 >
-                  {formData.precipitation.type === "Nieve" ? (
-                    <Snowflake className="w-5 h-5 text-blue-400" />
-                  ) : formData.precipitation.type === "Lluvia" ? (
-                    <CloudRain className="w-5 h-5 text-blue-400" />
-                  ) : (
-                    <CloudRain className="w-5 h-5 text-blue-400" />
-                  )}
-                  Herramienta
-                </label>
-                <select
-                  id="precipitation"
-                  value={formData.precipitation.type || ""}
-                  onChange={handleChange}
-                  className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
-                >
-                  <option value="">Seleccione una herramienta</option>
-                  <option value="Nieve">Nieve</option>
-                  <option value="Lluvia">Lluvia</option>
-                </select>
+                  <Plus className="w-5 h-5" />
+                  Crear Nuevo Sitio
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
+
+              {/* Zona (solo lectura) */}
+              <div className="mb-6">
+                <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="zona">
+                  <MapPin className="w-5 h-5 text-blue-400" />
+                  Zona (automática)
+                </label>
+                <input
+                  id="zona"
+                  type="text"
+                  value={zonaSeleccionada?.locality || ""}
+                  disabled
+                  placeholder="Seleccione un sitio primero"
+                  className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed"
+                />
+              </div>
+
+              {/* Tipo de precipitación (solo lectura) */}
+              {zonaSeleccionada && (
+                <div className="mb-6">
+                  <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2">
+                    {sitios.find(s => s.id === parseInt(formData.site_id))?.precipitation?.type === "Nieve" ? (
+                      <Snowflake className="w-5 h-5 text-blue-400" />
+                    ) : (
+                      <CloudRain className="w-5 h-5 text-blue-400" />
+                    )}
+                    Tipo de Precipitación
+                  </label>
+                  <input
+                    type="text"
+                    value={sitios.find(s => s.id === parseInt(formData.site_id))?.precipitation?.type || ""}
+                    disabled
+                    className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed"
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center justify-center mt-8">

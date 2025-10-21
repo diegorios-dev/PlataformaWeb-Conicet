@@ -22,6 +22,7 @@ const useNavegation = () => {
 
   const goAHistograma = () => navigate("/histograma")
 
+   const goAddSite = () => navigate("/dashboard/site/add");
 
   const goEditReport = (report: any) => {
     handleSelectReport(report)
@@ -36,7 +37,7 @@ const useNavegation = () => {
 
     return (
         {
-            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona , goAHistograma, goHeatMap
+            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona , goAHistograma, goHeatMap, goAddSite
         }
     )
 }
