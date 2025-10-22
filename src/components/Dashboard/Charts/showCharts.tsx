@@ -1,231 +1,287 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from "react";
 import {
-  PrecipitacionPorZona,
-  ReportesPorInstrumento,
-  EvolucionTemporalPorZona,
-  DistribucionPorTipo,
-  PrecipitacionVsLatitud,
-  PrecipitacionMensualRadar,
-  ComparativaZonasAreas,
-  LluviaVsNieveBarrasAgrupadas,
-  PrecipitacionConPromedio,
-  TopSitiosPrecipitacion
-} from './specific';
+  BarChart3,
+  TrendingUp,
+  PieChart as PieChartIcon,
+  Activity,
+  MapPin,
+  Calendar,
+  Waves,
+} from "lucide-react";
+import BackButton from "../../BackButton";
+import ChartCard from "./ChartCard";
+import PrecipitacionPorZona from "./PrecipitacionPorZona";
+import ReportesPorInstrumento from "./ReportesPorInstrumento";
+import TopZonasPorRegistro from "./TopZonasPorRegistro";
+import DistribucionPorTipo from "./DistribucionPorTipo";
+import EvolucionMensual from "./EvolucionMensual";
+import ComparativaZonas from "./ComparativaZonas";
+import PrecipitacionCoordenadas from "./PrecipitacionCoordenadas";
+import PatronMensual from "./PatronMensual";
+import AnalisisFrecuencia from "./AnalisisFrecuencia";
+import ComparativaAnual from "./ComparativaAnual";
 
-
-/**
- * Componente de ejemplo que muestra cómo usar todos los gráficos
- * Este archivo es solo de referencia, puedes adaptarlo a tus necesidades
- */
-export const ShowCharts: React.FC = () => {
-  // Estado para datos de la API
-  const [dataPorZona, setDataPorZona] = useState<any[]>([]);
+const ShowCharts = () => {
   const [loading, setLoading] = useState(true);
 
-  // Cargar datos de todas las zonas
-  useEffect(() => {
-    const fetchZonasData = async () => {
-      try {
-        setLoading(true);
-        
-        // Si tienes un endpoint que devuelve todas las zonas, úsalo así:
-        // const response = await fetch('http://localhost:8000/api/zonas/total-acumulado');
-        // const data = await response.json();
-        // setDataPorZona(data);
-        
-        // Si no, necesitas hacer peticiones individuales por cada zona ID
-        // Aquí asumo que tienes las zonas con IDs: 1, 2, 3, etc.
-        const zonasIds = [1, 2, 3]; // Ajusta según tus zonas
-        
-        const promesas = zonasIds.map(id =>
-          fetch(`http://localhost:8000/api/zona/${id}/total-acumulado`)
-            .then(res => res.json())
-            .catch(err => {
-              console.error(`Error al cargar zona ${id}:`, err);
-              return null;
-            })
-        );
-        
-        const resultados = await Promise.all(promesas);
-        console.log('Datos de zonas (raw):', resultados);
-        
-        // Filtrar resultados válidos: debe tener 'id' y 'locality'
-        const zonasValidas = resultados.filter(zona => 
-          zona && 
-          typeof zona === 'object' && 
-          'id' in zona && 
-          'locality' in zona &&
-          !zona.message // Excluir objetos con mensaje de error
-        );
-        
-        console.log('Datos de zonas (filtradas):', zonasValidas);
-        setDataPorZona(zonasValidas);
-        
-      } catch (error) {
-        console.error('Error al cargar datos de zonas:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Datos de ejemplo (estos se reemplazarán con datos reales del backend)
+  const [precipitacionPorZona] = useState([
+    { zona: "Bariloche", precipitacion: 450 },
+    { zona: "El Bolsón", precipitacion: 620 },
+    { zona: "Las Grutas", precipitacion: 380 },
+    { zona: "Viedma", precipitacion: 520 },
+    { zona: "San Antonio Oeste", precipitacion: 490 },
+  ]);
 
-    fetchZonasData();
+  const [reportesPorInstrumento] = useState([
+    { instrumento: "Pluviómetro", cantidad: 245 },
+    { instrumento: "Caudalímetro", cantidad: 180 },
+    { instrumento: "Nivómetro", cantidad: 95 },
+  ]);
+
+  const [topSitios] = useState([
+    { zona: "Bariloche", registros: 342 },
+    { zona: "El Bolsón", registros: 298 },
+    { zona: "Viedma", registros: 276 },
+    { zona: "Las Grutas", registros: 245 },
+    { zona: "San Antonio Oeste", registros: 218 },
+    { zona: "Ñorquinco", registros: 187 },
+    { zona: "Pilcaniyeu", registros: 165 },
+    { zona: "El Maitén", registros: 142 },
+  ]);
+
+  const [distribucionTipo] = useState([
+    { tipo: "Lluvia", cantidad: 320, porcentaje: 61.5 },
+    { tipo: "Nieve", cantidad: 125, porcentaje: 24.0 },
+    { tipo: "Caudal", cantidad: 75, porcentaje: 14.5 },
+  ]);
+
+  const [evolucionMensual] = useState([
+    { mes: "Ene", lluvia: 45, nieve: 85, caudal: 120 },
+    { mes: "Feb", lluvia: 52, nieve: 78, caudal: 115 },
+    { mes: "Mar", lluvia: 68, nieve: 65, caudal: 130 },
+    { mes: "Abr", lluvia: 95, nieve: 42, caudal: 145 },
+    { mes: "May", lluvia: 125, nieve: 15, caudal: 160 },
+    { mes: "Jun", lluvia: 140, nieve: 5, caudal: 135 },
+    { mes: "Jul", lluvia: 155, nieve: 0, caudal: 125 },
+    { mes: "Ago", lluvia: 145, nieve: 0, caudal: 120 },
+    { mes: "Sep", lluvia: 110, nieve: 8, caudal: 140 },
+    { mes: "Oct", lluvia: 85, nieve: 25, caudal: 155 },
+    { mes: "Nov", lluvia: 65, nieve: 55, caudal: 145 },
+    { mes: "Dic", lluvia: 50, nieve: 75, caudal: 130 },
+  ]);
+
+  const [comparativaZonas] = useState([
+    { fecha: "Ene", Bariloche: 120, "El Bolsón": 145, "Las Grutas": 98, Viedma: 132 },
+    { fecha: "Feb", Bariloche: 135, "El Bolsón": 152, "Las Grutas": 105, Viedma: 140 },
+    { fecha: "Mar", Bariloche: 145, "El Bolsón": 168, "Las Grutas": 118, Viedma: 155 },
+    { fecha: "Abr", Bariloche: 155, "El Bolsón": 180, "Las Grutas": 125, Viedma: 165 },
+    { fecha: "May", Bariloche: 165, "El Bolsón": 195, "Las Grutas": 135, Viedma: 175 },
+    { fecha: "Jun", Bariloche: 150, "El Bolsón": 170, "Las Grutas": 120, Viedma: 160 },
+  ]);
+
+  const [precipitacionCoordenadas] = useState([
+    { x: -41.13, y: -71.31, precipitacion: 450, sitio: "Bariloche" },
+    { x: -41.97, y: -71.53, precipitacion: 520, sitio: "El Bolsón" },
+    { x: -40.81, y: -65.09, precipitacion: 380, sitio: "Las Grutas" },
+    { x: -40.81, y: -63.00, precipitacion: 610, sitio: "Viedma" },
+    { x: -40.73, y: -65.03, precipitacion: 490, sitio: "San Antonio Oeste" },
+    { x: -41.91, y: -71.38, precipitacion: 560, sitio: "El Maitén" },
+  ]);
+
+  const [patronMensual] = useState([
+    { mes: "Ene", precipitacion: 85 },
+    { mes: "Feb", precipitacion: 92 },
+    { mes: "Mar", precipitacion: 78 },
+    { mes: "Abr", precipitacion: 65 },
+    { mes: "May", precipitacion: 45 },
+    { mes: "Jun", precipitacion: 35 },
+    { mes: "Jul", precipitacion: 30 },
+    { mes: "Ago", precipitacion: 38 },
+    { mes: "Sep", precipitacion: 52 },
+    { mes: "Oct", precipitacion: 68 },
+    { mes: "Nov", precipitacion: 75 },
+    { mes: "Dic", precipitacion: 88 },
+  ]);
+
+  const [analisisFrecuencia] = useState([
+    { rango: "0-10", frecuencia: 45 },
+    { rango: "10-20", frecuencia: 78 },
+    { rango: "20-30", frecuencia: 125 },
+    { rango: "30-40", frecuencia: 98 },
+    { rango: "40-50", frecuencia: 82 },
+    { rango: "50-60", frecuencia: 65 },
+    { rango: "60-70", frecuencia: 42 },
+    { rango: "70-80", frecuencia: 28 },
+    { rango: "80+", frecuencia: 15 },
+  ]);
+
+  const [comparativaAnual] = useState([
+    { mes: "Ene", "2023": 120, "2024": 135, "2025": 145 },
+    { mes: "Feb", "2023": 115, "2024": 128, "2025": 140 },
+    { mes: "Mar", "2023": 145, "2024": 152, "2025": 168 },
+    { mes: "Abr", "2023": 165, "2024": 158, "2025": 175 },
+    { mes: "May", "2023": 180, "2024": 175, "2025": 185 },
+    { mes: "Jun", "2023": 155, "2024": 148, "2025": 165 },
+  ]);
+
+  useEffect(() => {
+    // Simular carga de datos
+    setTimeout(() => setLoading(false), 1000);
   }, []);
 
-  // ===== DATOS DE EJEMPLO PARA OTROS GRÁFICOS =====
-
-  const dataReportes = [
-    { instrumento: 'Pluviómetro A1', cantidad: 245 },
-    { instrumento: 'Pluviómetro B2', cantidad: 189 },
-    { instrumento: 'Caudalímetro C1', cantidad: 156 },
-    { instrumento: 'Nivómetro D1', cantidad: 98 }
-  ];
-
-  const dataEvolucion = [
-    { fecha: '2025-01-01', zona1: 45, zona2: 32, zona3: 51 },
-    { fecha: '2025-01-08', zona1: 52, zona2: 38, zona3: 48 },
-    { fecha: '2025-01-15', zona1: 38, zona2: 45, zona3: 55 },
-    { fecha: '2025-01-22', zona1: 62, zona2: 51, zona3: 43 },
-    { fecha: '2025-01-29', zona1: 48, zona2: 39, zona3: 58 }
-  ];
-
-  const zonasConfig = [
-    { id: 'zona1', nombre: 'Zona Norte', color: '#3B82F6' },
-    { id: 'zona2', nombre: 'Zona Sur', color: '#10B981' },
-    { id: 'zona3', nombre: 'Zona Este', color: '#F59E0B' }
-  ];
-
-  const dataTipo = [
-    { tipo: 'Lluvia', cantidad: 1250 },
-    { tipo: 'Nieve', cantidad: 450 },
-    { tipo: 'Caudal', cantidad: 780 }
-  ];
-
-  const dataLatitud = [
-    { sitio: 'Sitio A', latitud: -33.45, longitud: -70.65, precipitacion: 450 },
-    { sitio: 'Sitio B', latitud: -33.52, longitud: -70.58, precipitacion: 520 },
-    { sitio: 'Sitio C', latitud: -33.38, longitud: -70.72, precipitacion: 380 },
-    { sitio: 'Sitio D', latitud: -33.61, longitud: -70.45, precipitacion: 610 }
-  ];
-
-  const dataMensual = [
-    { mes: 'Enero', promedio: 45, actual: 52 },
-    { mes: 'Febrero', promedio: 38, actual: 42 },
-    { mes: 'Marzo', promedio: 62, actual: 58 },
-    { mes: 'Abril', promedio: 78, actual: 85 },
-    { mes: 'Mayo', promedio: 125, actual: 118 },
-    { mes: 'Junio', promedio: 156, actual: 162 },
-    { mes: 'Julio', promedio: 148, actual: 155 },
-    { mes: 'Agosto', promedio: 132, actual: 128 },
-    { mes: 'Septiembre', promedio: 95, actual: 102 },
-    { mes: 'Octubre', promedio: 58, actual: 61 },
-    { mes: 'Noviembre', promedio: 42, actual: 38 },
-    { mes: 'Diciembre', promedio: 35, actual: 41 }
-  ];
-
-  const dataLluviaNieve = [
-    { sitio: 'Cordillera A', lluvia: 120, nieve: 85 },
-    { sitio: 'Valle B', lluvia: 245, nieve: 15 },
-    { sitio: 'Precordillera C', lluvia: 185, nieve: 52 },
-    { sitio: 'Costa D', lluvia: 320, nieve: 0 }
-  ];
-
-  const dataMultimetrica = [
-    { fecha: '2025-10-01', precipitacion: 45, promedio: 42, reportes: 12 },
-    { fecha: '2025-10-02', precipitacion: 52, promedio: 43, reportes: 15 },
-    { fecha: '2025-10-03', precipitacion: 38, promedio: 44, reportes: 11 },
-    { fecha: '2025-10-04', precipitacion: 65, promedio: 46, reportes: 18 },
-    { fecha: '2025-10-05', precipitacion: 48, promedio: 47, reportes: 14 }
-  ];
-
-  const dataTopSitios = [
-    { sitio: 'Sitio A', precipitacion: 1250 },
-    { sitio: 'Sitio B', precipitacion: 980 },
-    { sitio: 'Sitio C', precipitacion: 1450 },
-    { sitio: 'Sitio D', precipitacion: 760 },
-    { sitio: 'Sitio E', precipitacion: 1180 },
-    { sitio: 'Sitio F', precipitacion: 890 },
-    { sitio: 'Sitio G', precipitacion: 1520 },
-    { sitio: 'Sitio H', precipitacion: 650 },
-    { sitio: 'Sitio I', precipitacion: 1320 },
-    { sitio: 'Sitio J', precipitacion: 920 }
-  ];
-
   return (
-    <div className="p-6 space-y-8 bg-gray-50">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Dashboard de Estadísticas de Precipitación
-        </h1>
-        <p className="text-gray-600">
-          Visualización interactiva de datos meteorológicos
-        </p>
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 p-6">
+      {/* Back Button */}
+      <div className="absolute top-6 left-6 z-50">
+        <BackButton />
       </div>
 
-      {/* Mostrar loading mientras se cargan los datos */}
-      {loading ? (
-        <div className="flex items-center justify-center h-96">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Cargando datos...</p>
+      {/* Header */}
+      <div className="max-w-7xl mx-auto mb-8 mt-16">
+        <div className="backdrop-blur-2xl bg-white/50 border border-white/60 rounded-3xl shadow-2xl p-8">
+          <div className="flex items-center gap-4">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 backdrop-blur-xl border border-white/40">
+              <BarChart3 className="w-10 h-10 text-blue-700" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+                Estadísticas y Análisis
+              </h1>
+              <p className="text-slate-600 mt-1">
+                Visualización completa de datos de precipitación
+              </p>
+            </div>
           </div>
         </div>
-      ) : (
-        <>
-          {/* Grid 2 columnas */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Gráfico de Barras - Precipitación por Zona CON DATOS REALES */}
-            <PrecipitacionPorZona data={dataPorZona} />
-
-            {/* Gráfico de Barras - Reportes por Instrumento */}
-            <ReportesPorInstrumento data={dataReportes} />
-          </div>
-
-      {/* Gráfico de Líneas - Ancho completo */}
-      <div className="w-full">
-        <EvolucionTemporalPorZona data={dataEvolucion} zonas={zonasConfig} />
       </div>
 
-      {/* Grid 2 columnas */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Gráfico de Torta */}
-        <DistribucionPorTipo data={dataTipo} />
+      {/* Grid de gráficos */}
+      <div className="max-w-7xl mx-auto space-y-6">
+        
+        {/* Fila 1: Gráficos de barras */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ChartCard
+            title="Precipitación Total por Zona"
+            subtitle="Acumulado por región"
+            description="Muestra el total acumulado de precipitación (en mm) para cada localidad de la línea sur. Permite identificar rápidamente las zonas con mayor y menor precipitación."
+            icon={<MapPin className="w-6 h-6 text-blue-700" />}
+            isLoading={loading}
+          >
+            <PrecipitacionPorZona data={precipitacionPorZona} />
+          </ChartCard>
 
-        {/* Gráfico Radial */}
-        <PrecipitacionMensualRadar data={dataMensual} />
+          <ChartCard
+            title="Reportes por Instrumento"
+            subtitle="Cantidad de mediciones registradas"
+            description="Cantidad de mediciones realizadas por cada tipo de instrumento meteorológico. Útil para identificar qué instrumentos tienen más actividad o necesitan mantenimiento."
+            icon={<Activity className="w-6 h-6 text-violet-700" />}
+            isLoading={loading}
+          >
+            <ReportesPorInstrumento data={reportesPorInstrumento} />
+          </ChartCard>
+        </div>
+
+        {/* Fila 2: Top sitios y distribución tipo */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ChartCard
+            title="Top Zonas por Registro"
+            subtitle="Localidades con más mediciones"
+            description="Ranking de las zonas con mayor cantidad de registros meteorológicos. Muestra qué localidades tienen instrumentos más activos o datos más frecuentes."
+            icon={<TrendingUp className="w-6 h-6 text-emerald-700" />}
+            isLoading={loading}
+          >
+            <TopZonasPorRegistro data={topSitios} />
+          </ChartCard>
+
+          <ChartCard
+            title="Distribución por Tipo de Precipitación"
+            subtitle="Porcentaje de cada tipo"
+            description="Proporción entre diferentes tipos de precipitación: lluvia, nieve y caudal. Ayuda a entender el balance hídrico de la región."
+            icon={<PieChartIcon className="w-6 h-6 text-amber-700" />}
+            isLoading={loading}
+          >
+            <DistribucionPorTipo data={distribucionTipo} />
+          </ChartCard>
+        </div>
+
+        {/* Fila 3: Evolución mensual (Composed Chart) */}
+        <ChartCard
+          title="Evolución Mensual por Tipo"
+          subtitle="Comparativa de lluvia, nieve y caudal"
+          description="Visualiza cómo varía cada tipo de precipitación a lo largo de los meses del año. Las barras muestran lluvia, la línea representa nieve, y el área sombreada indica el caudal medido."
+          icon={<Calendar className="w-6 h-6 text-cyan-700" />}
+          isLoading={loading}
+        >
+          <EvolucionMensual data={evolucionMensual} />
+        </ChartCard>
+
+        {/* Fila 4: Comparativa de zonas (Line Chart) */}
+        <ChartCard
+          title="Comparativa de Localidades en el Tiempo"
+          subtitle="Tendencias por localidad"
+          description="Compara la evolución de precipitación entre diferentes localidades de la línea sur a lo largo del tiempo. Permite identificar patrones y tendencias regionales."
+          icon={<TrendingUp className="w-6 h-6 text-indigo-700" />}
+          isLoading={loading}
+        >
+          <ComparativaZonas data={comparativaZonas} />
+        </ChartCard>
+
+        {/* Fila 5: Scatter y Radar */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ChartCard
+            title="Precipitación vs Coordenadas"
+            subtitle="Distribución geográfica"
+            description="Relaciona la precipitación con la ubicación geográfica (latitud y longitud) de cada sitio. Útil para identificar patrones espaciales y áreas críticas."
+            icon={<MapPin className="w-6 h-6 text-pink-700" />}
+            isLoading={loading}
+          >
+            <PrecipitacionCoordenadas data={precipitacionCoordenadas} />
+          </ChartCard>
+
+          <ChartCard
+            title="Patrón Mensual (Radar)"
+            subtitle="Distribución circular anual"
+            description="Visualización circular del patrón de precipitación a lo largo de los 12 meses. Facilita la identificación de estacionalidad y meses críticos."
+            icon={<Activity className="w-6 h-6 text-red-700" />}
+            isLoading={loading}
+          >
+            <PatronMensual data={patronMensual} />
+          </ChartCard>
+        </div>
+
+        {/* Fila 6: Análisis de frecuencia */}
+        <ChartCard
+          title="Análisis de Frecuencia"
+          subtitle="Distribución de valores de precipitación"
+          description="Histograma que muestra cuántas veces se registraron valores de precipitación en diferentes rangos (0-10mm, 10-20mm, etc.). Permite entender la distribución estadística de los datos."
+          icon={<BarChart3 className="w-6 h-6 text-blue-700" />}
+          isLoading={loading}
+        >
+          <AnalisisFrecuencia data={analisisFrecuencia} />
+        </ChartCard>
+
+        {/* Fila 7: Comparativa anual (Area Chart) */}
+        <ChartCard
+          title="Comparativa Año a Año"
+          subtitle="Evolución de precipitación entre años"
+          description="Compara la precipitación del mismo período en diferentes años. Las áreas apiladas permiten ver tendencias anuales y detectar cambios en los patrones climáticos."
+          icon={<Waves className="w-6 h-6 text-teal-700" />}
+          isLoading={loading}
+        >
+          <ComparativaAnual data={comparativaAnual} />
+        </ChartCard>
+
       </div>
 
-      {/* Grid 2 columnas */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Gráfico de Dispersión */}
-        <PrecipitacionVsLatitud data={dataLatitud} />
-
-        {/* Gráfico de Barras Agrupadas */}
-        <LluviaVsNieveBarrasAgrupadas data={dataLluviaNieve} />
+      {/* Footer con información */}
+      <div className="max-w-7xl mx-auto mt-8 mb-6">
+        <div className="backdrop-blur-2xl bg-white/50 border border-white/60 rounded-2xl p-6 text-center">
+          <p className="text-slate-600 text-sm">
+            📊 Datos actualizados • Última actualización: {new Date().toLocaleDateString('es-ES')}
+          </p>
+        </div>
       </div>
-
-      {/* Gráfico de Áreas - Ancho completo */}
-      <div className="w-full">
-        <ComparativaZonasAreas 
-          data={dataEvolucion} 
-          zonas={zonasConfig} 
-        />
-      </div>
-
-      {/* Grid 2 columnas */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Gráfico Compuesto */}
-        <PrecipitacionConPromedio data={dataMultimetrica} />
-
-        {/* Top 10 Sitios */}
-        <TopSitiosPrecipitacion 
-          data={dataTopSitios} 
-          top={10} 
-          orden="mayor" 
-        />
-      </div>
-        </>
-      )}
     </div>
   );
 };
