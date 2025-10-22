@@ -51,9 +51,8 @@ export const saveUser = async (user) => {
     name: user.name,
     rol: user.rol,
     password: user.password,
-    latitude: user.site?.latitude,
-    longitude: user.site?.longitude,
-    locality: user.zona?.locality,
+    site_id: user.site_id,    // Enviar el ID del sitio
+    zona_id: user.zona_id,    // Enviar el ID de la zona
   };
 
   try {
