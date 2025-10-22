@@ -15,6 +15,7 @@ import HistogramaNieve from "./components/histograma/HistogramaNieve";
 import HistogramaCaudalimetro from "./components/histograma/HistogramaCaudalimetro";
 import HeatMapView from "./components/MapHeatView";
 import FormAddSite from "./components/Dashboard/site/FormAddSite";
+import ShowCharts from "./components/Dashboard/Charts/ShowCharts";
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/dashboard/administration/user/add" element={<FormAddUser/>} />
           <Route path="/dashboard/Zona/FormAddZona.tsx" element={<FormAddZona />} />
           <Route path="/dashboard/site/add" element={<FormAddSite />} />
+          <Route path="/estadisticas" element={<ShowCharts />} />
           <Route path="/histograma" element={<ShowHistograma />} />
           <Route path="/histograma/lluvia" element={<HistogramaLluvia />} />
           <Route path="/histograma/nieve" element={<HistogramaNieve />} />
