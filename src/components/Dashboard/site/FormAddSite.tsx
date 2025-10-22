@@ -194,7 +194,6 @@ const FormAddSite = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Datos a enviar:", formData);
     
     try {
       await postNewSite(formData);

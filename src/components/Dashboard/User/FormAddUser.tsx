@@ -79,7 +79,7 @@ const FormAddUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Datos a enviar:", formData);
+  
     
     try {
       const payload = {

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { updateReporte } from "../../../services/reportService";
+import { getAllSitios } from "../../../services/sitiosService";
+import { getAllZonas } from "../../../services/zonaService";
 import { useUserContext } from "../../../context/UserContext";
 import useNavegation from "../../../hooks/useNavegation";
 import {
@@ -14,7 +16,8 @@ import {
   Loader2,
   Edit3,
   Snowflake,
-  Droplet
+  Droplet,
+  Locate
 } from "lucide-react";
 import BackButton from "../../BackButton";
 
@@ -25,14 +28,54 @@ const FormEditReport = () => {
   const [formData, setFormData] = useState({
     note: report.note || "",
     amount: report.report_regular?.amount || "",
-    latitude: report.site?.latitude || "",
-    longitude: report.site?.longitude || "",
-    locality: report.site.zona?.locality || "",
+    site_id: report.site?.id || "",
+    zona_id: report.site?.zona_id || "",
   });
+
+  const [sitios, setSitios] = useState([]);
+  const [zonas, setZonas] = useState([]);
+  const [sitioSeleccionado, setSitioSeleccionado] = useState(null);
+  const [zonaSeleccionada, setZonaSeleccionada] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  // Cargar sitios y zonas al montar el componente
+  useEffect(() => {
+    fetchSitios();
+    fetchZonas();
+  }, []);
+
+  // Establecer el sitio y zona iniciales
+  useEffect(() => {
+    if (sitios.length > 0 && report.site?.id) {
+      const sitioActual = sitios.find(s => s.id === report.site.id);
+      if (sitioActual) {
+        setSitioSeleccionado({ ...sitioActual });
+        setZonaSeleccionada(sitioActual.zona ? { ...sitioActual.zona } : null);
+      }
+    }
+  }, [sitios, report.site?.id]);
+
+  const fetchSitios = async () => {
+    try {
+      const data = await getAllSitios();
+      setSitios(data);
+    } catch (error) {
+      console.error("Error al cargar sitios:", error);
+      setError("Error al cargar los sitios disponibles");
+    }
+  };
+
+  const fetchZonas = async () => {
+    try {
+      const data = await getAllZonas();
+      setZonas(data);
+    } catch (error) {
+      console.error("Error al cargar zonas:", error);
+    }
+  };
 
   useEffect(() => {
     if (success) {
@@ -41,12 +84,26 @@ const FormEditReport = () => {
     }
   }, [success]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+
+    if (name === "site_id") {
+      const sitio = sitios.find(s => s.id === parseInt(value));
+      if (sitio) {
+        setFormData(prev => ({
+          ...prev,
+          site_id: value,
+          zona_id: sitio.zona_id
+        }));
+        setSitioSeleccionado({ ...sitio });
+        setZonaSeleccionada(sitio.zona ? { ...sitio.zona } : null);
+      }
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
     setError("");
   };
 
@@ -58,16 +115,11 @@ const FormEditReport = () => {
     try {
       const payload = {
         note: formData.note,
-        report_regular: {
-          amount: formData.amount,
-        },
-        site: {
-          latitude: formData.latitude,
-          longitude: formData.longitude,
-        },
-        zona: {
-          locality: formData.locality,
-        },
+        site_id: parseInt(formData.site_id),
+        zona_id: parseInt(formData.zona_id),
+        report_regular: report.report_regular ? {
+          amount: parseFloat(formData.amount),
+        } : undefined,
       };
 
       await updateReporte(report.id, payload);
@@ -76,6 +128,7 @@ const FormEditReport = () => {
         goReports();
       }, 1500);
     } catch (error) {
+      console.error("Error al actualizar reporte:", error);
       setError("Hubo un problema al actualizar el reporte. Por favor, intenta nuevamente.");
     } finally {
       setLoading(false);
@@ -87,7 +140,7 @@ const FormEditReport = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
   
-      <div className=" backdrop-blur-sm  ">
+      <div className="backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <BackButton />
           <div className="flex items-center gap-3">
@@ -172,80 +225,100 @@ const FormEditReport = () => {
               />
             </div>
 
-          
-            <div>
-              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-                <Droplets size={18} className="text-slate-500" />
-                Cantidad de precipitación
-              </label>
-              <div className="relative">
-                <input
-                  type="number"
-                  step="0.1"
-                  name="amount"
-                  value={formData.amount}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition"
-                  placeholder="Ej: 12.5"
-                />
-                {report.report_regular && (
+            {/* Cantidad de precipitación (solo si es reporte regular) */}
+            {report.report_regular && (
+              <div>
+                <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
+                  <Droplets size={18} className="text-slate-500" />
+                  Cantidad de precipitación
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    step="0.1"
+                    name="amount"
+                    value={formData.amount}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition"
+                    placeholder="Ej: 12.5"
+                  />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-500">
                     {report.report_regular.united_measure.abbreviation}
                   </span>
-                )}
+                </div>
               </div>
-            </div>
+            )}
 
-       
+            {/* Sitio (Select dinámico) */}
             <div>
-              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-3">
-                <MapPin size={18} className="text-slate-500" />
-                Coordenadas
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
+                <Locate size={18} className="text-slate-500" />
+                Sitio
               </label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-medium text-slate-600 mb-1.5 block">
-                    Latitud
-                  </label>
-                  <input
-                    type="text"
-                    name="latitude"
-                    value={formData.latitude}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition font-mono text-sm"
-                    placeholder="-34.6037"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-slate-600 mb-1.5 block">
-                    Longitud
-                  </label>
-                  <input
-                    type="text"
-                    name="longitude"
-                    value={formData.longitude}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition font-mono text-sm"
-                    placeholder="-58.3816"
-                  />
-                </div>
-              </div>
+              <select
+                name="site_id"
+                value={formData.site_id}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition"
+              >
+                <option value="">Seleccione un sitio</option>
+                {sitios.map(sitio => (
+                  <option key={sitio.id} value={sitio.id}>
+                    {sitio.zona?.locality} - Lat: {sitio.latitude}, Lon: {sitio.longitude}
+                    {sitio.precipitation && ` (${sitio.precipitation.type})`}
+                  </option>
+                ))}
+              </select>
+              <span className="text-xs text-slate-500 mt-1.5 block">
+                Al cambiar el sitio, la zona se actualizará automáticamente
+              </span>
             </div>
 
-       
+            {/* Zona (solo lectura) */}
             <div>
               <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
                 <MapPin size={18} className="text-slate-500" />
-                Zona / Localidad
+                Zona (automática)
               </label>
               <input
                 type="text"
-                name="locality"
-                value={formData.locality}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition"
-                placeholder="Ej: Palermo, Buenos Aires"
+                value={zonaSeleccionada?.locality || ""}
+                disabled
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-100 text-slate-500 cursor-not-allowed"
+                placeholder="Seleccione un sitio primero"
               />
+              <span className="text-xs text-slate-500 mt-1.5 block">
+                La zona se asigna automáticamente según el sitio seleccionado
+              </span>
+            </div>
+
+            {/* Coordenadas (solo lectura - informativas) */}
+            <div>
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-3">
+                <MapPin size={18} className="text-slate-500" />
+                Coordenadas del Sitio
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <label className="text-xs font-medium text-slate-600 mb-1 block">
+                    Latitud
+                  </label>
+                  <span className="text-slate-700 font-mono text-sm font-semibold">
+                    {sitioSeleccionado?.latitude || 'N/A'}
+                  </span>
+                </div>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <label className="text-xs font-medium text-slate-600 mb-1 block">
+                    Longitud
+                  </label>
+                  <span className="text-slate-700 font-mono text-sm font-semibold">
+                    {sitioSeleccionado?.longitude || 'N/A'}
+                  </span>
+                </div>
+              </div>
+              <span className="text-xs text-slate-500 mt-1.5 block">
+                Las coordenadas son del sitio seleccionado y no se pueden editar directamente
+              </span>
             </div>
 
        
@@ -260,29 +333,28 @@ const FormEditReport = () => {
                     <span>Nota modificada</span>
                   </div>
                 )}
-                {formData.amount !== report.report_regular?.amount && (
+                {report.report_regular && formData.amount !== report.report_regular?.amount && (
                   <div className="flex items-start gap-2 text-slate-600">
                     <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
                     <span>Cantidad actualizada</span>
                   </div>
                 )}
-                {(formData.latitude !== report.site?.latitude || formData.longitude !== report.site?.longitude) && (
+                {formData.site_id !== report.site?.id && (
                   <div className="flex items-start gap-2 text-slate-600">
                     <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                    <span>Coordenadas modificadas</span>
+                    <span>Sitio modificado</span>
                   </div>
                 )}
-                {formData.locality !== report.site.zona?.locality && (
+                {formData.zona_id !== report.site?.zona_id && (
                   <div className="flex items-start gap-2 text-slate-600">
                     <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                    <span>Localidad actualizada</span>
+                    <span>Zona actualizada</span>
                   </div>
                 )}
                 {formData.note === report.note && 
                  formData.amount === report.report_regular?.amount && 
-                 formData.latitude === report.site?.latitude && 
-                 formData.longitude === report.site?.longitude && 
-                 formData.locality === report.site.zona?.locality && (
+                 formData.site_id === report.site?.id && 
+                 formData.zona_id === report.site?.zona_id && (
                   <div className="text-slate-500 italic">Sin cambios realizados</div>
                 )}
               </div>
