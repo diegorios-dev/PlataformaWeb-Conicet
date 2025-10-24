@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import useReports from "../../../hooks/useReports";
 import useNavegation from "../../../hooks/useNavegation";
-import { ArrowLeft, Pencil, Search, Filter, Droplet, Snowflake, FileText, AlertTriangle, MapPin } from "lucide-react";
+import { Pencil, Search, Filter, Droplet, Snowflake, FileText, AlertTriangle, MapPin } from "lucide-react";
+
 import BackButton from "../../BackButton";
 const ShowReport = () => {
   const [search, setSearch] = useState("");
@@ -247,7 +248,7 @@ const ShowReport = () => {
                     <div className="w-28 h-28 flex-shrink-0">
                       {reporte.image ? (
                         <img
-                          src={"../../../../" + reporte.image}
+                          src={reporte.image}
                           alt="Reporte"
                           className="w-full h-full object-cover rounded-xl border-2 border-slate-200 shadow-sm"
                         />

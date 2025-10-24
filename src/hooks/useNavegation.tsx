@@ -24,6 +24,8 @@ const useNavegation = () => {
 
    const goAddSite = () => navigate("/dashboard/site/add");
 
+   const goPopulateExcel = () => navigate("/dashboard/populate/excel");
+
   const goEditReport = (report: any) => {
     handleSelectReport(report)
     navigate("/dashboard/administration/report/edit")
@@ -37,7 +39,7 @@ const useNavegation = () => {
 
     return (
         {
-            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona , goAHistograma, goHeatMap, goAddSite
+            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona , goAHistograma, goHeatMap, goAddSite , goPopulateExcel
         }
     )
 }
