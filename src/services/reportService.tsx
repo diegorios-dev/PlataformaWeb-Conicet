@@ -8,8 +8,15 @@ export const getReportes = async () => {
 };
 
 export const updateReporte = async (id: number, data: any) => {
-  const response = await axios.put(`${API_URL}/reportes/${id}`, data);
-  return response.data;
+  try {   
+    const response = await axios.put(`${API_URL}/reportes/${id}`, data);
+    
+    return response.data;
+  } catch (error) {
+    console.error("Error en updateReporte:", error);
+    console.error("Respuesta del error:", error.response?.data);
+    throw error;
+  }
 };
 
 export async function getHistograma(
@@ -31,14 +38,11 @@ export async function getHistograma(
     url += `&month=${month}`;
   }
 
-  console.log(url);
-
   const res = await fetch(url);
   if (!res.ok) throw new Error("Error al traer datos de lluvia");
 
   const json = await res.json();
 
-  // Adaptar la data al formato que usa el gráfico
   return json.map((item: any) => {
     if (groupBy === "dia") {
       return { label: item.date, value: parseFloat(item.amount) };
@@ -57,7 +61,6 @@ export async function getHistogramaNieve(
   month: number | null = null
 ) {
   let url = `http://localhost:8000/api/histograma?type=${groupBy}&precipitation=nieve`;
-  console.log(url);
 
   if (year) url += `&year=${year}`;
   if (month) url += `&month=${month}`;
@@ -67,7 +70,6 @@ export async function getHistogramaNieve(
 
   const json = await res.json();
 
-  // Adaptar la data al formato que usa el gráfico
   return json.map((item: any) => {
     if (groupBy === "dia") {
       return { label: item.date, value: parseFloat(item.amount) };
@@ -86,7 +88,6 @@ export async function getHistogramaCaudalimetro(
   month: number | null = null
 ) {
   let url = `http://localhost:8000/api/histograma?type=${groupBy}&precipitation=caudalimetro`;
-  console.log(url);
 
   if (year) url += `&year=${year}`;
   if (month) url += `&month=${month}`;
@@ -96,7 +97,6 @@ export async function getHistogramaCaudalimetro(
 
   const json = await res.json();
 
-  // Adaptar la data al formato que usa el gráfico
   return json.map((item: any) => {
     if (groupBy === "dia") {
       return { label: item.date, value: parseFloat(item.amount) };

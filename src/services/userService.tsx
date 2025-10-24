@@ -13,10 +13,7 @@ export const postNewUser = async (newUser) => {
       zona_id: newUser.zona_id
     };
 
-    console.log("Payload a enviar:", payload);
-
     const { data } = await axios.post(`${API_URL}/user/register`, payload);
-    console.log("Usuario creado:", data);
     return data;
   } catch (error) {
     console.error("Error completo:", error);
@@ -36,13 +33,11 @@ export const login = async (password) => {
 
 export const getAllUsers = async () => {
   const { data } = await axios.get(`${API_URL}/usuarios`);
-  console.log(data);
   return data;
 };
 
 export const getUsersByWord = async (word = "") => {
   const { data } = await axios.get(`${API_URL}/usuario?word=${encodeURIComponent(word)}`);
-  console.log(data);
   return data;
 };
 
@@ -51,14 +46,12 @@ export const saveUser = async (user) => {
     name: user.name,
     rol: user.rol,
     password: user.password,
-    latitude: user.site?.latitude,
-    longitude: user.site?.longitude,
-    locality: user.zona?.locality,
+    site_id: user.site_id,    // Enviar el ID del sitio
+    zona_id: user.zona_id,    // Enviar el ID de la zona
   };
 
   try {
     const { data } = await axios.put(`${API_URL}/usuario/${user.id}`, payload);
-    console.log("Usuario actualizado:", data);
     return data;
   } catch (error) {
     console.error("Error al actualizar usuario:", error);
@@ -69,7 +62,6 @@ export const saveUser = async (user) => {
 export const deleteUser = async (userId) => {
   try {
     const { data } = await axios.delete(`${API_URL}/usuario/${userId}`);
-    console.log("Usuario eliminado:", data);
     return data;
   } catch (error) {
     console.error("Error al eliminar usuario:", error);

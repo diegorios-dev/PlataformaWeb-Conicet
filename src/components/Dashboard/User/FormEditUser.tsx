@@ -70,7 +70,14 @@ const FormEditUser = ({
 
   const handleSave = async () => {
     try {
-      await saveUser(selectedUser);
+      // Asegurarnos de que tenemos los IDs correctos
+      const userToSave = {
+        ...selectedUser,
+        site_id: selectedUser.site_id,
+        zona_id: selectedUser.zona_id
+      };
+      
+      await saveUser(userToSave);
       setShowEditModal(false);
       if (onSave) {
         onSave(); // Recargar la lista de usuarios

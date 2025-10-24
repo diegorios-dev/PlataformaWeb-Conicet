@@ -66,7 +66,8 @@ const FormAddUser = () => {
           site_id: value,
           zona_id: sitioSeleccionado.zona_id
         }));
-        setZonaSeleccionada(sitioSeleccionado.zona);
+        // CAMBIO IMPORTANTE: Crear una copia del objeto zona para evitar mutaciones
+        setZonaSeleccionada(sitioSeleccionado.zona ? { ...sitioSeleccionado.zona } : null);
       }
     } else {
       setFormData(prev => ({
@@ -78,10 +79,18 @@ const FormAddUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Datos a enviar:", formData);
+  
     
     try {
-      await postNewUser(formData);
+      const payload = {
+        name: formData.name,
+        password: formData.password,
+        rol: formData.rol,
+        site_id: parseInt(formData.site_id),
+        zona_id: parseInt(formData.zona_id)
+      };
+      
+      await postNewUser(payload);
       alert("Usuario creado exitosamente");
       goBack();
     } catch (error) {
@@ -100,10 +109,7 @@ const FormAddUser = () => {
           <User className="w-7 h-7 text-blue-500" />
           Agregar Usuario
         </h1>
-        <form
-          className="bg-white shadow-xl rounded-3xl px-10 pt-8 pb-10 border border-gray-100"
-          onSubmit={handleSubmit}
-        >
+        <div className="bg-white shadow-xl rounded-3xl px-10 pt-8 pb-10 border border-gray-100">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Columna 1 */}
             <div>
@@ -217,7 +223,7 @@ const FormAddUser = () => {
               </div>
 
               {/* Tipo de precipitación (solo lectura) */}
-              {zonaSeleccionada && (
+              {zonaSeleccionada && formData.site_id && (
                 <div className="mb-6">
                   <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2">
                     {sitios.find(s => s.id === parseInt(formData.site_id))?.precipitation?.type === "Nieve" ? (
@@ -239,14 +245,15 @@ const FormAddUser = () => {
           </div>
           <div className="flex items-center justify-center mt-8">
             <button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               className="bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-3 px-8 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-200 transition flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
               Agregar Usuario
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

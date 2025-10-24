@@ -1,21 +1,40 @@
 import { useEffect, useState } from "react";
 import useReports from "../../../hooks/useReports";
 import useNavegation from "../../../hooks/useNavegation";
-import { Pencil, Search, Filter, Droplet, Snowflake, FileText, AlertTriangle, MapPin } from "lucide-react";
-
+import { getAllZonas } from "../../../services/zonaService";
+import { ArrowLeft, Pencil, Search, Filter, Droplet, Snowflake, FileText, AlertTriangle, MapPin, Volume2, Play, Pause } from "lucide-react";
 import BackButton from "../../BackButton";
+
 const ShowReport = () => {
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState<any[]>([]);
   const [filterType, setFilterType] = useState<"all" | "regular" | "rotura">("all");
   const [filterPrecipitation, setFilterPrecipitation] = useState<"all" | "lluvia" | "nieve">("all");
+  const [filterZona, setFilterZona] = useState<string>("all");
+  const [zonas, setZonas] = useState<any[]>([]);
+  const [playingAudio, setPlayingAudio] = useState<number | null>(null);
 
-  const { goEditReport} = useNavegation();
+  const { goEditReport } = useNavegation();
   const reports = useReports();
+
+  // Cargar zonas al montar el componente
+  useEffect(() => {
+    fetchZonas();
+  }, []);
+
+  const fetchZonas = async () => {
+    try {
+      const data = await getAllZonas();
+      setZonas(data);
+    } catch (error) {
+      console.error("Error al cargar zonas:", error);
+    }
+  };
 
   useEffect(() => {
     let result = reports;
 
+    // Filtro por tipo de reporte
     if (filterType !== "all") {
       result = result.filter((r) => {
         if (filterType === "regular") return r.report_regular !== null;
@@ -24,6 +43,7 @@ const ShowReport = () => {
       });
     }
 
+    // Filtro por tipo de precipitación
     if (filterPrecipitation !== "all") {
       result = result.filter((r) => {
         if (filterPrecipitation === "lluvia") return r.site?.precipitation_id === 1;
@@ -32,25 +52,39 @@ const ShowReport = () => {
       });
     }
 
+    // Filtro por zona
+    if (filterZona !== "all") {
+      result = result.filter((r) => r.site?.zona_id === parseInt(filterZona));
+    }
+
+    // Búsqueda por texto
     if (search.trim() !== "") {
       result = result.filter(
         (r) =>
           r.id.toString().includes(search) ||
-          r.note?.toLowerCase().includes(search.toLowerCase())
+          r.note?.toLowerCase().includes(search.toLowerCase()) ||
+          r.site?.zona?.locality?.toLowerCase().includes(search.toLowerCase())
       );
     }
 
     setFiltered(result);
-  }, [search, reports, filterType, filterPrecipitation]);
+  }, [search, reports, filterType, filterPrecipitation, filterZona]);
+
+  const handleAudioPlay = (reportId: number) => {
+    setPlayingAudio(reportId);
+  };
+
+  const handleAudioPause = () => {
+    setPlayingAudio(null);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4 md:p-6 lg:p-8">
       <div className="w-full max-w-7xl mx-auto">
         <BackButton />
+        
         {/* Header */}
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-         
-          
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
               <Filter className="w-5 h-5 text-white" />
@@ -69,98 +103,118 @@ const ShowReport = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
             <input
               type="text"
-              placeholder="Buscar por ID o nota..."
+              placeholder="Buscar por ID, nota o zona..."
               className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-slate-700 placeholder:text-slate-400"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
-          {/* Filtros en grid responsive */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Filtros en grid responsive */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             
             {/* Filtro: Tipo de Reporte */}
-            <div>
+            <div className="pb-4 border-b border-slate-200 md:pb-0 md:border-b-0 md:border-r md:pr-6 md:mr-6 md:border-slate-200">
               <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">
-                <FileText className="w-4 h-4" />
-                Tipo de Reporte
+              <FileText className="w-4 h-4" />
+              Tipo de Reporte
               </label>
               <div className="flex gap-2">
-                <button
-                  onClick={() => setFilterType("all")}
-                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all ${
-                    filterType === "all"
-                      ? "bg-slate-700 text-white shadow-md"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  Todos
-                </button>
-                <button
-                  onClick={() => setFilterType("regular")}
-                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
-                    filterType === "regular"
-                      ? "bg-green-600 text-white shadow-md"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  <FileText className="w-4 h-4" />
-                  Regular
-                </button>
-                <button
-                  onClick={() => setFilterType("rotura")}
-                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
-                    filterType === "rotura"
-                      ? "bg-red-600 text-white shadow-md"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  <AlertTriangle className="w-4 h-4" />
-                  Rotura
-                </button>
+              <button
+                onClick={() => setFilterType("all")}
+                className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all ${
+                filterType === "all"
+                  ? "bg-slate-700 text-white shadow-md"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                Todos
+              </button>
+              <button
+                onClick={() => setFilterType("regular")}
+                className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+                filterType === "regular"
+                  ? "bg-green-600 text-white shadow-md"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                <FileText className="w-4 h-4" />
+                Regular
+              </button>
+              <button
+                onClick={() => setFilterType("rotura")}
+                className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+                filterType === "rotura"
+                  ? "bg-red-600 text-white shadow-md"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                <AlertTriangle className="w-4 h-4" />
+                Rotura
+              </button>
               </div>
             </div>
 
             {/* Filtro: Precipitación */}
             <div>
               <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">
-                <Droplet className="w-4 h-4" />
-                Precipitación
+              <Droplet className="w-4 h-4" />
+              Precipitación
               </label>
               <div className="flex gap-2">
-                <button
-                  onClick={() => setFilterPrecipitation("all")}
-                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all ${
-                    filterPrecipitation === "all"
-                      ? "bg-slate-700 text-white shadow-md"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  Todos
-                </button>
-                <button
-                  onClick={() => setFilterPrecipitation("lluvia")}
-                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
-                    filterPrecipitation === "lluvia"
-                      ? "bg-blue-600 text-white shadow-md"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  <Droplet className="w-4 h-4" />
-                  Lluvia
-                </button>
-                <button
-                  onClick={() => setFilterPrecipitation("nieve")}
-                  className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
-                    filterPrecipitation === "nieve"
-                      ? "bg-cyan-600 text-white shadow-md"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  <Snowflake className="w-4 h-4" />
-                  Nieve
-                </button>
+              <button
+                onClick={() => setFilterPrecipitation("all")}
+                className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all ${
+                filterPrecipitation === "all"
+                  ? "bg-slate-700 text-white shadow-md"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                Todos
+              </button>
+              <button
+                onClick={() => setFilterPrecipitation("lluvia")}
+                className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+                filterPrecipitation === "lluvia"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                <Droplet className="w-4 h-4" />
+                Lluvia
+              </button>
+              <button
+                onClick={() => setFilterPrecipitation("nieve")}
+                className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+                filterPrecipitation === "nieve"
+                  ? "bg-cyan-600 text-white shadow-md"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                <Snowflake className="w-4 h-4" />
+                Nieve
+              </button>
               </div>
+            </div>
+
+            {/* Filtro: Zona (dinámico) */}
+            <div>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wide mb-3">
+                <MapPin className="w-4 h-4" />
+                Zona
+              </label>
+              <select
+                value={filterZona}
+                onChange={(e) => setFilterZona(e.target.value)}
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 font-medium text-sm transition"
+              >
+                <option value="all">Todas las zonas</option>
+                {zonas.map((zona) => (
+                  <option key={zona.id} value={zona.id}>
+                    {zona.locality}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -259,6 +313,29 @@ const ShowReport = () => {
                       )}
                     </div>
                   </div>
+
+                    {/* Reproductor de Audio */}
+                    {reporte.audio && (
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4">
+                      <div className="flex items-center gap-3 mb-2">
+                      <div className="bg-slate-200 p-2 rounded-lg">
+                        <Volume2 className="w-4 h-4 text-slate-600" />
+                      </div>
+                      <span className="text-sm font-semibold text-slate-800">Audio del Reporte</span>
+                      </div>
+                      <audio
+                      controls
+                      className="w-full h-10 bg-white"
+                      onPlay={() => handleAudioPlay(reporte.id)}
+                      onPause={handleAudioPause}
+                      >
+                      <source src={"../../../../" + reporte.audio} type="audio/mpeg" />
+                      <source src={"../../../../" + reporte.audio} type="audio/wav" />
+                      <source src={"../../../../" + reporte.audio} type="audio/ogg" />
+                      Tu navegador no soporta el elemento de audio.
+                      </audio>
+                    </div>
+                    )}
 
                   {/* Ubicación */}
                   <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4">
