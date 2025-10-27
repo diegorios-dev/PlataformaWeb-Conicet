@@ -46,8 +46,8 @@ const ShowReport = () => {
     // Filtro por tipo de precipitación
     if (filterPrecipitation !== "all") {
       result = result.filter((r) => {
-        if (filterPrecipitation === "lluvia") return r.site?.precipitation_id === 1;
-        if (filterPrecipitation === "nieve") return r.site?.precipitation_id === 2;
+        if (filterPrecipitation === "lluvia") return r.site?.event_id === 1;
+        if (filterPrecipitation === "nieve") return r.site?.event_id === 2;
         return true;
       });
     }
@@ -261,7 +261,7 @@ const ShowReport = () => {
                       </span>
                     )}
                   </div>
-                  {reporte.site?.precipitation_id === 1 ? (
+                  {reporte.site?.event_id === 1 ? (
                     <div className="bg-blue-100 p-2 rounded-lg">
                       <Droplet className="w-5 h-5 text-blue-600" />
                     </div>

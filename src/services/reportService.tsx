@@ -24,7 +24,7 @@ export async function getHistograma(
   year: number | null = null, 
   month: number | null = null
 ) {
-  let url = `http://localhost:8000/api/histograma?type=${groupBy}&precipitation=lluvia`;
+  let url = `http://localhost:8000/api/histograma?type=${groupBy}&event=Lluvia`;
   
   if (groupBy === "dia" && year && month) {
     url += `&year=${year}&month=${month}`;
@@ -60,7 +60,7 @@ export async function getHistogramaNieve(
   year: number | null = null, 
   month: number | null = null
 ) {
-  let url = `http://localhost:8000/api/histograma?type=${groupBy}&precipitation=nieve`;
+  let url = `http://localhost:8000/api/histograma?type=${groupBy}&event=Nieve`;
 
   if (year) url += `&year=${year}`;
   if (month) url += `&month=${month}`;
@@ -87,7 +87,7 @@ export async function getHistogramaCaudalimetro(
   year: number | null = null, 
   month: number | null = null
 ) {
-  let url = `http://localhost:8000/api/histograma?type=${groupBy}&precipitation=caudalimetro`;
+  let url = `http://localhost:8000/api/histograma?type=${groupBy}&event=Caudal`;
 
   if (year) url += `&year=${year}`;
   if (month) url += `&month=${month}`;

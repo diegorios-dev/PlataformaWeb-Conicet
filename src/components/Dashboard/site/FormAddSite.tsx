@@ -21,7 +21,7 @@ const FormAddSite = () => {
     latitude: "",
     longitude: "",
     zona_id: "",
-    precipitation_id: "1"
+    event_id: "1"
   });
   
   const [zonas, setZonas] = useState([]);
@@ -352,8 +352,8 @@ const FormAddSite = () => {
 
               {/* Tipo de Precipitación */}
               <div className="mb-8">
-                <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="precipitation_id">
-                  {formData.precipitation_id === "2" ? (
+                <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="event_id">
+                  {formData.event_id === "2" ? (
                     <Snowflake className="w-5 h-5 text-blue-400" />
                   ) : (
                     <CloudRain className="w-5 h-5 text-blue-400" />
@@ -361,8 +361,8 @@ const FormAddSite = () => {
                   Tipo de Precipitación
                 </label>
                 <select
-                  id="precipitation_id"
-                  value={formData.precipitation_id}
+                  id="event_id"
+                  value={formData.event_id}
                   onChange={handleChange}
                   required
                   className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"

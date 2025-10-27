@@ -9,6 +9,7 @@ function useSitio (selectedInstrument : any) {
             
             try {
                 const data = await getSitio(selectedInstrument);
+                
                 const objSitio = data.map(item => ({
                     coordenadas: [
                         parseFloat(item.report.site.latitude),

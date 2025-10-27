@@ -135,7 +135,7 @@ const FormEditReport = () => {
     }
   };
 
-  const isPrecipitacionLluvia = report.site?.precipitation_id === 1;
+  const isPrecipitacionLluvia = report.site?.event_id === 1;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -265,7 +265,7 @@ const FormEditReport = () => {
                 {sitios.map(sitio => (
                   <option key={sitio.id} value={sitio.id}>
                     {sitio.zona?.locality} - Lat: {sitio.latitude}, Lon: {sitio.longitude}
-                    {sitio.precipitation && ` (${sitio.precipitation.type})`}
+                    {sitio.event && ` (${sitio.event.type})`}
                   </option>
                 ))}
               </select>
