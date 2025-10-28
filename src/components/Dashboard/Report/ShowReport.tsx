@@ -329,11 +329,12 @@ const ShowReport = () => {
                       onPlay={() => handleAudioPlay(reporte.id)}
                       onPause={handleAudioPause}
                       >
-                      <source src={"../../../../" + reporte.audio} type="audio/mpeg" />
-                      <source src={"../../../../" + reporte.audio} type="audio/wav" />
-                      <source src={"../../../../" + reporte.audio} type="audio/ogg" />
+                      <source src={reporte.audio} type="audio/mpeg" />
+                      <source src={reporte.audio} type="audio/wav" />
+                      <source src={reporte.audio} type="audio/ogg" />
+                      <source src={reporte.audio} type="audio/mp4" />
                       Tu navegador no soporta el elemento de audio.
-                      </audio>
+                      </audio>  
                     </div>
                     )}
 
