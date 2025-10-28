@@ -60,8 +60,8 @@ const HeatMapView = () => {
       lat: parseFloat(report.site.latitude),
       lng: parseFloat(report.site.longitude),
       valor: parseFloat(report.report_regular.amount),
-      // Mapear precipitation_id: 1 = lluvia, 2 = nieve           !!!! esto lo hardcodee lo de lluvia = 1 nieve = 2
-      tipo: report.site.precipitation_id === 2 ? "nieve" : "lluvia",
+      // Mapear event_id: 1 = lluvia, 2 = nieve           !!!! esto lo hardcodee lo de lluvia = 1 nieve = 2
+      tipo: report.site.event_id === 2 ? "nieve" : "lluvia",
       nombre: report.site.name || `Sitio ${report.site.id}`,
       fecha: report.date,
       note: report.note,

@@ -11,8 +11,11 @@ import img from "../assets/logo-CONICET_opt.png";
 
 const Home = () => {
   const { goAHistograma, goEstadisticas } = useNavegation();
-  const [selectOptionMenu, setSelectOptionMenu] = useState("lluvia");
+
+  const [selectOptionMenu, setSelectOptionMenu] = useState("Lluvia");
+
   const sitios = useSitio(selectOptionMenu);
+  
   const { isLogin, handleLogout, getUsername } = useUserContext();
   const { goLogin, goAdminUi, goHeatMap } = useNavegation();
   const [showWelcome, setShowWelcome] = useState(false);

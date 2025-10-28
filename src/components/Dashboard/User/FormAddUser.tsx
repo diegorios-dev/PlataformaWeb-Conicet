@@ -186,7 +186,7 @@ const FormAddUser = () => {
                     {sitios.map(sitio => (
                       <option key={sitio.id} value={sitio.id}>
                         {sitio.zona?.locality} ({sitio.latitude}) , ({sitio.longitude})
-                        {sitio.precipitation && ` (${sitio.precipitation.type})`}
+                        {sitio.event && ` (${sitio.event.type})`}
                       </option>
                     ))}
                   </select>
@@ -226,7 +226,7 @@ const FormAddUser = () => {
               {zonaSeleccionada && formData.site_id && (
                 <div className="mb-6">
                   <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2">
-                    {sitios.find(s => s.id === parseInt(formData.site_id))?.precipitation?.type === "Nieve" ? (
+                    {sitios.find(s => s.id === parseInt(formData.site_id))?.event?.type === "Nieve" ? (
                       <Snowflake className="w-5 h-5 text-blue-400" />
                     ) : (
                       <CloudRain className="w-5 h-5 text-blue-400" />
@@ -235,7 +235,7 @@ const FormAddUser = () => {
                   </label>
                   <input
                     type="text"
-                    value={sitios.find(s => s.id === parseInt(formData.site_id))?.precipitation?.type || ""}
+                    value={sitios.find(s => s.id === parseInt(formData.site_id))?.event?.type || ""}
                     disabled
                     className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed"
                   />
