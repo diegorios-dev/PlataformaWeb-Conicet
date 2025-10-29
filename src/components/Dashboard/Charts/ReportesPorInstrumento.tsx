@@ -9,7 +9,7 @@ import {
 } from "recharts";
 
 interface ReportesPorInstrumentoProps {
-  data: Array<{ instrumento: string; cantidad: number }>;
+  data: Array<{ instrumento: string; cantidad_mediciones: number }>;
 }
 
 const ReportesPorInstrumento = ({ data }: ReportesPorInstrumentoProps) => {
@@ -17,7 +17,14 @@ const ReportesPorInstrumento = ({ data }: ReportesPorInstrumentoProps) => {
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-        <XAxis dataKey="instrumento" stroke="#64748b" />
+        <XAxis 
+          dataKey="instrumento" 
+          stroke="#64748b"
+          interval={0}
+          angle={-45}
+          textAnchor="end"
+          height={80}
+        />
         <YAxis stroke="#64748b" />
         <Tooltip
           contentStyle={{
@@ -26,7 +33,7 @@ const ReportesPorInstrumento = ({ data }: ReportesPorInstrumentoProps) => {
             borderRadius: "12px",
           }}
         />
-        <Bar dataKey="cantidad" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
+        <Bar dataKey="cantidad_mediciones" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

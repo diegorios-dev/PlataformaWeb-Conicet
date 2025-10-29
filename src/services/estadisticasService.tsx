@@ -10,8 +10,8 @@ export const getPrecipitacionPorZona = async () => {
 
 // Reportes por instrumento
 export const getReportesPorInstrumento = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/reportes-por-instrumento`);
-  return data;
+  const { data } = await axios.get(`${API_URL}/reportes/por-instrumento`);
+  return data.data || data;
 };
 
 // Top zonas por cantidad de registros
@@ -62,8 +62,14 @@ export const getSeriePorTipo = async () => {
 };
 
 // Distribución porcentual por tipo
-export const getDistribucionPorTipo = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/distribucion-por-tipo`);
+export const getDistribucionPorTipo = async (periodo = "anio") => {
+  const { data } = await axios.get(`${API_URL}/reportes/distribucion-precipitacion?periodo=${periodo}`);
+  return data;
+};
+
+// Evolución mensual
+export const getEvolucionMensual = async (periodo = "anio") => {
+  const { data } = await axios.get(`${API_URL}/reportes/evolucion-mensual?periodo=${periodo}`);
   return data;
 };
 

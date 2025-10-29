@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+
 const API_URL = "http://localhost:8000/api";
 
 
@@ -47,6 +47,30 @@ export const getZonaByLocality = async (zona) => {
   } catch (error) {
     console.log("Error al obtener la zona por localidad:", error);
 
+    throw error;
+  }
+};
+
+// **NUEVO ENDPOINT PRINCIPAL** - Precipitación total acumulada por zona
+export const getTotalAcumuladoPorZona = async () => {
+  try {
+    const { data } = await axios.get(`${API_URL}/zonas/total-acumulado`);
+    return data;
+  } catch (error) {
+    console.error("Error al obtener total acumulado por zona:", error);
+    throw error;
+  }
+};
+
+// Top zonas por cantidad de registros
+export const getTopZonasPorRegistro = async (periodo = "anio", limit = 8) => {
+  try {
+    const { data } = await axios.get(
+      `${API_URL}/zonas/top-registros?periodo=${periodo}&limit=${limit}`
+    );
+    return data;
+  } catch (error) {
+    console.error("Error al obtener top zonas por registro:", error);
     throw error;
   }
 };

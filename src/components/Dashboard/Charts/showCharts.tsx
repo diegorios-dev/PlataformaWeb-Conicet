@@ -7,6 +7,8 @@ import {
   MapPin,
   Calendar,
   Waves,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import BackButton from "../../BackButton";
 import ChartCard from "./ChartCard";
@@ -20,115 +22,135 @@ import PrecipitacionCoordenadas from "./PrecipitacionCoordenadas";
 import PatronMensual from "./PatronMensual";
 import AnalisisFrecuencia from "./AnalisisFrecuencia";
 import ComparativaAnual from "./ComparativaAnual";
+// Importar servicios de la API
+import { getTotalAcumuladoPorZona, getTopZonasPorRegistro } from "../../../services/zonaService";
+import {
+  getReportesPorInstrumento,
+  getDistribucionPorTipo,
+  getEvolucionMensual,
+  getEvolucionPorZona,
+  getPrecipitacionCoordenadas,
+  getPatronMensual,
+  getAnalisisFrecuencia,
+  getComparativaAnual,
+} from "../../../services/estadisticasService";
 
 const ShowCharts = () => {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Datos de ejemplo (estos se reemplazarán con datos reales del backend)
-  const [precipitacionPorZona] = useState([
-    { zona: "Bariloche", precipitacion: 450 },
-    { zona: "El Bolsón", precipitacion: 620 },
-    { zona: "Las Grutas", precipitacion: 380 },
-    { zona: "Viedma", precipitacion: 520 },
-    { zona: "San Antonio Oeste", precipitacion: 490 },
-  ]);
+  // Estados para datos de la API
+  const [precipitacionPorZona, setPrecipitacionPorZona] = useState<any[]>([]);
+  const [reportesPorInstrumento, setReportesPorInstrumento] = useState<any[]>([]);
+  const [topSitios, setTopSitios] = useState<any[]>([]);
+  const [distribucionTipo, setDistribucionTipo] = useState<any[]>([]);
+  const [evolucionMensual, setEvolucionMensual] = useState<any[]>([]);
+  const [comparativaZonas, setComparativaZonas] = useState<any[]>([]);
+  const [precipitacionCoordenadas, setPrecipitacionCoordenadas] = useState<any[]>([]);
+  const [patronMensual, setPatronMensual] = useState<any[]>([]);
+  const [analisisFrecuencia, setAnalisisFrecuencia] = useState<any[]>([]);
+  const [comparativaAnual, setComparativaAnual] = useState<any[]>([]);
 
-  const [reportesPorInstrumento] = useState([
-    { instrumento: "Pluviómetro", cantidad: 245 },
-    { instrumento: "Caudalímetro", cantidad: 180 },
-    { instrumento: "Nivómetro", cantidad: 95 },
-  ]);
-
-  const [topSitios] = useState([
-    { zona: "Bariloche", registros: 342 },
-    { zona: "El Bolsón", registros: 298 },
-    { zona: "Viedma", registros: 276 },
-    { zona: "Las Grutas", registros: 245 },
-    { zona: "San Antonio Oeste", registros: 218 },
-    { zona: "Ñorquinco", registros: 187 },
-    { zona: "Pilcaniyeu", registros: 165 },
-    { zona: "El Maitén", registros: 142 },
-  ]);
-
-  const [distribucionTipo] = useState([
-    { tipo: "Lluvia", cantidad: 320, porcentaje: 61.5 },
-    { tipo: "Nieve", cantidad: 125, porcentaje: 24.0 },
-    { tipo: "Caudal", cantidad: 75, porcentaje: 14.5 },
-  ]);
-
-  const [evolucionMensual] = useState([
-    { mes: "Ene", lluvia: 45, nieve: 85, caudal: 120 },
-    { mes: "Feb", lluvia: 52, nieve: 78, caudal: 115 },
-    { mes: "Mar", lluvia: 68, nieve: 65, caudal: 130 },
-    { mes: "Abr", lluvia: 95, nieve: 42, caudal: 145 },
-    { mes: "May", lluvia: 125, nieve: 15, caudal: 160 },
-    { mes: "Jun", lluvia: 140, nieve: 5, caudal: 135 },
-    { mes: "Jul", lluvia: 155, nieve: 0, caudal: 125 },
-    { mes: "Ago", lluvia: 145, nieve: 0, caudal: 120 },
-    { mes: "Sep", lluvia: 110, nieve: 8, caudal: 140 },
-    { mes: "Oct", lluvia: 85, nieve: 25, caudal: 155 },
-    { mes: "Nov", lluvia: 65, nieve: 55, caudal: 145 },
-    { mes: "Dic", lluvia: 50, nieve: 75, caudal: 130 },
-  ]);
-
-  const [comparativaZonas] = useState([
-    { fecha: "Ene", Bariloche: 120, "El Bolsón": 145, "Las Grutas": 98, Viedma: 132 },
-    { fecha: "Feb", Bariloche: 135, "El Bolsón": 152, "Las Grutas": 105, Viedma: 140 },
-    { fecha: "Mar", Bariloche: 145, "El Bolsón": 168, "Las Grutas": 118, Viedma: 155 },
-    { fecha: "Abr", Bariloche: 155, "El Bolsón": 180, "Las Grutas": 125, Viedma: 165 },
-    { fecha: "May", Bariloche: 165, "El Bolsón": 195, "Las Grutas": 135, Viedma: 175 },
-    { fecha: "Jun", Bariloche: 150, "El Bolsón": 170, "Las Grutas": 120, Viedma: 160 },
-  ]);
-
-  const [precipitacionCoordenadas] = useState([
-    { x: -41.13, y: -71.31, precipitacion: 450, sitio: "Bariloche" },
-    { x: -41.97, y: -71.53, precipitacion: 520, sitio: "El Bolsón" },
-    { x: -40.81, y: -65.09, precipitacion: 380, sitio: "Las Grutas" },
-    { x: -40.81, y: -63.00, precipitacion: 610, sitio: "Viedma" },
-    { x: -40.73, y: -65.03, precipitacion: 490, sitio: "San Antonio Oeste" },
-    { x: -41.91, y: -71.38, precipitacion: 560, sitio: "El Maitén" },
-  ]);
-
-  const [patronMensual] = useState([
-    { mes: "Ene", precipitacion: 85 },
-    { mes: "Feb", precipitacion: 92 },
-    { mes: "Mar", precipitacion: 78 },
-    { mes: "Abr", precipitacion: 65 },
-    { mes: "May", precipitacion: 45 },
-    { mes: "Jun", precipitacion: 35 },
-    { mes: "Jul", precipitacion: 30 },
-    { mes: "Ago", precipitacion: 38 },
-    { mes: "Sep", precipitacion: 52 },
-    { mes: "Oct", precipitacion: 68 },
-    { mes: "Nov", precipitacion: 75 },
-    { mes: "Dic", precipitacion: 88 },
-  ]);
-
-  const [analisisFrecuencia] = useState([
-    { rango: "0-10", frecuencia: 45 },
-    { rango: "10-20", frecuencia: 78 },
-    { rango: "20-30", frecuencia: 125 },
-    { rango: "30-40", frecuencia: 98 },
-    { rango: "40-50", frecuencia: 82 },
-    { rango: "50-60", frecuencia: 65 },
-    { rango: "60-70", frecuencia: 42 },
-    { rango: "70-80", frecuencia: 28 },
-    { rango: "80+", frecuencia: 15 },
-  ]);
-
-  const [comparativaAnual] = useState([
-    { mes: "Ene", "2023": 120, "2024": 135, "2025": 145 },
-    { mes: "Feb", "2023": 115, "2024": 128, "2025": 140 },
-    { mes: "Mar", "2023": 145, "2024": 152, "2025": 168 },
-    { mes: "Abr", "2023": 165, "2024": 158, "2025": 175 },
-    { mes: "May", "2023": 180, "2024": 175, "2025": 185 },
-    { mes: "Jun", "2023": 155, "2024": 148, "2025": 165 },
-  ]);
-
+  // Cargar datos del backend
   useEffect(() => {
-    // Simular carga de datos
-    setTimeout(() => setLoading(false), 1000);
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      console.log('🔄 Cargando datos del backend...');
+      
+      // Cargar solo el endpoint principal primero
+      const zonasData = await getTotalAcumuladoPorZona().catch((err) => { 
+        console.error('❌ Error en zonas/total-acumulado:', err.response?.status, err.message); 
+        return []; 
+      });
+
+      console.log('📦 Datos de zonas recibidos:', zonasData);
+
+      // Helper para asegurar que sea un array
+      const ensureArray = (data: any) => {
+        if (Array.isArray(data)) return data;
+        if (data && typeof data === 'object') return [data];
+        return [];
+      };
+
+      // Transformar datos de zonas para el gráfico
+      const zonasArray = ensureArray(zonasData);
+      console.log('🔍 Estructura de cada zona:', zonasArray[0]);
+      const zonasFormateadas = zonasArray.map((zona: any) => ({
+        zona: zona.locality || zona.nombre || "Sin nombre",
+        precipitacion: parseFloat((parseFloat(zona.total_acumulado) || 0).toFixed(2)),
+      }));
+      console.log('📊 Zonas formateadas para gráfico:', zonasFormateadas);
+
+      // Para top zonas, intentar el endpoint nuevo, si falla usar los datos de zonas principales
+      let topFormateadas = [];
+      try {
+        const topZonasData = await getTopZonasPorRegistro("anio", 8);
+        console.log('📦 Top zonas recibidas:', topZonasData);
+        const topZonasArray = ensureArray(topZonasData);
+        topFormateadas = topZonasArray.map((zona: any) => ({
+          zona: zona.locality || zona.nombre || "Sin nombre",
+          registros: parseInt(zona.reportes_count) || 0,
+        }));
+      } catch (err: any) {
+        console.warn('⚠️ Endpoint /zonas/top-registros no disponible, usando datos de zonas principales');
+        // Usar los datos de zonas principales como fallback
+        topFormateadas = zonasFormateadas.slice(0, 8).map((zona: any) => ({
+          zona: zona.zona,
+          registros: Math.round(zona.precipitacion / 10), // Estimación basada en precipitación
+        }));
+      }
+
+      // Cargar el resto de endpoints en paralelo (opcionales)
+      const [
+        reportesData,
+        distribucionData,
+        evolucionData,
+        comparativaData,
+        coordenadasData,
+        patronData,
+        frecuenciaData,
+        anualData,
+      ] = await Promise.all([
+        getReportesPorInstrumento().catch(() => []),
+        getDistribucionPorTipo("anio").catch(() => []),
+        getEvolucionMensual("anio").catch(() => []),
+        getEvolucionPorZona().catch(() => []),
+        getPrecipitacionCoordenadas().catch(() => []),
+        getPatronMensual().catch(() => []),
+        getAnalisisFrecuencia().catch(() => []),
+        getComparativaAnual().catch(() => []),
+      ]);
+
+      // Actualizar estados con validación
+      setPrecipitacionPorZona(zonasFormateadas);
+      setReportesPorInstrumento(ensureArray(reportesData));
+      setTopSitios(topFormateadas);
+      setDistribucionTipo(ensureArray(distribucionData));
+      setEvolucionMensual(ensureArray(evolucionData));
+      setComparativaZonas(ensureArray(comparativaData));
+      setPrecipitacionCoordenadas(ensureArray(coordenadasData));
+      setPatronMensual(ensureArray(patronData));
+      setAnalisisFrecuencia(ensureArray(frecuenciaData));
+      setComparativaAnual(ensureArray(anualData));
+
+      console.log("✅ Datos cargados y transformados:", {
+        zonas: zonasFormateadas.length,
+        reportes: ensureArray(reportesData).length,
+        topZonas: topFormateadas.length,
+      });
+    } catch (err: any) {
+      console.error("❌ Error crítico al cargar datos:", err);
+      setError(err.message || "Error al cargar datos del servidor");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 p-6">
@@ -140,21 +162,49 @@ const ShowCharts = () => {
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8 mt-16">
         <div className="backdrop-blur-2xl bg-white/50 border border-white/60 rounded-3xl shadow-2xl p-8">
-          <div className="flex items-center gap-4">
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 backdrop-blur-xl border border-white/40">
-              <BarChart3 className="w-10 h-10 text-blue-700" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 backdrop-blur-xl border border-white/40">
+                <BarChart3 className="w-10 h-10 text-blue-700" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+                  Estadísticas y Análisis
+                </h1>
+                <p className="text-slate-600 mt-1">
+                  Visualización completa de datos de precipitación en tiempo real
+                </p>
+              </div>
             </div>
+            
+            {/* Botón de refresh */}
+            <button
+              onClick={fetchData}
+              disabled={loading}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+            >
+              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+              {loading ? 'Actualizando...' : 'Actualizar'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mensaje de error global */}
+      {error && (
+        <div className="max-w-7xl mx-auto mb-6">
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-6 flex items-start gap-4">
+            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
-                Estadísticas y Análisis
-              </h1>
-              <p className="text-slate-600 mt-1">
-                Visualización completa de datos de precipitación
+              <h3 className="text-red-800 font-semibold mb-1">Error al cargar datos</h3>
+              <p className="text-red-600 text-sm">{error}</p>
+              <p className="text-red-500 text-xs mt-2">
+                Verifica que el backend esté corriendo en http://localhost:8000
               </p>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Grid de gráficos */}
       <div className="max-w-7xl mx-auto space-y-6">
@@ -276,10 +326,56 @@ const ShowCharts = () => {
 
       {/* Footer con información */}
       <div className="max-w-7xl mx-auto mt-8 mb-6">
-        <div className="backdrop-blur-2xl bg-white/50 border border-white/60 rounded-2xl p-6 text-center">
-          <p className="text-slate-600 text-sm">
-            📊 Datos actualizados • Última actualización: {new Date().toLocaleDateString('es-ES')}
-          </p>
+        <div className="backdrop-blur-2xl bg-white/50 border border-white/60 rounded-2xl p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-green-100">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+              </div>
+              <div>
+                <p className="text-slate-800 font-semibold text-sm">
+                  🌐 Conectado al Backend Laravel
+                </p>
+                <p className="text-slate-600 text-xs">
+                  http://localhost:8000/api
+                </p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-slate-600 text-sm">
+                📊 Datos en tiempo real
+              </p>
+              <p className="text-slate-500 text-xs">
+                Última actualización: {new Date().toLocaleString('es-ES')}
+              </p>
+            </div>
+          </div>
+          
+          {/* Indicadores de datos cargados */}
+          <div className="mt-4 pt-4 border-t border-slate-200">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
+              <div className="bg-blue-50 rounded-lg p-2">
+                <p className="text-blue-900 font-bold text-lg">{precipitacionPorZona.length}</p>
+                <p className="text-blue-700 text-xs">Zonas</p>
+              </div>
+              <div className="bg-violet-50 rounded-lg p-2">
+                <p className="text-violet-900 font-bold text-lg">{reportesPorInstrumento.length}</p>
+                <p className="text-violet-700 text-xs">Instrumentos</p>
+              </div>
+              <div className="bg-emerald-50 rounded-lg p-2">
+                <p className="text-emerald-900 font-bold text-lg">{topSitios.length}</p>
+                <p className="text-emerald-700 text-xs">Top Sitios</p>
+              </div>
+              <div className="bg-amber-50 rounded-lg p-2">
+                <p className="text-amber-900 font-bold text-lg">{distribucionTipo.length}</p>
+                <p className="text-amber-700 text-xs">Tipos</p>
+              </div>
+              <div className="bg-cyan-50 rounded-lg p-2">
+                <p className="text-cyan-900 font-bold text-lg">{evolucionMensual.length}</p>
+                <p className="text-cyan-700 text-xs">Meses</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

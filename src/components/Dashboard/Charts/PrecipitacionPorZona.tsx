@@ -19,11 +19,21 @@ interface PrecipitacionPorZonaProps {
 }
 
 const PrecipitacionPorZona = ({ data }: PrecipitacionPorZonaProps) => {
+  // Filtrar solo zonas con precipitación mayor a 0
+  const dataFiltrada = data.filter(item => item.precipitacion > 0);
+  
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={data}>
+      <BarChart data={dataFiltrada}>
         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-        <XAxis dataKey="zona" stroke="#64748b" />
+        <XAxis 
+          dataKey="zona" 
+          stroke="#64748b"
+          interval={0}
+          angle={-45}
+          textAnchor="end"
+          height={80}
+        />
         <YAxis stroke="#64748b" label={{ value: 'mm', angle: -90, position: 'insideLeft' }} />
         <Tooltip
           contentStyle={{
@@ -33,7 +43,7 @@ const PrecipitacionPorZona = ({ data }: PrecipitacionPorZonaProps) => {
           }}
         />
         <Bar dataKey="precipitacion" fill="#3b82f6" radius={[8, 8, 0, 0]}>
-          {data.map((_, index) => (
+          {dataFiltrada.map((_, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Bar>
