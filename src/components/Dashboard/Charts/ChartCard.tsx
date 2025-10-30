@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Calendar } from "lucide-react";
 
 interface ChartCardProps {
   title: string;
@@ -8,10 +8,32 @@ interface ChartCardProps {
   icon: React.ReactNode;
   children: React.ReactNode;
   isLoading?: boolean;
+  showPeriodSelector?: boolean;
+  selectedPeriod?: string;
+  onPeriodChange?: (period: string) => void;
 }
 
-const ChartCard = ({ title, subtitle, description, icon, children, isLoading }: ChartCardProps) => {
+const ChartCard = ({ 
+  title, 
+  subtitle, 
+  description, 
+  icon, 
+  children, 
+  isLoading,
+  showPeriodSelector = false,
+  selectedPeriod = "todos",
+  onPeriodChange
+}: ChartCardProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
+
+  const periods = [
+    { value: "todos", label: "Todos los datos" },
+    { value: "trimestre", label: "Últimos 3 meses" },
+    { value: "6meses", label: "Últimos 6 meses" },
+    { value: "anio", label: "Último año" },
+    { value: "5anios", label: "Últimos 5 años" },
+    { value: "10anios", label: "Últimos 10 años" },
+  ];
 
   return (
     <div className="backdrop-blur-2xl bg-white/70 border border-white/60 rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300">
@@ -42,6 +64,24 @@ const ChartCard = ({ title, subtitle, description, icon, children, isLoading }: 
           </div>
           {subtitle && <p className="text-sm text-slate-600">{subtitle}</p>}
         </div>
+        
+        {showPeriodSelector && onPeriodChange && (
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-slate-500" />
+            <label className="text-xs text-slate-600 font-medium">Período:</label>
+            <select
+              value={selectedPeriod}
+              onChange={(e) => onPeriodChange(e.target.value)}
+              className="text-sm px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 font-medium hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all cursor-pointer"
+            >
+              {periods.map((period) => (
+                <option key={period.value} value={period.value}>
+                  {period.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
     {isLoading ? (
       <div className="flex items-center justify-center h-64">

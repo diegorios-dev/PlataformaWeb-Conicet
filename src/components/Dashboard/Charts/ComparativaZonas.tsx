@@ -17,7 +17,7 @@ const ComparativaZonas = ({ data }: ComparativaZonasProps) => {
   // Extraer las claves dinámicamente (todas excepto 'fecha')
   const zonas = data.length > 0 ? Object.keys(data[0]).filter(key => key !== 'fecha') : [];
   
-  const COLORS = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444", "#06b6d4"];
+  const COLORS = ["#f97316", "#3b82f6", "#8b5cf6", "#06b6d4", "#10b981", "#ec4899", "#6366f1", "#eab308"];
 
   return (
     <ResponsiveContainer width="100%" height={350}>

@@ -62,9 +62,12 @@ export const getSeriePorTipo = async () => {
 };
 
 // Distribución porcentual por tipo
-export const getDistribucionPorTipo = async (periodo = "anio") => {
-  const { data } = await axios.get(`${API_URL}/reportes/distribucion-precipitacion?periodo=${periodo}`);
-  return data;
+export const getDistribucionPorTipo = async (periodo?: string) => {
+  const url = periodo && periodo !== 'todos' 
+    ? `${API_URL}/eventos/distribucion-reportes?periodo=${periodo}`
+    : `${API_URL}/eventos/distribucion-reportes`;
+  const { data } = await axios.get(url);
+  return data.data || data;
 };
 
 // Evolución mensual

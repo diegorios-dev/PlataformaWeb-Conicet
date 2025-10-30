@@ -10,8 +10,14 @@ import {
 } from "recharts";
 
 const COLORS = [
-  "#3b82f6", "#8b5cf6", "#06b6d4", "#10b981", "#f59e0b",
-  "#ef4444", "#ec4899", "#6366f1",
+  "#f97316", // naranja para el máximo
+  "#3b82f6", // azul
+  "#8b5cf6", // púrpura
+  "#06b6d4", // cyan
+  "#10b981", // verde
+  "#ec4899", // rosa
+  "#6366f1", // índigo
+  "#eab308", // amarillo
 ];
 
 interface PrecipitacionCoordenadasProps {

@@ -30,9 +30,9 @@ const EvolucionMensual = ({ data }: EvolucionMensualProps) => {
           }}
         />
         <Legend />
-        <Bar dataKey="lluvia" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-        <Line type="monotone" dataKey="nieve" stroke="#8b5cf6" strokeWidth={2} />
-        <Area type="monotone" dataKey="caudal" fill="#06b6d4" stroke="#06b6d4" fillOpacity={0.3} />
+        <Bar dataKey="lluvia" fill="#f97316" radius={[4, 4, 0, 0]} />
+        <Line type="monotone" dataKey="nieve" stroke="#3b82f6" strokeWidth={2} />
+        <Area type="monotone" dataKey="caudal" fill="#8b5cf6" stroke="#8b5cf6" fillOpacity={0.3} />
       </ComposedChart>
     </ResponsiveContainer>
   );

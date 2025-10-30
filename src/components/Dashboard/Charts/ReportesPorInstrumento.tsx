@@ -6,7 +6,19 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
+
+const COLORS = [
+  "#f97316", // naranja para el máximo
+  "#3b82f6", // azul
+  "#8b5cf6", // púrpura
+  "#06b6d4", // cyan
+  "#10b981", // verde
+  "#ec4899", // rosa
+  "#6366f1", // índigo
+  "#eab308", // amarillo
+];
 
 interface ReportesPorInstrumentoProps {
   data: Array<{ instrumento: string; cantidad_mediciones: number }>;
@@ -33,7 +45,11 @@ const ReportesPorInstrumento = ({ data }: ReportesPorInstrumentoProps) => {
             borderRadius: "12px",
           }}
         />
-        <Bar dataKey="cantidad_mediciones" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
+        <Bar dataKey="cantidad_mediciones" radius={[8, 8, 0, 0]}>
+          {data.map((_, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );

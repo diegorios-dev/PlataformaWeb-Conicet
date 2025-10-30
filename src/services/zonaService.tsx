@@ -68,7 +68,7 @@ export const getTopZonasPorRegistro = async (periodo = "anio", limit = 8) => {
     const { data } = await axios.get(
       `${API_URL}/zonas/top-registros?periodo=${periodo}&limit=${limit}`
     );
-    return data;
+    return data.data || data;
   } catch (error) {
     console.error("Error al obtener top zonas por registro:", error);
     throw error;

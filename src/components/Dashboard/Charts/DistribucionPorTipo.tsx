@@ -7,12 +7,18 @@ import {
 } from "recharts";
 
 const COLORS = [
-  "#3b82f6", "#8b5cf6", "#06b6d4", "#10b981", "#f59e0b",
-  "#ef4444", "#ec4899", "#6366f1",
+  "#f97316", // naranja para el máximo
+  "#3b82f6", // azul
+  "#8b5cf6", // púrpura
+  "#06b6d4", // cyan
+  "#10b981", // verde
+  "#ec4899", // rosa
+  "#6366f1", // índigo
+  "#eab308", // amarillo
 ];
 
 interface DistribucionPorTipoProps {
-  data: Array<{ tipo: string; cantidad: number; porcentaje: number }>;
+  data: Array<{ tipo_evento: string; cantidad_reportes: number; porcentaje: number }>;
 }
 
 const DistribucionPorTipo = ({ data }: DistribucionPorTipoProps) => {
@@ -24,10 +30,9 @@ const DistribucionPorTipo = ({ data }: DistribucionPorTipoProps) => {
           cx="50%"
           cy="50%"
           labelLine={false}
-          label={({ tipo, porcentaje }) => `${tipo}: ${porcentaje}%`}
+          label={({ tipo_evento, porcentaje }) => `${tipo_evento}: ${porcentaje}%`}
           outerRadius={100}
-          fill="#8884d8"
-          dataKey="cantidad"
+          dataKey="cantidad_reportes"
         >
           {data.map((_, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -39,6 +44,10 @@ const DistribucionPorTipo = ({ data }: DistribucionPorTipoProps) => {
             border: "1px solid #e2e8f0",
             borderRadius: "12px",
           }}
+          formatter={(value: number, _name: string, props: any) => [
+            `${value} reportes (${props.payload.porcentaje}%)`,
+            props.payload.tipo_evento
+          ]}
         />
       </PieChart>
     </ResponsiveContainer>

@@ -51,17 +51,34 @@ const ShowCharts = () => {
   const [analisisFrecuencia, setAnalisisFrecuencia] = useState<any[]>([]);
   const [comparativaAnual, setComparativaAnual] = useState<any[]>([]);
 
+  // Estados para períodos de cada gráfico
+  const [periodoTopZonas, setPeriodoTopZonas] = useState("anio");
+  const [periodoDistribucion, setPeriodoDistribucion] = useState("todos");
+  const [periodoEvolucion, setPeriodoEvolucion] = useState("anio");
+
   // Cargar datos del backend
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Recargar cuando cambien los períodos
+  useEffect(() => {
+    fetchTopZonas();
+  }, [periodoTopZonas]);
+
+  useEffect(() => {
+    fetchDistribucion();
+  }, [periodoDistribucion]);
+
+  useEffect(() => {
+    fetchEvolucion();
+  }, [periodoEvolucion]);
 
   const fetchData = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      console.log('🔄 Cargando datos del backend...');
       
       // Cargar solo el endpoint principal primero
       const zonasData = await getTotalAcumuladoPorZona().catch((err) => { 
@@ -69,7 +86,6 @@ const ShowCharts = () => {
         return []; 
       });
 
-      console.log('📦 Datos de zonas recibidos:', zonasData);
 
       // Helper para asegurar que sea un array
       const ensureArray = (data: any) => {
@@ -80,7 +96,6 @@ const ShowCharts = () => {
 
       // Transformar datos de zonas para el gráfico
       const zonasArray = ensureArray(zonasData);
-      console.log('🔍 Estructura de cada zona:', zonasArray[0]);
       const zonasFormateadas = zonasArray.map((zona: any) => ({
         zona: zona.locality || zona.nombre || "Sin nombre",
         precipitacion: parseFloat((parseFloat(zona.total_acumulado) || 0).toFixed(2)),
@@ -91,19 +106,12 @@ const ShowCharts = () => {
       let topFormateadas = [];
       try {
         const topZonasData = await getTopZonasPorRegistro("anio", 8);
-        console.log('📦 Top zonas recibidas:', topZonasData);
         const topZonasArray = ensureArray(topZonasData);
-        topFormateadas = topZonasArray.map((zona: any) => ({
-          zona: zona.locality || zona.nombre || "Sin nombre",
-          registros: parseInt(zona.reportes_count) || 0,
-        }));
+        // Mantener la estructura original del backend
+        topFormateadas = topZonasArray;
       } catch (err: any) {
-        console.warn('⚠️ Endpoint /zonas/top-registros no disponible, usando datos de zonas principales');
-        // Usar los datos de zonas principales como fallback
-        topFormateadas = zonasFormateadas.slice(0, 8).map((zona: any) => ({
-          zona: zona.zona,
-          registros: Math.round(zona.precipitacion / 10), // Estimación basada en precipitación
-        }));
+        console.warn('⚠️ Endpoint /zonas/top-registros no disponible');
+        topFormateadas = [];
       }
 
       // Cargar el resto de endpoints en paralelo (opcionales)
@@ -118,7 +126,7 @@ const ShowCharts = () => {
         anualData,
       ] = await Promise.all([
         getReportesPorInstrumento().catch(() => []),
-        getDistribucionPorTipo("anio").catch(() => []),
+        getDistribucionPorTipo().catch(() => []),
         getEvolucionMensual("anio").catch(() => []),
         getEvolucionPorZona().catch(() => []),
         getPrecipitacionCoordenadas().catch(() => []),
@@ -139,16 +147,49 @@ const ShowCharts = () => {
       setAnalisisFrecuencia(ensureArray(frecuenciaData));
       setComparativaAnual(ensureArray(anualData));
 
-      console.log("✅ Datos cargados y transformados:", {
-        zonas: zonasFormateadas.length,
-        reportes: ensureArray(reportesData).length,
-        topZonas: topFormateadas.length,
-      });
     } catch (err: any) {
       console.error("❌ Error crítico al cargar datos:", err);
       setError(err.message || "Error al cargar datos del servidor");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Funciones individuales para recargar gráficos específicos
+  const ensureArray = (data: any) => {
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === 'object') return [data];
+    return [];
+  };
+
+  const fetchTopZonas = async () => {
+    try {
+      const topZonasData = await getTopZonasPorRegistro(periodoTopZonas, 8);
+      const topZonasArray = ensureArray(topZonasData);
+      setTopSitios(topZonasArray);
+    } catch (err) {
+      console.warn('⚠️ Error al recargar top zonas');
+      setTopSitios([]);
+    }
+  };
+
+  const fetchDistribucion = async () => {
+    try {
+      const distribucionData = await getDistribucionPorTipo(periodoDistribucion);
+      setDistribucionTipo(ensureArray(distribucionData));
+    } catch (err) {
+      console.warn('⚠️ Error al recargar distribución');
+      setDistribucionTipo([]);
+    }
+  };
+
+  const fetchEvolucion = async () => {
+    try {
+      const evolucionData = await getEvolucionMensual(periodoEvolucion);
+      setEvolucionMensual(ensureArray(evolucionData));
+    } catch (err) {
+      console.warn('⚠️ Error al recargar evolución');
+      setEvolucionMensual([]);
     }
   };
 
@@ -240,6 +281,9 @@ const ShowCharts = () => {
             description="Ranking de las zonas con mayor cantidad de registros meteorológicos. Muestra qué localidades tienen instrumentos más activos o datos más frecuentes."
             icon={<TrendingUp className="w-6 h-6 text-emerald-700" />}
             isLoading={loading}
+            showPeriodSelector={true}
+            selectedPeriod={periodoTopZonas}
+            onPeriodChange={setPeriodoTopZonas}
           >
             <TopZonasPorRegistro data={topSitios} />
           </ChartCard>
@@ -250,6 +294,9 @@ const ShowCharts = () => {
             description="Proporción entre diferentes tipos de precipitación: lluvia, nieve y caudal. Ayuda a entender el balance hídrico de la región."
             icon={<PieChartIcon className="w-6 h-6 text-amber-700" />}
             isLoading={loading}
+            showPeriodSelector={true}
+            selectedPeriod={periodoDistribucion}
+            onPeriodChange={setPeriodoDistribucion}
           >
             <DistribucionPorTipo data={distribucionTipo} />
           </ChartCard>
@@ -262,6 +309,9 @@ const ShowCharts = () => {
           description="Visualiza cómo varía cada tipo de precipitación a lo largo de los meses del año. Las barras muestran lluvia, la línea representa nieve, y el área sombreada indica el caudal medido."
           icon={<Calendar className="w-6 h-6 text-cyan-700" />}
           isLoading={loading}
+          showPeriodSelector={true}
+          selectedPeriod={periodoEvolucion}
+          onPeriodChange={setPeriodoEvolucion}
         >
           <EvolucionMensual data={evolucionMensual} />
         </ChartCard>

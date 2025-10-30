@@ -22,8 +22,8 @@ const PatronMensual = ({ data }: PatronMensualProps) => {
         <Radar
           name="Precipitación"
           dataKey="precipitacion"
-          stroke="#3b82f6"
-          fill="#3b82f6"
+          stroke="#f97316"
+          fill="#f97316"
           fillOpacity={0.5}
         />
         <Tooltip
