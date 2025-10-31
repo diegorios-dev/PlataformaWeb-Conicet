@@ -17,7 +17,6 @@ import ReportesPorInstrumento from "./ReportesPorInstrumento";
 import TopZonasPorRegistro from "./TopZonasPorRegistro";
 import DistribucionPorTipo from "./DistribucionPorTipo";
 import EvolucionMensual from "./EvolucionMensual";
-import ComparativaZonas from "./ComparativaZonas";
 import PrecipitacionCoordenadas from "./PrecipitacionCoordenadas";
 import PatronMensual from "./PatronMensual";
 import AnalisisFrecuencia from "./AnalisisFrecuencia";
@@ -28,7 +27,6 @@ import {
   getReportesPorInstrumento,
   getDistribucionPorTipo,
   getEvolucionMensual,
-  getEvolucionPorZona,
   getPrecipitacionCoordenadas,
   getPatronMensual,
   getAnalisisFrecuencia,
@@ -45,16 +43,20 @@ const ShowCharts = () => {
   const [topSitios, setTopSitios] = useState<any[]>([]);
   const [distribucionTipo, setDistribucionTipo] = useState<any[]>([]);
   const [evolucionMensual, setEvolucionMensual] = useState<any[]>([]);
-  const [comparativaZonas, setComparativaZonas] = useState<any[]>([]);
   const [precipitacionCoordenadas, setPrecipitacionCoordenadas] = useState<any[]>([]);
   const [patronMensual, setPatronMensual] = useState<any[]>([]);
   const [analisisFrecuencia, setAnalisisFrecuencia] = useState<any[]>([]);
   const [comparativaAnual, setComparativaAnual] = useState<any[]>([]);
 
   // Estados para períodos de cada gráfico
+  const [periodoPrecipitacion, setPeriodoPrecipitacion] = useState("todos");
   const [periodoTopZonas, setPeriodoTopZonas] = useState("anio");
   const [periodoDistribucion, setPeriodoDistribucion] = useState("todos");
   const [periodoEvolucion, setPeriodoEvolucion] = useState("anio");
+  const [periodoCoordenadas, setPeriodoCoordenadas] = useState("todos");
+  const [tipoEventoCoordenadas, setTipoEventoCoordenadas] = useState<string | undefined>();
+  // Loading específico para el gráfico de coordenadas (evita usar el loading global que desmonta children)
+  const [loadingCoordenadas, setLoadingCoordenadas] = useState(false);
 
   // Cargar datos del backend
   useEffect(() => {
@@ -62,6 +64,10 @@ const ShowCharts = () => {
   }, []);
 
   // Recargar cuando cambien los períodos
+  useEffect(() => {
+    fetchPrecipitacion();
+  }, [periodoPrecipitacion]);
+
   useEffect(() => {
     fetchTopZonas();
   }, [periodoTopZonas]);
@@ -74,12 +80,39 @@ const ShowCharts = () => {
     fetchEvolucion();
   }, [periodoEvolucion]);
 
+  useEffect(() => {
+    fetchCoordenadas();
+  }, [periodoCoordenadas, tipoEventoCoordenadas]);
+
+  const fetchCoordenadas = async () => {
+    try {
+      // usar loading específico para evitar que ChartCard muestre el spinner global y desmonte el gráfico
+      setLoadingCoordenadas(true);
+      console.log('📊 Fetching coordenadas:', { periodo: periodoCoordenadas, tipo: tipoEventoCoordenadas });
+      const data = await getPrecipitacionCoordenadas(periodoCoordenadas, tipoEventoCoordenadas);
+      console.log('📊 Datos recibidos de la API:', data);
+      
+      if (!data || !Array.isArray(data)) {
+        console.warn('⚠️ Los datos recibidos no son un array:', data);
+        setPrecipitacionCoordenadas([]);
+        return;
+      }
+      
+      setPrecipitacionCoordenadas(data);
+    } catch (err) {
+      console.error('❌ Error al cargar datos de coordenadas:', err);
+      setError('Error al cargar datos de coordenadas');
+      setPrecipitacionCoordenadas([]);
+    } finally {
+      setLoadingCoordenadas(false);
+    }
+  };
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      
       // Cargar solo el endpoint principal primero
       const zonasData = await getTotalAcumuladoPorZona().catch((err) => { 
         console.error('❌ Error en zonas/total-acumulado:', err.response?.status, err.message); 
@@ -119,7 +152,6 @@ const ShowCharts = () => {
         reportesData,
         distribucionData,
         evolucionData,
-        comparativaData,
         coordenadasData,
         patronData,
         frecuenciaData,
@@ -127,8 +159,7 @@ const ShowCharts = () => {
       ] = await Promise.all([
         getReportesPorInstrumento().catch(() => []),
         getDistribucionPorTipo().catch(() => []),
-        getEvolucionMensual("anio").catch(() => []),
-        getEvolucionPorZona().catch(() => []),
+        getEvolucionMensual(periodoEvolucion).catch(() => []),
         getPrecipitacionCoordenadas().catch(() => []),
         getPatronMensual().catch(() => []),
         getAnalisisFrecuencia().catch(() => []),
@@ -141,7 +172,6 @@ const ShowCharts = () => {
       setTopSitios(topFormateadas);
       setDistribucionTipo(ensureArray(distribucionData));
       setEvolucionMensual(ensureArray(evolucionData));
-      setComparativaZonas(ensureArray(comparativaData));
       setPrecipitacionCoordenadas(ensureArray(coordenadasData));
       setPatronMensual(ensureArray(patronData));
       setAnalisisFrecuencia(ensureArray(frecuenciaData));
@@ -160,6 +190,22 @@ const ShowCharts = () => {
     if (Array.isArray(data)) return data;
     if (data && typeof data === 'object') return [data];
     return [];
+  };
+
+  const fetchPrecipitacion = async () => {
+    try {
+      console.log('📡 URL de precipitación por zona:', `http://localhost:8000/api/zonas/total-acumulado${periodoPrecipitacion && periodoPrecipitacion !== 'todos' ? '?periodo=' + periodoPrecipitacion : ''}`);
+      const zonasData = await getTotalAcumuladoPorZona(periodoPrecipitacion);
+      const zonasArray = ensureArray(zonasData);
+      const zonasFormateadas = zonasArray.map((zona: any) => ({
+        zona: zona.locality || zona.nombre || "Sin nombre",
+        precipitacion: parseFloat((parseFloat(zona.total_acumulado) || 0).toFixed(2)),
+      }));
+      setPrecipitacionPorZona(zonasFormateadas);
+    } catch (err) {
+      console.warn('⚠️ Error al recargar precipitación por zona');
+      setPrecipitacionPorZona([]);
+    }
   };
 
   const fetchTopZonas = async () => {
@@ -258,6 +304,9 @@ const ShowCharts = () => {
             description="Muestra el total acumulado de precipitación (en mm) para cada localidad de la línea sur. Permite identificar rápidamente las zonas con mayor y menor precipitación."
             icon={<MapPin className="w-6 h-6 text-blue-700" />}
             isLoading={loading}
+            showPeriodSelector={true}
+            selectedPeriod={periodoPrecipitacion}
+            onPeriodChange={setPeriodoPrecipitacion}
           >
             <PrecipitacionPorZona data={precipitacionPorZona} />
           </ChartCard>
@@ -316,27 +365,37 @@ const ShowCharts = () => {
           <EvolucionMensual data={evolucionMensual} />
         </ChartCard>
 
-        {/* Fila 4: Comparativa de zonas (Line Chart) */}
-        <ChartCard
-          title="Comparativa de Localidades en el Tiempo"
-          subtitle="Tendencias por localidad"
-          description="Compara la evolución de precipitación entre diferentes localidades de la línea sur a lo largo del tiempo. Permite identificar patrones y tendencias regionales."
-          icon={<TrendingUp className="w-6 h-6 text-indigo-700" />}
-          isLoading={loading}
-        >
-          <ComparativaZonas data={comparativaZonas} />
-        </ChartCard>
-
-        {/* Fila 5: Scatter y Radar */}
+        {/* Fila 4: Scatter y Radar */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ChartCard
             title="Precipitación vs Coordenadas"
             subtitle="Distribución geográfica"
-            description="Relaciona la precipitación con la ubicación geográfica (latitud y longitud) de cada sitio. Útil para identificar patrones espaciales y áreas críticas."
+            description="Relaciona la precipitación con la ubicación geográfica (latitud y longitud) de cada sitio. Los puntos rojos indican sitios con precipitación y los azules sitios con medición de caudal."
             icon={<MapPin className="w-6 h-6 text-pink-700" />}
-            isLoading={loading}
+            isLoading={loadingCoordenadas}
+            showPeriodSelector={true}
+            selectedPeriod={periodoCoordenadas}
+            onPeriodChange={setPeriodoCoordenadas}
           >
-            <PrecipitacionCoordenadas data={precipitacionCoordenadas} />
+            <div className="space-y-2">
+              <div className="flex justify-end space-x-2">
+                <select
+                  className="px-3 py-1 text-sm border rounded-lg bg-white/50 border-gray-200"
+                  value={tipoEventoCoordenadas || 'todos'}
+                  onChange={(e) => setTipoEventoCoordenadas(e.target.value === 'todos' ? undefined : e.target.value)}
+                >
+                  <option value="todos">Todos los tipos</option>
+                  <option value="lluvia">Lluvia</option>
+                  <option value="nieve">Nieve</option>
+                  <option value="caudal">Caudal</option>
+                </select>
+              </div>
+              <PrecipitacionCoordenadas 
+                data={precipitacionCoordenadas} 
+                periodo={periodoCoordenadas}
+                tipoEvento={tipoEventoCoordenadas}
+              />
+            </div>
           </ChartCard>
 
           <ChartCard

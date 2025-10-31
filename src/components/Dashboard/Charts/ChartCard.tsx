@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HelpCircle, Calendar } from "lucide-react";
+import { HelpCircle, Calendar, ChevronDown, Check } from "lucide-react";
 
 interface ChartCardProps {
   title: string;
@@ -25,15 +25,25 @@ const ChartCard = ({
   onPeriodChange
 }: ChartCardProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const periods = [
-    { value: "todos", label: "Todos los datos" },
-    { value: "trimestre", label: "Últimos 3 meses" },
-    { value: "6meses", label: "Últimos 6 meses" },
-    { value: "anio", label: "Último año" },
-    { value: "5anios", label: "Últimos 5 años" },
-    { value: "10anios", label: "Últimos 10 años" },
+    { value: "todos", label: "Todos los datos", icon: "📊" },
+    { value: "trimestre", label: "Últimos 3 meses", icon: "📅" },
+    { value: "6meses", label: "Últimos 6 meses", icon: "📆" },
+    { value: "anio", label: "Último año", icon: "🗓️" },
+    { value: "5anios", label: "Últimos 5 años", icon: "📈" },
+    { value: "10anios", label: "Últimos 10 años", icon: "📉" },
   ];
+
+  const selectedOption = periods.find(p => p.value === selectedPeriod);
+
+  const handleSelect = (value: string) => {
+    if (onPeriodChange) {
+      onPeriodChange(value);
+    }
+    setIsDropdownOpen(false);
+  };
 
   return (
     <div className="backdrop-blur-2xl bg-white/70 border border-white/60 rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300">
@@ -66,20 +76,45 @@ const ChartCard = ({
         </div>
         
         {showPeriodSelector && onPeriodChange && (
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-slate-500" />
-            <label className="text-xs text-slate-600 font-medium">Período:</label>
-            <select
-              value={selectedPeriod}
-              onChange={(e) => onPeriodChange(e.target.value)}
-              className="text-sm px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 font-medium hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all cursor-pointer"
+          <div className="relative">
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 shadow-sm hover:shadow-md transition-all duration-200"
             >
-              {periods.map((period) => (
-                <option key={period.value} value={period.value}>
-                  {period.label}
-                </option>
-              ))}
-            </select>
+              <Calendar className="w-3.5 h-3.5 text-blue-600" />
+              <span className="text-xs font-semibold text-slate-700">
+                {selectedOption?.icon} {selectedOption?.label}
+              </span>
+              <ChevronDown className={`w-3.5 h-3.5 text-blue-600 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isDropdownOpen && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setIsDropdownOpen(false)}
+                />
+                <div className="absolute right-0 top-full mt-1.5 w-48 backdrop-blur-xl bg-white/95 border border-blue-200/50 rounded-xl shadow-2xl overflow-hidden z-50 animate-fade-in">
+                  {periods.map((period) => (
+                    <button
+                      key={period.value}
+                      onClick={() => handleSelect(period.value)}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 text-left transition-all duration-150 ${
+                        period.value === selectedPeriod
+                          ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
+                          : 'hover:bg-blue-50 text-slate-700'
+                      }`}
+                    >
+                      <span className="text-base">{period.icon}</span>
+                      <span className="flex-1 text-xs font-medium">{period.label}</span>
+                      {period.value === selectedPeriod && (
+                        <Check className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

@@ -52,10 +52,14 @@ export const getZonaByLocality = async (zona) => {
 };
 
 // **NUEVO ENDPOINT PRINCIPAL** - Precipitación total acumulada por zona
-export const getTotalAcumuladoPorZona = async () => {
+export const getTotalAcumuladoPorZona = async (periodo?: string) => {
   try {
-    const { data } = await axios.get(`${API_URL}/zonas/total-acumulado`);
-    return data;
+    let url = `${API_URL}/zonas/total-acumulado`;
+    if (periodo && periodo !== 'todos') {
+      url += `?periodo=${periodo}`;
+    }
+    const { data } = await axios.get(url);
+    return data.data || data;
   } catch (error) {
     console.error("Error al obtener total acumulado por zona:", error);
     throw error;
