@@ -12,15 +12,20 @@ const ViewOptionMenu = ({ instruments, selectedInstrument, onSelectInstrument })
         <button
           key={index}
           onClick={() => onSelectInstrument(item.event)}
-          className={`flex items-center gap-4 w-full px-6 py-4 rounded-lg text-lg font-bold transition-all duration-200 
+          className={`group relative flex items-center gap-4 w-full px-6 py-4 rounded-2xl text-lg font-semibold transition-all duration-200 overflow-hidden
             ${
               selectedInstrument === item.event
-                ? "bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-md"
-                : "bg-white text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 border border-gray-200"
+                ? "bg-gradient-to-br from-yellow-500 to-amber-600 text-white shadow-lg shadow-yellow-500/30 scale-[1.02]"
+                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-yellow-300 hover:shadow-md active:scale-[0.98]"
             }`}
         >
-          {icons[item.event]}
-          {item.instrumento}
+          {selectedInstrument === item.event && (
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-amber-500 animate-pulse" />
+          )}
+          <span className="relative z-10 flex items-center gap-4">
+            {icons[item.event]}
+            {item.instrumento}
+          </span>
         </button>
       ))}
     </div>
