@@ -16,6 +16,7 @@ import HistogramaCaudalimetro from "./components/histograma/HistogramaCaudalimet
 import HeatMapView from "./components/MapHeatView";
 import FormAddSite from "./components/Dashboard/site/FormAddSite";
 import ShowCharts from "./components/Dashboard/Charts/ShowCharts";
+import ImportExcel from "./components/Dashboard/excel/ImportExcel";
 
 export default function App() {
   return (
@@ -37,6 +38,9 @@ export default function App() {
           <Route path="/histograma/nieve" element={<HistogramaNieve />} />
           <Route path="/histograma/caudalimetro" element={<HistogramaCaudalimetro />} />
           <Route path="/components/MapHeatView.tsx" element={<HeatMapView />} />
+
+          <Route path="/dashboard/import/excel" element={<ImportExcel />} />
+
         </Routes>
       </UserProvider>
     </div>

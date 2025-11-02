@@ -24,7 +24,7 @@ const useNavegation = () => {
 
    const goAddSite = () => navigate("/dashboard/site/add");
 
-   const goPopulateExcel = () => navigate("/dashboard/populate/excel");
+   const goExcelImport = () => navigate("/dashboard/import/excel");
 
    const goEstadisticas = () => navigate("/estadisticas")
 
@@ -41,7 +41,7 @@ const useNavegation = () => {
 
     return (
         {
-            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona , goAHistograma, goHeatMap, goAddSite, goEstadisticas , goPopulateExcel
+            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona , goAHistograma, goHeatMap, goAddSite, goEstadisticas , goExcelImport 
         }
     )
 }
