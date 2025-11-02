@@ -13,6 +13,7 @@ interface Coord {
 
 interface MapHTMLProps {
   position: Coord[];
+  loading?: boolean;
 }
 
 interface SiteData {
@@ -21,9 +22,9 @@ interface SiteData {
   lastReportDate: string | null;
 }
 
-const MapHTML = ({ position }: MapHTMLProps) => {
+const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
   const [siteReports, setSiteReports] = useState<Map<number, SiteData>>(new Map());
-  const [loading, setLoading] = useState(true);
+  const [loadingReports, setLoadingReports] = useState(true);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
 
@@ -65,7 +66,7 @@ const MapHTML = ({ position }: MapHTMLProps) => {
   useEffect(() => {
     const fetchAllReports = async () => {
       if (!position || position.length === 0) {
-        setLoading(false);
+        setLoadingReports(false);
         return;
       }
 
@@ -105,21 +106,48 @@ const MapHTML = ({ position }: MapHTMLProps) => {
       } catch (error) {
         console.error("Error fetching reports:", error);
       } finally {
-        setLoading(false);
+        setLoadingReports(false);
       }
     };
 
     fetchAllReports();
   }, [position, selectedYear]);
 
-  if (!position || position.length === 0) {
+  // Mostrar loading mientras carga datos externos o reportes
+  if (externalLoading || (loadingReports && (!position || position.length === 0))) {
     return <LoadingPage />;
+  }
+
+  // Si terminó de cargar pero no hay datos
+  if (!position || position.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <div className="text-center p-8 bg-blue-50 border border-blue-200 rounded-xl max-w-md">
+          <MapPin className="w-16 h-16 text-blue-400 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-blue-900 mb-2">
+            No hay datos disponibles
+          </h3>
+          <p className="text-blue-700">
+            No se encontraron sitios con datos para el instrumento seleccionado.
+            Intenta con otra opción del menú.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   const center: [number, number] = position[0].coordenadas;
 
   return (
     <div className="relative w-full h-full">
+      {/* Indicador de carga de reportes */}
+      {loadingReports && (
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[1000] bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <span className="font-medium">Cargando reportes...</span>
+        </div>
+      )}
+
       {/* Selector de año */}
       <div className="absolute top-5 right-5 z-[1000] bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
         <div className="px-4 py-3 flex items-center gap-3">
@@ -134,7 +162,7 @@ const MapHTML = ({ position }: MapHTMLProps) => {
               onChange={(e) => {
                 const value = e.target.value;
                 setSelectedYear(value === "all" ? null : parseInt(value));
-                setLoading(true);
+                setLoadingReports(true);
               }}
               className="pl-3 pr-8 py-2 rounded-lg border border-slate-200 text-sm cursor-pointer bg-slate-50 font-medium hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
             >

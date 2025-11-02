@@ -6,7 +6,7 @@ import useNavegation from "../hooks/useNavegation";
 import ViewOptionMenu from "./Menu/ViewOptionMenu";
 import ViewComplementMenu from "./Menu/ViewComplementMenu";
 import { OPTION_INSTRUMENTS } from "../constants/optionInstruments";
-import { LogIn, LogOut, Wrench, CheckCircle } from "lucide-react";
+import { LogIn, LogOut, Wrench, CheckCircle, AlertCircle } from "lucide-react";
 import img from "../assets/logo-CONICET_opt.png";
 
 const Home = () => {
@@ -14,7 +14,7 @@ const Home = () => {
 
   const [selectOptionMenu, setSelectOptionMenu] = useState("Lluvia");
 
-  const sitios = useSitio(selectOptionMenu);
+  const { sitios, loading, error } = useSitio(selectOptionMenu);
   
   const { isLogin, handleLogout, getUsername } = useUserContext();
   const { goLogin, goAdminUi, goHeatMap } = useNavegation();
@@ -49,7 +49,7 @@ const Home = () => {
   return (
     <div className="flex h-screen bg-gray-50 relative">
       {/* Mensaje de bienvenida */}
-     { /*showWelcome && (
+      {showWelcome && (
         <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
           <div className="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3">
             <CheckCircle className="w-6 h-6" />
@@ -58,7 +58,7 @@ const Home = () => {
             </span>
           </div>
         </div>
-      )*/}
+      )}
 
       <aside className="w-96 bg-white border-r border-gray-200 flex flex-col justify-between text-[17px]">
         <div className="p-10">
@@ -118,8 +118,27 @@ const Home = () => {
       </aside>
 
       <main className="flex-1 bg-gray-50 flex items-center justify-center">
-        <MapHTML position={pointsMap} />
+        {error ? (
+          <div className="max-w-md w-full mx-auto p-8">
+            <div className="bg-red-50 border border-red-200 rounded-xl p-6 shadow-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <AlertCircle className="w-8 h-8 text-red-600" />
+                <h3 className="text-lg font-bold text-red-900">Error al cargar datos</h3>
+              </div>
+              <p className="text-red-700 mb-4">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+              >
+                Recargar página
+              </button>
+            </div>
+          </div>
+        ) : (
+          <MapHTML position={pointsMap} loading={loading} />
+        )}
       </main>
+
     </div>
   );
 };

@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useUserContext } from "../../context/UserContext";
 import useNavegation from "../../hooks/useNavegation";
-import { Lock, LogIn, ArrowLeft } from "lucide-react";
+import { Lock, LogIn, ArrowLeft, AlertCircle } from "lucide-react";
 import img from "../../assets/logo-CONICET_opt.png";
 
 const Login = () => {
-  const { password, handleSavePassword, fetchGetUserByPassword, isLogin } = useUserContext();
+  const { password, handleSavePassword, fetchGetUserByPassword, isLogin, error, loading } = useUserContext();
   const { goHome } = useNavegation();
 
   useEffect(() => {
@@ -40,23 +40,47 @@ const Login = () => {
             Login
           </h2>
 
-          <div className="flex items-center gap-3 bg-gray-100 rounded-full px-5 py-3 border border-gray-200">
+          {/* Mensaje de error profesional */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 animate-shake">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-red-900 mb-1">Error de autenticación</p>
+                <p className="text-xs text-red-700">{error}</p>
+              </div>
+            </div>
+          )}
+
+          <div className={`flex items-center gap-3 bg-gray-100 rounded-full px-5 py-3 border transition-all ${
+            error ? 'border-red-300 bg-red-50' : 'border-gray-200'
+          }`}>
             <input
               type="password"
               placeholder="Contraseña"
               value={password}
               onChange={handleSavePassword}
-              className="bg-transparent outline-none flex-1 text-gray-900 placeholder-gray-400"
+              disabled={loading}
+              className="bg-transparent outline-none flex-1 text-gray-900 placeholder-gray-400 disabled:cursor-not-allowed"
             />
-            <Lock className="w-5 h-5 text-gray-500" />
+            <Lock className={`w-5 h-5 ${error ? 'text-red-500' : 'text-gray-500'}`} />
           </div>
 
           <button
             type="submit"
-            className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-3 rounded-full font-medium text-lg hover:bg-blue-700 transition"
+            disabled={loading || !password}
+            className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-3 rounded-full font-medium text-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
           >
-            <LogIn className="w-5 h-5" />
-            Entrar
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Validando...
+              </>
+            ) : (
+              <>
+                <LogIn className="w-5 h-5" />
+                Entrar
+              </>
+            )}
           </button>
 
           <button

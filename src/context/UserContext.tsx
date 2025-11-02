@@ -1,9 +1,12 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState } from "react";
+import type { ReactNode } from "react";
 import useUser from "../hooks/useUser";
 
 type UserContextType = {
   user: any;
   password: string;
+  error: string | null;
+  loading: boolean;
   fetchGetUserByPassword: (e: React.FormEvent) => Promise<void>;
   handleSavePassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSelectReport: any;
@@ -22,13 +25,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setReport(report);
   };
 
-  const { user, fetchGetUserByPassword, isLogin, password, handleSavePassword, handleLogout, getUsername } = useUser();
+  const { user, fetchGetUserByPassword, isLogin, password, error, loading, handleSavePassword, handleLogout, getUsername } = useUser();
 
   return (
     <UserContext.Provider
       value={{
         user,
         password,
+        error,
+        loading,
         fetchGetUserByPassword,
         handleSavePassword,
         handleSelectReport,
