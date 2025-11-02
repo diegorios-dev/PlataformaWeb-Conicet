@@ -124,19 +124,73 @@ export const getPrecipitacionCoordenadas = async (periodo?: string, tipoEvento?:
 };
 
 // Patrón mensual (radar)
-export const getPatronMensual = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/patron-mensual`);
-  return data;
+export const getPatronMensual = async (periodo?: string, tipoEvento?: string) => {
+  let url = `${API_URL}/reportes/patron-mensual`;
+  const params = new URLSearchParams();
+  
+  if (periodo && periodo !== 'todos') {
+    params.append('periodo', periodo);
+  }
+  if (tipoEvento && tipoEvento !== 'todos') {
+    params.append('tipo_evento', tipoEvento);
+  }
+
+  const queryString = params.toString();
+  if (queryString) {
+    url += `?${queryString}`;
+  }
+
+  const { data } = await axios.get(url);
+  return data.data || data;
 };
 
-// Análisis de frecuencia
-export const getAnalisisFrecuencia = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/analisis-frecuencia`);
-  return data;
+// Análisis de frecuencia (histograma)
+export const getAnalisisFrecuencia = async (periodo?: string, tipoEvento?: string, rango?: number) => {
+  let url = `${API_URL}/histograma`;
+  const params = new URLSearchParams();
+  
+  if (periodo && periodo !== 'todos') {
+    params.append('periodo', periodo);
+  }
+  if (tipoEvento && tipoEvento !== 'todos') {
+    params.append('tipo_evento', tipoEvento);
+  }
+  if (rango) {
+    params.append('rango', rango.toString());
+  }
+
+  const queryString = params.toString();
+  if (queryString) {
+    url += `?${queryString}`;
+  }
+
+  const { data } = await axios.get(url);
+  return data.data || data;
 };
 
 // Comparativa año a año
-export const getComparativaAnual = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/comparativa-anual`);
+export const getComparativaAnual = async (anios?: string, tipoEvento?: string, mesInicio?: number, mesFin?: number) => {
+  let url = `${API_URL}/reportes/comparativa-anual`;
+  const params = new URLSearchParams();
+  
+  if (anios) {
+    params.append('anios', anios);
+  }
+  if (tipoEvento && tipoEvento !== 'todos') {
+    params.append('tipo_evento', tipoEvento);
+  }
+  if (mesInicio) {
+    params.append('mes_inicio', mesInicio.toString());
+  }
+  if (mesFin) {
+    params.append('mes_fin', mesFin.toString());
+  }
+
+  const queryString = params.toString();
+  if (queryString) {
+    url += `?${queryString}`;
+  }
+
+  const { data } = await axios.get(url);
   return data;
 };
