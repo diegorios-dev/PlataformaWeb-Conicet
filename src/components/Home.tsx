@@ -74,7 +74,7 @@ const Home = () => {
           </div>
 
           <div className="mb-12">
-            <h3 className="text-base font-semibold text-gray-500 mb-5 tracking-wider uppercase">
+            <h3 className="text-base font-bold text-gray-500 mb-5 tracking-wider uppercase">
               Análisis
             </h3>
 
