@@ -10,8 +10,8 @@ export const getPrecipitacionPorZona = async () => {
 
 // Reportes por instrumento
 export const getReportesPorInstrumento = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/reportes-por-instrumento`);
-  return data;
+  const { data } = await axios.get(`${API_URL}/reportes/por-instrumento`);
+  return data.data || data;
 };
 
 // Top zonas por cantidad de registros
@@ -62,15 +62,65 @@ export const getSeriePorTipo = async () => {
 };
 
 // Distribución porcentual por tipo
-export const getDistribucionPorTipo = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/distribucion-por-tipo`);
-  return data;
+export const getDistribucionPorTipo = async (periodo?: string) => {
+  const url = periodo && periodo !== 'todos' 
+    ? `${API_URL}/eventos/distribucion-reportes?periodo=${periodo}`
+    : `${API_URL}/eventos/distribucion-reportes`;
+  const { data } = await axios.get(url);
+  return data.data || data;
+};
+
+// Evolución mensual
+export const getEvolucionMensual = async (periodo?: string, anio?: number) => {
+  let url = `${API_URL}/reportes/evolucion-mensual`;
+  
+  if (anio) {
+    url += `?anio=${anio}`;
+  } else if (periodo && periodo !== 'todos') {
+    url += `?periodo=${periodo}`;
+  }
+  
+  const { data } = await axios.get(url);
+  return data.data || data;
 };
 
 // Precipitación vs coordenadas (scatter)
-export const getPrecipitacionCoordenadas = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/precipitacion-coordenadas`);
-  return data;
+export const getPrecipitacionCoordenadas = async (periodo?: string, tipoEvento?: string) => {
+  let url = `${API_URL}/sitios/precipitacion-coordenadas`;
+  const params = new URLSearchParams();
+  
+  if (periodo && periodo !== 'todos') {
+    params.append('periodo', periodo);
+  }
+  if (tipoEvento && tipoEvento !== 'todos') {
+    params.append('tipo_evento', tipoEvento);
+  }
+
+  const queryString = params.toString();
+  if (queryString) {
+    url += `?${queryString}`;
+  }
+
+  console.log('🌐 Llamando a API URL:', url);
+  try {
+    const response = await axios.get(url);
+    console.log('✅ Respuesta completa de la API:', response);
+    
+    // Validar la estructura de la respuesta
+    if (response.data && Array.isArray(response.data.data)) {
+      console.log('✅ Datos válidos encontrados:', response.data.data);
+      return response.data.data;
+    } else if (Array.isArray(response.data)) {
+      console.log('✅ Array directo encontrado:', response.data);
+      return response.data;
+    } else {
+      console.warn('⚠️ Formato de respuesta inesperado:', response.data);
+      return [];
+    }
+  } catch (error) {
+    console.error('❌ Error en llamada a API:', error);
+    throw error;
+  }
 };
 
 // Patrón mensual (radar)

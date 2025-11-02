@@ -28,9 +28,9 @@ const ComparativaAnual = ({ data }: ComparativaAnualProps) => {
           }}
         />
         <Legend />
-        <Area type="monotone" dataKey="2023" stackId="1" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} />
-        <Area type="monotone" dataKey="2024" stackId="2" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.6} />
-        <Area type="monotone" dataKey="2025" stackId="3" stroke="#10b981" fill="#10b981" fillOpacity={0.6} />
+        <Area type="monotone" dataKey="2023" stackId="1" stroke="#f97316" fill="#f97316" fillOpacity={0.6} />
+        <Area type="monotone" dataKey="2024" stackId="2" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} />
+        <Area type="monotone" dataKey="2025" stackId="3" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.6} />
       </AreaChart>
     </ResponsiveContainer>
   );
