@@ -74,17 +74,18 @@ const Home = () => {
           </div>
 
           <div className="mb-12">
-            <h3 className="text-base font-semibold text-gray-500 mb-5 tracking-wider uppercase">
+            <h3 className="text-base font-bold text-gray-500 mb-5 tracking-wider uppercase">
               Análisis
             </h3>
 
             {isLogin && (
               <button
                 onClick={goAdminUi}
-                className="flex items-center gap-3 w-full px-6 py-4 rounded-lg text-lg font-semibold bg-blue-500 text-white hover:bg-blue-600 transition mb-4"
+                className="group relative flex items-center gap-3 w-full px-6 py-4 rounded-2xl text-lg font-semibold bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 mb-4 overflow-hidden"
               >
-                <Wrench className="w-6 h-6" />
-                Panel Admin
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                <Wrench className="w-6 h-6 relative z-10" />
+                <span className="relative z-10">Panel Admin</span>
               </button>
             )}
 
@@ -107,18 +108,20 @@ const Home = () => {
           {isLogin ? (
             <button
               onClick={handleLogoutClick}
-              className="w-full flex items-center justify-center gap-3 bg-red-500 hover:bg-red-600 text-white font-semibold py-4 rounded-lg text-lg transition"
+              className="group relative w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl text-lg font-semibold bg-gradient-to-br from-yellow-500 to-amber-600 text-white shadow-lg shadow-yellow-500/30 hover:shadow-xl hover:shadow-yellow-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 overflow-hidden"
             >
-              <LogOut className="w-6 h-6" />
-              Cerrar Sesión
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+              <LogOut className="w-6 h-6 relative z-10" />
+              <span className="relative z-10">Cerrar Sesión</span>
             </button>
           ) : (
             <button
               onClick={goLogin}
-              className="w-full flex items-center justify-center gap-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 rounded-lg text-lg transition"
+              className="group relative w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl text-lg font-semibold bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 overflow-hidden"
             >
-              <LogIn className="w-6 h-6" />
-              Login
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+              <LogIn className="w-6 h-6 relative z-10" />
+              <span className="relative z-10">Login</span>
             </button>
           )}
         </div>
