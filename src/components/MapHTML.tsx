@@ -30,7 +30,17 @@ const MapHTML = ({ position }: MapHTMLProps) => {
   useEffect(() => {
     const fetchAvailableYears = async () => {
       try {
-        const years = await getAvailableYears();
+        const response = await getAvailableYears();
+        
+        // Manejar tanto si viene un array directo como si viene { years: [...] }
+        let years: number[] = [];
+        
+        if (Array.isArray(response)) {
+          years = response;
+        } else if (response && typeof response === 'object' && 'years' in response) {
+          years = (response as any).years || [];
+        }
+        
         setAvailableYears(years);
         
         if (years.length > 0) {

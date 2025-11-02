@@ -31,29 +31,37 @@ export default function ImportExcel() {
   // Datos para los selectores
   const [zonas, setZonas] = useState<Zona[]>([]);
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
-  // Cargar zonas y usuarios al montar el componente
+  // Cargar zonas, usuarios y años disponibles al montar el componente
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [zonasRes, usuariosRes] = await Promise.all([
+        const [zonasRes, usuariosRes, yearsRes] = await Promise.all([
           fetch('http://localhost:8000/api/zonas'),
-          fetch('http://localhost:8000/api/usuarios')
+          fetch('http://localhost:8000/api/usuarios'),
+          fetch('http://localhost:8000/api/reportes/available-years')
         ]);
         
         const zonasData = await zonasRes.json();
         const usuariosData = await usuariosRes.json();
+        const yearsData = await yearsRes.json();
         
         // La API de zonas devuelve un array directo
         setZonas(Array.isArray(zonasData) ? zonasData : []);
         
         // La API de usuarios devuelve { users: [...] }
         setUsuarios(usuariosData.users || []);
+        
+        // La API de años devuelve { years: [2025, 2024, ...] }
+        setAvailableYears(yearsData.years || []);
       } catch (err) {
         console.error('Error al cargar datos:', err);
         setZonas([]);
         setUsuarios([]);
+        // Si falla, al menos mostrar el año actual
+        setAvailableYears([new Date().getFullYear()]);
       } finally {
         setLoadingData(false);
       }
@@ -122,10 +130,6 @@ export default function ImportExcel() {
   };
 
   const hasFilters = startDate || endDate || zonaId || userId || year || month || day;
-
-  // Generar años dinámicamente
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
 
   // Meses
   const months = [
@@ -230,15 +234,16 @@ export default function ImportExcel() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-slate-600 mb-2">
-                      Año (ej: todos los reportes de 2025)
+                      Año (todos los reportes del año)
                     </label>
                     <select
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
-                      className="w-full px-4 py-2 rounded-xl border border-slate-300 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all"
+                      disabled={loadingData}
+                      className="w-full px-4 py-2 rounded-xl border border-slate-300 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all disabled:opacity-50"
                     >
                       <option value="">Todos los años</option>
-                      {years.map((y) => (
+                      {availableYears.map((y) => (
                         <option key={y} value={y}>{y}</option>
                       ))}
                     </select>
@@ -246,7 +251,7 @@ export default function ImportExcel() {
                   
                   <div>
                     <label className="block text-xs font-medium text-slate-600 mb-2">
-                      Mes (ej: todos los reportes de octubre)
+                      Mes (todos los reportes del mes)
                     </label>
                     <select
                       value={month}
@@ -262,7 +267,7 @@ export default function ImportExcel() {
                   
                   <div>
                     <label className="block text-xs font-medium text-slate-600 mb-2">
-                      Día (ej: todos los reportes del día 15)
+                      Día (todos los reportes del día)
                     </label>
                     <select
                       value={day}
