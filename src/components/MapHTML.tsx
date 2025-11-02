@@ -2,7 +2,6 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { getReportsForSite, getAvailableYears } from "../services/sitiosService";
 import { useEffect, useState } from "react";
 import { MapPin, Droplet, CalendarDays } from "lucide-react";
-import LoadingPage from "../components/LoadingPage";
 
 interface Coord {
   coordenadas: [number, number];
@@ -70,6 +69,8 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
         return;
       }
 
+      // Iniciar carga
+      setLoadingReports(true);
       const reportsMap = new Map<number, SiteData>();
 
       try {
@@ -113,24 +114,92 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
     fetchAllReports();
   }, [position, selectedYear]);
 
-  // Mostrar loading mientras carga datos externos o reportes
-  if (externalLoading || (loadingReports && (!position || position.length === 0))) {
-    return <LoadingPage />;
+  // Mostrar loading mientras carga datos externos
+  if (externalLoading) {
+    return (
+      <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="text-center p-10">
+          {/* Animación de mapa cargando */}
+          <div className="relative w-24 h-24 mx-auto mb-6">
+            <div className="absolute inset-0 border-4 border-blue-200 rounded-full animate-ping"></div>
+            <div className="absolute inset-0 border-4 border-blue-500 rounded-full animate-pulse"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <MapPin className="w-10 h-10 text-blue-600 animate-bounce" />
+            </div>
+          </div>
+          
+          <h3 className="text-2xl font-bold text-gray-800 mb-3">
+            Cargando sitios...
+          </h3>
+          <p className="text-gray-600 mb-4">
+            Obteniendo ubicaciones de instrumentos
+          </p>
+          
+          {/* Barra de progreso indeterminada */}
+          <div className="w-80 h-2 bg-gray-200 rounded-full overflow-hidden mx-auto relative">
+            <div className="absolute inset-0 w-1/3 h-full bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-progress"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar loading mientras carga los reportes/puntos del mapa
+  if (loadingReports) {
+    return (
+      <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="text-center p-10">
+          {/* Animación de puntos del mapa */}
+          <div className="relative w-24 h-24 mx-auto mb-6">
+            {/* Círculos animados */}
+            <div className="absolute inset-0 border-4 border-blue-200 rounded-full animate-ping"></div>
+            <div className="absolute inset-0 border-4 border-blue-400 rounded-full animate-pulse"></div>
+            
+            {/* Puntos simulando carga de marcadores */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative w-16 h-16">
+                <MapPin className="absolute top-0 left-0 w-5 h-5 text-blue-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+                <MapPin className="absolute top-0 right-0 w-5 h-5 text-blue-600 animate-bounce" style={{ animationDelay: '150ms' }} />
+                <MapPin className="absolute bottom-0 left-0 w-5 h-5 text-blue-700 animate-bounce" style={{ animationDelay: '300ms' }} />
+                <MapPin className="absolute bottom-0 right-0 w-5 h-5 text-blue-800 animate-bounce" style={{ animationDelay: '450ms' }} />
+              </div>
+            </div>
+          </div>
+          
+          {/* Texto */}
+          <h3 className="text-2xl font-bold text-gray-800 mb-3">
+            Cargando puntos del mapa
+          </h3>
+          <p className="text-gray-600 mb-4">
+            Obteniendo reportes de {position?.length || 0} sitios...
+          </p>
+          
+          {/* Barra de progreso */}
+          <div className="w-80 h-2 bg-gray-200 rounded-full overflow-hidden mx-auto relative">
+            <div className="absolute inset-0 w-1/3 h-full bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-progress"></div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Si terminó de cargar pero no hay datos
   if (!position || position.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full w-full">
-        <div className="text-center p-8 bg-blue-50 border border-blue-200 rounded-xl max-w-md">
-          <MapPin className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-blue-900 mb-2">
+      <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="text-center p-10 bg-white/80 backdrop-blur-sm border border-blue-200 rounded-2xl max-w-md shadow-xl">
+          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <MapPin className="w-10 h-10 text-blue-500" />
+          </div>
+          <h3 className="text-2xl font-bold text-gray-800 mb-3">
             No hay datos disponibles
           </h3>
-          <p className="text-blue-700">
+          <p className="text-gray-600 mb-6">
             No se encontraron sitios con datos para el instrumento seleccionado.
-            Intenta con otra opción del menú.
           </p>
+          <div className="text-sm text-gray-500 bg-blue-50 rounded-lg p-4">
+            💡 <strong>Sugerencia:</strong> Intenta seleccionar otro instrumento desde el menú lateral
+          </div>
         </div>
       </div>
     );
@@ -140,14 +209,6 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
 
   return (
     <div className="relative w-full h-full">
-      {/* Indicador de carga de reportes */}
-      {loadingReports && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[1000] bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
-          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          <span className="font-medium">Cargando reportes...</span>
-        </div>
-      )}
-
       {/* Selector de año */}
       <div className="absolute top-5 right-5 z-[1000] bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
         <div className="px-4 py-3 flex items-center gap-3">
