@@ -20,10 +20,17 @@ const Home = () => {
   const { goLogin, goAdminUi, goHeatMap } = useNavegation();
   const [showWelcome, setShowWelcome] = useState(false);
 
-  // Mostrar mensaje de bienvenida cuando el usuario inicia sesión
+  // Mostrar mensaje de bienvenida SOLO cuando el usuario acaba de iniciar sesión
   useEffect(() => {
-    if (isLogin) {
+    // Verificar si es un login nuevo (marcado desde el componente Login)
+    const isNewLogin = sessionStorage.getItem('newLogin');
+    
+    if (isLogin && isNewLogin === 'true') {
       setShowWelcome(true);
+      
+      // Limpiar la marca de nuevo login
+      sessionStorage.removeItem('newLogin');
+      
       const timer = setTimeout(() => {
         setShowWelcome(false);
       }, 3000);
