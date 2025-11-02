@@ -123,7 +123,20 @@ const ChartCard = ({
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" />
       </div>
     ) : (
-      <div className="mt-4">{children}</div>
+      <div className="relative mt-4">
+        {children}
+        {/* Marca de agua - Grande y centrada sobre el gráfico */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10">
+          <img 
+            src="/logo-watermark.svg" 
+            alt="Watermark"
+            className="w-150 h-150 opacity-50"
+            style={{ 
+              filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))',
+            }}
+          />
+        </div>
+      </div>
     )}
   </div>
 );
