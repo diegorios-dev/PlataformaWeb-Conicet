@@ -12,7 +12,7 @@ export const updateReporte = async (id: number, data: any) => {
     const response = await axios.put(`${API_URL}/reportes/${id}`, data);
     
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error en updateReporte:", error);
     console.error("Respuesta del error:", error.response?.data);
     throw error;
@@ -43,6 +43,17 @@ export async function getHistograma(
 
   const json = await res.json();
 
+  // Validar que json sea un array
+  if (!Array.isArray(json)) {
+    console.error("La respuesta no es un array:", json);
+    throw new Error("Formato de datos incorrecto: se esperaba un array");
+  }
+
+  // Si el array está vacío, retornar array vacío
+  if (json.length === 0) {
+    return [];
+  }
+
   return json.map((item: any) => {
     if (groupBy === "dia") {
       return { label: item.date, value: parseFloat(item.amount) };
@@ -70,6 +81,17 @@ export async function getHistogramaNieve(
 
   const json = await res.json();
 
+  // Validar que json sea un array
+  if (!Array.isArray(json)) {
+    console.error("La respuesta no es un array:", json);
+    throw new Error("Formato de datos incorrecto: se esperaba un array");
+  }
+
+  // Si el array está vacío, retornar array vacío
+  if (json.length === 0) {
+    return [];
+  }
+
   return json.map((item: any) => {
     if (groupBy === "dia") {
       return { label: item.date, value: parseFloat(item.amount) };
@@ -96,6 +118,17 @@ export async function getHistogramaCaudalimetro(
   if (!res.ok) throw new Error("Error al traer datos de caudalímetro");
 
   const json = await res.json();
+
+  // Validar que json sea un array
+  if (!Array.isArray(json)) {
+    console.error("La respuesta no es un array:", json);
+    throw new Error("Formato de datos incorrecto: se esperaba un array");
+  }
+
+  // Si el array está vacío, retornar array vacío
+  if (json.length === 0) {
+    return [];
+  }
 
   return json.map((item: any) => {
     if (groupBy === "dia") {
