@@ -1,5 +1,5 @@
 import BaseHistograma from "./BaseHistograma";
-import { getHistogramaNieve } from "../../services/reportService";
+import { getHistogramaNieve } from '../../services/reportService';
 
 export default function HistogramaNieve() {
   return (

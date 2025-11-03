@@ -19,125 +19,74 @@ export const updateReporte = async (id: number, data: any) => {
   }
 };
 
-export async function getHistograma(
-  groupBy: string = "month", 
-  year: number | null = null, 
-  month: number | null = null
-) {
-  let url = `http://localhost:8000/api/histograma?type=${groupBy}&event=Lluvia`;
+export const getHistogramaLluvia = async (periodo, year, month) => {
+  const params = new URLSearchParams();
   
-  if (groupBy === "dia" && year && month) {
-    url += `&year=${year}&month=${month}`;
-  } else if (groupBy === "mes" && year) {
-    url += `&year=${year}`;
-  } else if (year) {
-    url += `&year=${year}`;
-  }
+  params.append('periodo', periodo);
+  params.append('tipo_evento', 'Lluvia');
   
-  if (month && groupBy !== "dia") {
-    url += `&month=${month}`;
+  if (year) params.append('year', year);
+  if (month) params.append('month', month);
+
+  const response = await fetch(`${API_URL}/histograma-temporal?${params}`);
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json.error || json.message || 'Error al obtener histograma');
   }
 
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Error al traer datos de lluvia");
+  // El backend ya devuelve en formato correcto: [{label, value}]
+  return json.data || [];
+};
 
-  const json = await res.json();
+/**
+ * Obtiene histograma de Nieve agrupado por día/mes/año
+ * @param {string} periodo - 'dia', 'mes', 'año'
+ * @param {number} year - Año (requerido para 'mes' y 'dia')
+ * @param {number} month - Mes (requerido solo para 'dia')
+ * @returns {Promise<Array>} Array con formato [{label, value}]
+ */
+export const getHistogramaNieve = async (periodo, year, month) => {
+  const params = new URLSearchParams();
+  
+  params.append('periodo', periodo);
+  params.append('tipo_evento', 'Nieve');
+  
+  if (year) params.append('year', year);
+  if (month) params.append('month', month);
 
-  // Validar que json sea un array
-  if (!Array.isArray(json)) {
-    console.error("La respuesta no es un array:", json);
-    throw new Error("Formato de datos incorrecto: se esperaba un array");
+  const response = await fetch(`${API_URL}/histograma-temporal?${params}`);
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json.error || json.message || 'Error al obtener histograma');
   }
 
-  // Si el array está vacío, retornar array vacío
-  if (json.length === 0) {
-    return [];
+  return json.data || [];
+};
+
+/**
+ * Obtiene histograma de Caudal agrupado por día/mes/año
+ * @param {string} periodo - 'dia', 'mes', 'año'
+ * @param {number} year - Año (requerido para 'mes' y 'dia')
+ * @param {number} month - Mes (requerido solo para 'dia')
+ * @returns {Promise<Array>} Array con formato [{label, value}]
+ */
+export const getHistogramaCaudal = async (periodo, year, month) => {
+  const params = new URLSearchParams();
+  
+  params.append('periodo', periodo);
+  params.append('tipo_evento', 'Caudal');
+  
+  if (year) params.append('year', year);
+  if (month) params.append('month', month);
+
+  const response = await fetch(`${API_URL}/histograma-temporal?${params}`);
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json.error || json.message || 'Error al obtener histograma');
   }
 
-  return json.map((item: any) => {
-    if (groupBy === "dia") {
-      return { label: item.date, value: parseFloat(item.amount) };
-    } else if (groupBy === "mes") {
-      const label = `${item.year}-${String(item.month).padStart(2, "0")}`;
-      return { label, value: parseFloat(item.amount) };
-    } else if (groupBy === "año") {
-      return { label: item.year.toString(), value: parseFloat(item.amount) };
-    }
-  });
-}
-
-export async function getHistogramaNieve(
-  groupBy: string = "month", 
-  year: number | null = null, 
-  month: number | null = null
-) {
-  let url = `http://localhost:8000/api/histograma?type=${groupBy}&event=Nieve`;
-
-  if (year) url += `&year=${year}`;
-  if (month) url += `&month=${month}`;
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Error al traer datos de nieve");
-
-  const json = await res.json();
-
-  // Validar que json sea un array
-  if (!Array.isArray(json)) {
-    console.error("La respuesta no es un array:", json);
-    throw new Error("Formato de datos incorrecto: se esperaba un array");
-  }
-
-  // Si el array está vacío, retornar array vacío
-  if (json.length === 0) {
-    return [];
-  }
-
-  return json.map((item: any) => {
-    if (groupBy === "dia") {
-      return { label: item.date, value: parseFloat(item.amount) };
-    } else if (groupBy === "mes") {
-      const label = `${item.year}-${String(item.month).padStart(2, "0")}`;
-      return { label, value: parseFloat(item.amount) };
-    } else if (groupBy === "año") {
-      return { label: item.year.toString(), value: parseFloat(item.amount) };
-    }
-  });
-}
-
-export async function getHistogramaCaudalimetro(
-  groupBy: string = "month", 
-  year: number | null = null, 
-  month: number | null = null
-) {
-  let url = `http://localhost:8000/api/histograma?type=${groupBy}&event=Caudal`;
-
-  if (year) url += `&year=${year}`;
-  if (month) url += `&month=${month}`;
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Error al traer datos de caudalímetro");
-
-  const json = await res.json();
-
-  // Validar que json sea un array
-  if (!Array.isArray(json)) {
-    console.error("La respuesta no es un array:", json);
-    throw new Error("Formato de datos incorrecto: se esperaba un array");
-  }
-
-  // Si el array está vacío, retornar array vacío
-  if (json.length === 0) {
-    return [];
-  }
-
-  return json.map((item: any) => {
-    if (groupBy === "dia") {
-      return { label: item.date, value: parseFloat(item.amount) };
-    } else if (groupBy === "mes") {
-      const label = `${item.year}-${String(item.month).padStart(2, "0")}`;
-      return { label, value: parseFloat(item.amount) };
-    } else if (groupBy === "año") {
-      return { label: item.year.toString(), value: parseFloat(item.amount) };
-    }
-  });
-}
+  return json.data || [];
+};
