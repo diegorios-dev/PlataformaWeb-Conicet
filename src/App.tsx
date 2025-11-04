@@ -17,29 +17,32 @@ import HeatMapView from "./components/MapHeatView";
 import FormAddSite from "./components/Dashboard/site/FormAddSite";
 import ShowCharts from "./components/Dashboard/Charts/ShowCharts";
 import ImportExcel from "./components/Dashboard/excel/ImportExcel";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
   return (
     <div>
       <UserProvider>
         <Routes>
+          {/* Rutas públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login/>} />
-          <Route path="/dashboard" element={<Dashboard/>} />
-          <Route path="/dashboard/administration/report" element={<ShowReport/>} />
-          <Route path="/dashboard/administration/report/edit" element={<FormEditReport/>} />
-          <Route path="/dashboard/administration/user" element={<ViewManagementUsers/>} />
-          <Route path="/dashboard/administration/user/add" element={<FormAddUser/>} />
-          <Route path="/dashboard/Zona/FormAddZona.tsx" element={<FormAddZona />} />
-          <Route path="/dashboard/site/add" element={<FormAddSite />} />
-          <Route path="/estadisticas" element={<ShowCharts />} />
           <Route path="/histograma" element={<ShowHistograma />} />
           <Route path="/histograma/lluvia" element={<HistogramaLluvia />} />
           <Route path="/histograma/nieve" element={<HistogramaNieve />} />
           <Route path="/histograma/caudalimetro" element={<HistogramaCaudalimetro />} />
           <Route path="/components/MapHeatView.tsx" element={<HeatMapView />} />
 
-          <Route path="/dashboard/import/excel" element={<ImportExcel />} />
+          {/* Rutas protegidas del dashboard - requieren login */}
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
+          <Route path="/estadisticas" element={<ProtectedRoute><ShowCharts /></ProtectedRoute>} />
+          <Route path="/dashboard/administration/report" element={<ProtectedRoute><ShowReport/></ProtectedRoute>} />
+          <Route path="/dashboard/administration/report/edit" element={<ProtectedRoute><FormEditReport/></ProtectedRoute>} />
+          <Route path="/dashboard/administration/user" element={<ProtectedRoute><ViewManagementUsers/></ProtectedRoute>} />
+          <Route path="/dashboard/administration/user/add" element={<ProtectedRoute><FormAddUser/></ProtectedRoute>} />
+          <Route path="/dashboard/Zona/FormAddZona.tsx" element={<ProtectedRoute><FormAddZona /></ProtectedRoute>} />
+          <Route path="/dashboard/site/add" element={<ProtectedRoute><FormAddSite /></ProtectedRoute>} />
+          <Route path="/dashboard/import/excel" element={<ProtectedRoute><ImportExcel /></ProtectedRoute>} />
 
         </Routes>
       </UserProvider>

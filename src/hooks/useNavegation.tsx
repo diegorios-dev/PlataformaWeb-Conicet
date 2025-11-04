@@ -48,6 +48,8 @@ const useNavegation = () => {
     } else if (currentPath.includes("/dashboard/administration/user") || 
                currentPath.includes("/dashboard/administration/report")) {
       goAdminUi();
+    } else if (currentPath.includes("/estadisticas")) {
+      goAdminUi(); // Estadísticas ahora vuelve al dashboard
     } else if (currentPath.includes("/dashboard/site/add")) {
       goAdminUi();
     } else if (currentPath.includes("/dashboard/Zona")) {
@@ -57,7 +59,6 @@ const useNavegation = () => {
     } else if (currentPath.includes("/dashboard")) {
       goHome();
     } else if (currentPath.includes("/histograma") || 
-               currentPath.includes("/estadisticas") || 
                currentPath.includes("/MapHeatView")) {
       goHome();
     } else if (currentPath.includes("/login")) {

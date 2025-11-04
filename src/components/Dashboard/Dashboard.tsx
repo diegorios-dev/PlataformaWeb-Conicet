@@ -1,13 +1,13 @@
 import { useState } from "react";
 import useNavegation from "../../hooks/useNavegation";
 import BackButton from "../BackButton";
-import { FileText, Users, MapPin, LogOut, Shield} from "lucide-react";
+import { FileText, Users, MapPin, LogOut, Shield , TrendingUp} from "lucide-react";
 import { FileSpreadsheet } from "lucide-react";
 import DashboardButton from "../DashboardButton";
 
 const Dashboard = () => {
   const [currentView, setCurrentView] = useState<"menu" | "instrumentos">("menu");
-  const { goReports, goConfigUsers, goBack, goAddZona, goExcelImport } = useNavegation();
+  const { goReports, goConfigUsers, goBack, goAddZona, goExcelImport ,goEstadisticas } = useNavegation();
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 flex flex-col">
@@ -73,6 +73,14 @@ const Dashboard = () => {
                   title="Importar Excel"
                   description="Sube un archivo Excel para importar datos"
                   colorScheme="green"
+                />
+
+                <DashboardButton
+                  onClick={goEstadisticas}
+                  icon={TrendingUp}
+                  title="Ver Estadísticas"
+                  description="Visualiza las estadísticas de los datos"
+                  colorScheme="blue"
                 />
 
               </div>

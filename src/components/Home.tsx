@@ -10,7 +10,7 @@ import { LogIn, LogOut, Wrench, CheckCircle, AlertCircle } from "lucide-react";
 import img from "../assets/logo-CONICET_opt.png";
 
 const Home = () => {
-  const { goAHistograma, goEstadisticas } = useNavegation();
+  const { goAHistograma} = useNavegation();
 
   const [selectOptionMenu, setSelectOptionMenu] = useState("Lluvia");
 
@@ -52,7 +52,6 @@ const Home = () => {
   const OPTION_COMPLEMENTS = [
     { option: "Ver Histograma", onClick: goAHistograma },
     { option: "Ver Mapa de Calor", onClick: goHeatMap },
-    { option: "Ver Estadísticas", onClick: goEstadisticas },
   ];
 
   // 🧠 Memorizar los puntos para no cambiar referencia en cada render

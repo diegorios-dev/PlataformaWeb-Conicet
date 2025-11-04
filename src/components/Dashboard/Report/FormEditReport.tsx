@@ -473,9 +473,9 @@ const FormEditReport = () => {
                   className="w-full px-4 py-3 border-2 border-cyan-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-slate-700 font-semibold transition"
                 >
                   <option value="">-- Seleccione un grupo --</option>
-                  <option value="grupo1">📊 Grupo 1: Parámetros Químicos (pH, Conductividad, Na)</option>
-                  <option value="grupo2">🧪 Grupo 2: Isótopos (δ2H, δ¹⁸O)</option>
-                  <option value="grupo3">🌊 Grupo 3: Hidrogeología (Nivel Freático)</option>
+                  <option value="grupo1">📊Muestras Químicas (pH, Conductividad, Na)</option>
+                  <option value="grupo2">🧪Isótopos (δ2H, δ¹⁸O)</option>
+                  <option value="grupo3">🌊Hidrogeología (Nivel Freático)</option>
                 </select>
               </div>
 
@@ -612,7 +612,7 @@ const FormEditReport = () => {
                 <div className="space-y-2 text-sm">
                   {grupoSeleccionado === "grupo1" && (
                     <>
-                      <div className="font-bold text-cyan-700 mb-2">📊 Grupo 1: Parámetros Químicos</div>
+                      <div className="font-bold text-cyan-700 mb-2">📊 Muestras Químicas</div>
                       {grupo1Data.ph && (
                         <div className="flex items-start gap-2 text-slate-600">
                           <div className="w-2 h-2 bg-cyan-500 rounded-full mt-1.5 flex-shrink-0"></div>
@@ -639,7 +639,7 @@ const FormEditReport = () => {
                   
                   {grupoSeleccionado === "grupo2" && (
                     <>
-                      <div className="font-bold text-cyan-700 mb-2">🧪 Grupo 2: Isótopos</div>
+                      <div className="font-bold text-cyan-700 mb-2">🧪Isótopos</div>
                       {grupo2Data.delta_2h && (
                         <div className="flex items-start gap-2 text-slate-600">
                           <div className="w-2 h-2 bg-cyan-500 rounded-full mt-1.5 flex-shrink-0"></div>
@@ -660,7 +660,7 @@ const FormEditReport = () => {
                   
                   {grupoSeleccionado === "grupo3" && (
                     <>
-                      <div className="font-bold text-cyan-700 mb-2">🌊 Grupo 3: Hidrogeología</div>
+                      <div className="font-bold text-cyan-700 mb-2">Hidrogeología</div>
                       {grupo3Data.nivel_freatico && (
                         <div className="flex items-start gap-2 text-slate-600">
                           <div className="w-2 h-2 bg-cyan-500 rounded-full mt-1.5 flex-shrink-0"></div>
