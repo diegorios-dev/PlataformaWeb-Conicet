@@ -59,6 +59,7 @@ function useSitio (selectedInstrument : any) {
                     loading: false,
                     error: null
                 });
+                
             } catch (error: any) {
                 console.error("Error al traer precipitaciones:", error);
                 

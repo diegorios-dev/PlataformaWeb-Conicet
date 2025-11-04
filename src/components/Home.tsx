@@ -44,6 +44,11 @@ const Home = () => {
     goLogin();
   };
 
+  useEffect(() => {
+    console.log("Instrumento seleccionado:", selectOptionMenu);
+    console.log("Sitios cargados:", sitios);
+  }, [selectOptionMenu]);
+
   const OPTION_COMPLEMENTS = [
     { option: "Ver Histograma", onClick: goAHistograma },
     { option: "Ver Mapa de Calor", onClick: goHeatMap },

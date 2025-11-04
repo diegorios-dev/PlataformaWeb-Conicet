@@ -36,7 +36,36 @@ const useNavegation = () => {
   const goAddUser = () => {
     navigate("/dashboard/administration/user/add")
   }
-   const goBack = () => navigate(-1);
+  
+  const goBack = () => {
+    const currentPath = window.location.pathname;
+    
+    // Usar las funciones go existentes de forma estática
+    if (currentPath.includes("/dashboard/administration/report/edit")) {
+      goReports();
+    } else if (currentPath.includes("/dashboard/administration/user/add")) {
+      goConfigUsers();
+    } else if (currentPath.includes("/dashboard/administration/user") || 
+               currentPath.includes("/dashboard/administration/report")) {
+      goAdminUi();
+    } else if (currentPath.includes("/dashboard/site/add")) {
+      goAdminUi();
+    } else if (currentPath.includes("/dashboard/Zona")) {
+      goAdminUi();
+    } else if (currentPath.includes("/dashboard/import/excel")) {
+      goAdminUi();
+    } else if (currentPath.includes("/dashboard")) {
+      goHome();
+    } else if (currentPath.includes("/histograma") || 
+               currentPath.includes("/estadisticas") || 
+               currentPath.includes("/MapHeatView")) {
+      goHome();
+    } else if (currentPath.includes("/login")) {
+      goHome();
+    } else {
+      goHome();
+    }
+  };
 
 
     return (
