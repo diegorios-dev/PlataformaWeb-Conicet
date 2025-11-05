@@ -3,6 +3,7 @@ import { Droplet, Ruler } from "lucide-react";
 const icons = {
   Lluvia: <Droplet className="w-6 h-6" />,
   Nieve: <Ruler className="w-6 h-6" />,
+  Regla: <Ruler className="w-6 h-6" />,
 };
 
 const ViewOptionMenu = ({ instruments, selectedInstrument, onSelectInstrument }) => {

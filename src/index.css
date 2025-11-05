@@ -67,6 +67,18 @@
   background: #cbd5e1;
 }
 
+/* Estilos para marcadores personalizados del mapa */
+.custom-map-marker {
+  background: transparent !important;
+  border: none !important;
+  transition: transform 0.2s ease;
+}
+
+.custom-map-marker:hover {
+  transform: scale(1.1);
+  z-index: 1000 !important;
+}
+
 /* Animación de shake para errores */
 @keyframes shake {
   0%, 100% {
