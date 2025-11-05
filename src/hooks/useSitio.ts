@@ -51,7 +51,12 @@ function useSitio (selectedInstrument : any) {
                     ],
                     cantidad: parseFloat(item.amount),
                     idSitio: item.report.site.id,
+<<<<<<< HEAD
                     tipo: item.report.event.type,
+=======
+                    nombreSitio: item.report.site.nombre || null,
+                    tipo: item.united_measure.abbreviation,
+>>>>>>> d310b0b7b75e1620aeba361a76487316b101388c
                 }));
 
                 setState({

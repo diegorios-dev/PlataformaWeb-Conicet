@@ -18,6 +18,7 @@ import {
 
 const FormAddSite = () => {
   const [formData, setFormData] = useState({
+    nombre: "",
     latitude: "",
     longitude: "",
     zona_id: "",
@@ -260,9 +261,26 @@ const FormAddSite = () => {
           {/* Formulario */}
           <div className="bg-white shadow-xl rounded-3xl p-8 border border-gray-100">
             <form onSubmit={handleSubmit}>
+              {/* Nombre del Sitio */}
+              <div className="mb-6">
+                <label className="text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="nombre">
+                  <MapPin className="w-5 h-5 text-blue-400" />
+                  Nombre del Sitio
+                </label>
+                <input
+                  id="nombre"
+                  type="text"
+                  placeholder="Ej: Sitio 1, Pluviómetro Norte, etc."
+                  value={formData.nombre}
+                  onChange={handleChange}
+                  required
+                  className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
+                />
+              </div>
+
               {/* Zona */}
               <div className="mb-6">
-                <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="zona_id">
+                <label className="text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="zona_id">
                   <MapPin className="w-5 h-5 text-blue-400" />
                   Zona
                 </label>
@@ -352,7 +370,7 @@ const FormAddSite = () => {
 
               {/* Tipo de Precipitación */}
               <div className="mb-8">
-                <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="event_id">
+                <label className="text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="event_id">
                   {formData.event_id === "2" ? (
                     <Snowflake className="w-5 h-5 text-blue-400" />
                   ) : (

@@ -10,6 +10,7 @@ interface Coord {
   cantidad: number;
   tipo: string;
   idSitio: number;
+  nombreSitio?: string;
 }
 
 interface MapHTMLProps {
@@ -350,7 +351,9 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
                       <MapPin className="w-5 h-5 text-blue-600" />
                     </div>
                     <div className="flex-1">
-                      <span className="text-base font-bold text-slate-800 block">Sitio</span>
+                      <span className="text-base font-bold text-slate-800 block">
+                        {coords.nombreSitio || 'Sitio'}
+                      </span>
                       <span className="text-xs text-slate-500 font-mono">
                         {coords.coordenadas[0].toFixed(4)}, {coords.coordenadas[1].toFixed(4)}
                       </span>
