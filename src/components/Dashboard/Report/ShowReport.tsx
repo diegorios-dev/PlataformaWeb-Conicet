@@ -342,7 +342,12 @@ const ShowReport = () => {
                   <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4">
                     <div className="flex items-start gap-2 mb-2">
                       <MapPin className="w-4 h-4 text-slate-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm font-semibold text-slate-700">{reporte.site.zona.locality}</span>
+                      <div className="flex flex-col">
+                        {reporte.site.nombre && (
+                          <span className="text-sm font-bold text-slate-800">{reporte.site.nombre}</span>
+                        )}
+                        <span className="text-sm font-semibold text-slate-700">{reporte.site.zona.locality}</span>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
                       <div>

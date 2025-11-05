@@ -7,7 +7,7 @@ import DashboardButton from "../DashboardButton";
 
 const Dashboard = () => {
   const [currentView, setCurrentView] = useState<"menu" | "instrumentos">("menu");
-  const { goReports, goConfigUsers, goBack, goAddZona, goExcelImport ,goEstadisticas } = useNavegation();
+  const { goReports, goConfigUsers, goBack, goAddZona, goImportExcel ,goEstadisticas , goExportExcel } = useNavegation();
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 flex flex-col">
@@ -68,7 +68,7 @@ const Dashboard = () => {
                 />
 
                 <DashboardButton
-                  onClick={goExcelImport}
+                  onClick={goImportExcel}
                   icon={FileSpreadsheet}
                   title="Importar Excel"
                   description="Sube un archivo Excel para importar datos"
@@ -81,6 +81,15 @@ const Dashboard = () => {
                   title="Ver Estadísticas"
                   description="Visualiza las estadísticas de los datos"
                   colorScheme="blue"
+                />
+
+                
+                <DashboardButton
+                  onClick={goExportExcel}
+                  icon={FileSpreadsheet}
+                  title="Exportar Excel"
+                  description="Descarga un archivo Excel con los datos"
+                  colorScheme="green"
                 />
 
               </div>

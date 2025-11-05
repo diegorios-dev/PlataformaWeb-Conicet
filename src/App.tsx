@@ -18,6 +18,7 @@ import FormAddSite from "./components/Dashboard/site/FormAddSite";
 import ShowCharts from "./components/Dashboard/Charts/ShowCharts";
 import ImportExcel from "./components/Dashboard/excel/ImportExcel";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ExportExcel from "./components/Dashboard/excel/ExportExcel";
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/dashboard/Zona/FormAddZona.tsx" element={<ProtectedRoute><FormAddZona /></ProtectedRoute>} />
           <Route path="/dashboard/site/add" element={<ProtectedRoute><FormAddSite /></ProtectedRoute>} />
           <Route path="/dashboard/import/excel" element={<ProtectedRoute><ImportExcel /></ProtectedRoute>} />
+          <Route path="/dashboard/export/excel" element={<ProtectedRoute><ExportExcel /></ProtectedRoute>} />
 
         </Routes>
       </UserProvider>

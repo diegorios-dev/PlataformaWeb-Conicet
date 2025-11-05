@@ -51,6 +51,7 @@ function useSitio (selectedInstrument : any) {
                     ],
                     cantidad: parseFloat(item.amount),
                     idSitio: item.report.site.id,
+                    nombreSitio: item.report.site.nombre || null,
                     tipo: item.united_measure.abbreviation,
                 }));
 

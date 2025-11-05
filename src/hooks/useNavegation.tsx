@@ -24,9 +24,12 @@ const useNavegation = () => {
 
    const goAddSite = () => navigate("/dashboard/site/add");
 
-   const goExcelImport = () => navigate("/dashboard/import/excel");
+   const goExportExcel = () => navigate("/dashboard/export/excel");
+
+   const goImportExcel = () => navigate("/dashboard/import/excel");
 
    const goEstadisticas = () => navigate("/estadisticas")
+
 
   const goEditReport = (report: any) => {
     handleSelectReport(report)
@@ -56,6 +59,8 @@ const useNavegation = () => {
       goAdminUi();
     } else if (currentPath.includes("/dashboard/import/excel")) {
       goAdminUi();
+    } else if (currentPath.includes("/dashboard/export/excel")) {
+      goAdminUi();
     } else if (currentPath.includes("/dashboard")) {
       goHome();
     } else if (currentPath.includes("/histograma") || 
@@ -71,7 +76,7 @@ const useNavegation = () => {
 
     return (
         {
-            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona , goAHistograma, goHeatMap, goAddSite, goEstadisticas , goExcelImport 
+            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona , goAHistograma, goHeatMap, goAddSite, goEstadisticas , goExportExcel , goImportExcel
         }
     )
 }
