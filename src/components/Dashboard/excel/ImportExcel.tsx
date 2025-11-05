@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import BackButton from '../../BackButton';
 
 const API_URL = 'http://localhost:8000/api';
 
@@ -139,6 +140,11 @@ export default function ImportarExcel() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      {/* Back Button flotante */}
+      <div className="absolute top-6 left-6 z-50">
+        <BackButton />
+      </div>
+
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -358,9 +364,9 @@ export default function ImportarExcel() {
           <div className="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
             <p className="text-sm text-yellow-800">
               <strong>⚠️ IMPORTANTE:</strong> Los eventos e instrumentos deben existir previamente en la base de datos. 
-              Ejecuta <code className="bg-yellow-100 px-2 py-1 rounded">php artisan db:seed</code> antes de importar.
             </p>
           </div>
+
         </div>
       </div>
     </div>

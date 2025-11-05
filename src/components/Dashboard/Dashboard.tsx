@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useNavegation from "../../hooks/useNavegation";
 import BackButton from "../BackButton";
-import { FileText, Users, MapPin, LogOut, Shield , TrendingUp} from "lucide-react";
+import { FileText, Users, MapPin, LogOut, Shield , TrendingUp, Upload} from "lucide-react";
 import { FileSpreadsheet } from "lucide-react";
 import DashboardButton from "../DashboardButton";
 
@@ -69,10 +69,10 @@ const Dashboard = () => {
 
                 <DashboardButton
                   onClick={goImportExcel}
-                  icon={FileSpreadsheet}
+                  icon={Upload}
                   title="Importar Excel"
                   description="Sube un archivo Excel para importar datos"
-                  colorScheme="green"
+                  colorScheme="indigo"
                 />
 
                 <DashboardButton
