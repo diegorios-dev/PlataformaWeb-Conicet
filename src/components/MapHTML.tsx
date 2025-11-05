@@ -2,6 +2,8 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { getReportsForSite, getAvailableYears } from "../services/sitiosService";
 import { useEffect, useState } from "react";
 import { MapPin, Droplet, CalendarDays } from "lucide-react";
+import L from "leaflet";
+import iconReporteRegular from "../assets/iconReporteRegular.png";
 
 interface Coord {
   coordenadas: [number, number];
@@ -21,6 +23,59 @@ interface SiteData {
   lastReportAmount: number;
   lastReportDate: string | null;
 }
+
+// Función para crear iconos personalizados según el tipo de instrumento
+const getCustomIcon = (tipo: string) => {
+  const config = {
+    'Lluvia': {
+      color: '#3b82f6',      // Azul
+      shadow: 'rgba(59, 130, 246, 0.15)'
+    },
+    'Nieve': {
+      color: '#06b6d4',      // Cyan
+      shadow: 'rgba(6, 182, 212, 0.15)'
+    },
+    'Caudal': {
+      color: '#10b981',      // Verde
+      shadow: 'rgba(16, 185, 129, 0.15)'
+    }
+  };
+
+  const iconConfig = config[tipo as keyof typeof config] || config['Lluvia'];
+
+  return L.divIcon({
+    className: '',
+    html: `
+      <div style="
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        filter: drop-shadow(0 2px 4px ${iconConfig.shadow});
+        -webkit-filter: drop-shadow(0 2px 4px ${iconConfig.shadow});
+        transform: translateZ(0);
+        will-change: transform;
+        transition: transform 0.2s ease;
+      "
+      onmouseover="this.style.transform='scale(1.15) translateZ(0)'"
+      onmouseout="this.style.transform='translateZ(0)'"
+      >
+        <img src="${iconReporteRegular}" 
+             style="
+               width: 48px; 
+               height: 48px;
+               filter: hue-rotate(0deg) saturate(1.2);
+             " 
+             alt="marker" 
+        />
+      </div>
+    `,
+    iconSize: [48, 48],
+    iconAnchor: [24, 24],
+    popupAnchor: [0, -24]
+  });
+};
 
 const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
   const [siteReports, setSiteReports] = useState<Map<number, SiteData>>(new Map());
@@ -283,7 +338,11 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
           }
 
           return (
-            <Marker key={index} position={coords.coordenadas}>
+            <Marker 
+              key={index} 
+              position={coords.coordenadas}
+              icon={getCustomIcon(coords.tipo)}
+            >
               <Popup>
                 <div className="font-sans p-3 min-w-[260px] bg-white rounded-xl">
                   {/* Header del popup */}
