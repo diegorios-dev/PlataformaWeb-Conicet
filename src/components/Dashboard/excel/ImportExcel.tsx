@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import axios from 'axios';
 import BackButton from '../../BackButton';
+import {
+  FileSpreadsheet,
+  Download,
+  UploadCloud,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  X,
+  Trash2,
+} from 'lucide-react';
 
 const API_URL = 'http://localhost:8000/api';
 
@@ -30,13 +40,13 @@ export default function ImportarExcel() {
   const [error, setError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
 
+  const getVal = (r: ImportResult | undefined, a: keyof ImportResult, b: keyof ImportResult) =>
+    (r?.[a] ?? r?.[b] ?? 0) as number;
+
   // Descargar plantilla
   const descargarPlantilla = async () => {
     try {
-      const response = await axios.get(`${API_URL}/import/plantilla`, {
-        responseType: 'blob',
-      });
-
+      const response = await axios.get(`${API_URL}/import/plantilla`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -49,47 +59,38 @@ export default function ImportarExcel() {
     }
   };
 
-  // Manejar selección de archivo
+  // Selección de archivo
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      
-      // Validar extensión
       if (!selectedFile.name.match(/\.(xlsx|xls)$/)) {
         setError('Solo se permiten archivos Excel (.xlsx, .xls)');
         return;
       }
-      
       setFile(selectedFile);
       setError(null);
       setResult(null);
     }
   };
 
-  // Drag and Drop handlers
+  // Drag & Drop
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+    if (e.type === 'dragenter' || e.type === 'dragover') setDragActive(true);
+    else if (e.type === 'dragleave') setDragActive(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const droppedFile = e.dataTransfer.files[0];
-      
       if (!droppedFile.name.match(/\.(xlsx|xls)$/)) {
         setError('Solo se permiten archivos Excel (.xlsx, .xls)');
         return;
       }
-      
       setFile(droppedFile);
       setError(null);
       setResult(null);
@@ -99,39 +100,32 @@ export default function ImportarExcel() {
   // Importar archivo
   const importarArchivo = async () => {
     if (!file) {
-      setError('Por favor selecciona un archivo');
+      setError('Por favor seleccioná un archivo');
       return;
     }
-
     setLoading(true);
     setError(null);
     setResult(null);
-
     try {
       const formData = new FormData();
       formData.append('file', file);
-
       const response = await axios.post<ImportResponse>(`${API_URL}/import/excel`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-
       setResult(response.data);
       setFile(null);
     } catch (err: any) {
       console.error('Error al importar:', err);
       setError(
-        err.response?.data?.message || 
-        err.response?.data?.error || 
-        'Error al importar el archivo. Verifica el formato y vuelve a intentar.'
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          'Error al importar el archivo. Verificá el formato y volvé a intentar.'
       );
     } finally {
       setLoading(false);
     }
   };
 
-  // Limpiar archivo seleccionado
   const limpiarArchivo = () => {
     setFile(null);
     setError(null);
@@ -139,234 +133,225 @@ export default function ImportarExcel() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      {/* Back Button flotante */}
-      <div className="absolute top-6 left-6 z-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+      <div className="w-full max-w-7xl mx-auto">
         <BackButton />
-      </div>
 
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            📥 Importación Masiva desde Excel
-          </h1>
-          <p className="text-gray-600">
-            Carga datos de zonas, sitios, usuarios y relaciones instrumento-usuario desde un archivo Excel
-          </p>
+        {/* Header estilo ShowReport */}
+        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center gap-4">
+            <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/30">
+              <FileSpreadsheet className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+                Importación desde Excel
+              </h1>
+              <p className="text-base text-slate-600 mt-1 font-medium">
+                Zonas, sitios, usuarios y relaciones instrumento-usuario
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Descargar Plantilla */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            1️⃣ Descargar Plantilla
-          </h2>
-          <p className="text-gray-600 mb-4">
-            Descarga la plantilla Excel con la estructura correcta y ejemplos de datos.
-          </p>
-          <button
-            onClick={descargarPlantilla}
-            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center gap-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Descargar Plantilla Excel
-          </button>
-        </div>
+        {/* Card principal - pasos y carga */}
+        <div className="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-3xl shadow-xl p-6 md:p-8 mb-6">
+          {/* Paso 1: Descargar plantilla */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-800 mb-1">Descargar plantilla</h2>
+                <p className="text-sm text-slate-600">
+                  Bajá la plantilla Excel con la estructura correcta y ejemplos.
+                </p>
+              </div>
+              <button
+                onClick={descargarPlantilla}
+                className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-2xl font-bold shadow-lg shadow-green-600/30 hover:shadow-xl transition-all"
+              >
+                <Download size={18} />
+                Descargar Plantilla ejemplo
+              </button>
+            </div>
+          </div>
 
-        {/* Upload Area */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            2️⃣ Cargar Archivo Excel
-          </h2>
-          
-          {/* Drag & Drop Zone */}
-          <div
-            className={`border-3 border-dashed rounded-lg p-8 text-center transition-all ${
-              dragActive 
-                ? 'border-blue-500 bg-blue-50' 
-                : 'border-gray-300 hover:border-gray-400'
-            }`}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-          >
-            {!file ? (
-              <>
-                <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                <p className="text-gray-600 mb-2">
-                  Arrastra tu archivo Excel aquí o
-                </p>
-                <label className="cursor-pointer">
-                  <span className="text-blue-500 hover:text-blue-600 font-semibold">
-                    haz clic para seleccionar
-                  </span>
-                  <input
-                    type="file"
-                    accept=".xlsx,.xls"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </label>
-                <p className="text-sm text-gray-500 mt-2">
-                  Formatos aceptados: .xlsx, .xls
-                </p>
-              </>
-            ) : (
-              <div className="flex items-center justify-center gap-4">
-                <svg className="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <div className="text-left">
-                  <p className="font-semibold text-gray-800">{file.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {(file.size / 1024).toFixed(2)} KB
-                  </p>
+          {/* Paso 2: Cargar archivo */}
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 mb-3">Cargar archivo Excel</h3>
+
+            <div
+              className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all ${
+                dragActive ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'
+              }`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+            >
+              {!file ? (
+                <div className="flex flex-col items-center">
+                  <div className="bg-blue-100 p-3 rounded-xl mb-3">
+                    <UploadCloud className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <p className="text-slate-700 mb-1">Arrastrá tu archivo Excel aquí</p>
+                  <label className="cursor-pointer text-blue-600 hover:text-blue-700 font-bold">
+                    o hacé clic para seleccionar
+                    <input
+                      type="file"
+                      accept=".xlsx,.xls"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </label>
+                  <p className="text-xs text-slate-500 mt-2">Formatos aceptados: .xlsx, .xls</p>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-green-100 p-2 rounded-xl">
+                      <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div className="text-left">
+                      <p className="font-semibold text-slate-800">{file.name}</p>
+                      <p className="text-xs text-slate-500">{(file.size / 1024).toFixed(2)} KB</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={limpiarArchivo}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl font-semibold border border-red-200 transition-colors"
+                    title="Quitar archivo"
+                  >
+                    <Trash2 size={16} />
+                    Quitar
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={importarArchivo}
+              disabled={!file || loading}
+              className={`mt-6 w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold transition-all shadow-lg ${
+                !file || loading
+                  ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-blue-600/30 hover:shadow-xl'
+              }`}
+            >
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : '🚀'}
+              {loading ? 'Importando...' : 'Importar Datos'}
+            </button>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div className="mt-6 bg-red-50 border-2 border-red-200 rounded-2xl p-5 shadow-md">
+              <div className="flex items-start gap-3">
+                <div className="bg-red-100 p-2 rounded-xl">
+                  <AlertCircle className="w-5 h-5 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-sm font-bold text-red-900 mb-1">Error</h4>
+                  <p className="text-sm text-red-700">{error}</p>
                 </div>
                 <button
-                  onClick={limpiarArchivo}
-                  className="ml-4 text-red-500 hover:text-red-600"
-                  title="Eliminar archivo"
+                  onClick={() => setError(null)}
+                  className="text-red-600 hover:text-red-800"
+                  title="Cerrar"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <X size={18} />
                 </button>
               </div>
-            )}
-          </div>
-
-          {/* Botón de Importar */}
-          <button
-            onClick={importarArchivo}
-            disabled={!file || loading}
-            className={`mt-6 w-full font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 ${
-              !file || loading
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600 text-white'
-            }`}
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Importando...
-              </span>
-            ) : (
-              '🚀 Importar Datos'
-            )}
-          </button>
+            </div>
+          )}
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-4 mb-6">
-            <div className="flex items-start">
-              <svg className="w-6 h-6 text-red-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-              <div>
-                <h3 className="font-semibold text-red-800">Error</h3>
-                <p className="text-red-700">{error}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Success Result */}
+        {/* Resultados */}
         {result && result.success && (
-          <div className="bg-green-50 border-l-4 border-green-500 rounded-lg p-6 mb-6">
-            <div className="flex items-start mb-4">
-              <svg className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <div>
-                <h3 className="font-semibold text-green-800 text-lg">{result.message}</h3>
+          <div className="bg-white/90 backdrop-blur-md border-2 border-slate-200 rounded-3xl shadow-xl overflow-hidden">
+            <div className="bg-gradient-to-r from-slate-50 to-blue-50 p-6 border-b-2 border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-green-100 p-2 rounded-lg">
+                  <CheckCircle2 className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-800">Importación completada</h3>
+                  <p className="text-xs text-slate-600">{result.message}</p>
+                </div>
               </div>
             </div>
 
-            {/* Resultados detallados */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Zonas */}
-              <div className="bg-white rounded-lg p-4 shadow">
-                <h4 className="font-semibold text-gray-700 mb-2">🗺️ Zonas</h4>
-                <p className="text-sm text-gray-600">
-                  Insertadas: <span className="font-bold text-green-600">{result.resultados.zonas.insertadas || 0}</span>
-                </p>
-                <p className="text-sm text-gray-600">
-                  Actualizadas: <span className="font-bold text-blue-600">{result.resultados.zonas.actualizadas || 0}</span>
-                </p>
+              <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4">
+                <h4 className="font-bold text-slate-800 mb-2">🗺️ Zonas</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="bg-white border border-green-200 rounded-xl px-3 py-2">
+                    Insertadas: <span className="font-bold text-green-700">{getVal(result.resultados.zonas, 'insertadas', 'insertados')}</span>
+                  </div>
+                  <div className="bg-white border border-blue-200 rounded-xl px-3 py-2">
+                    Actualizadas: <span className="font-bold text-blue-700">{getVal(result.resultados.zonas, 'actualizadas', 'actualizados')}</span>
+                  </div>
+                </div>
               </div>
 
               {/* Sitios */}
-              <div className="bg-white rounded-lg p-4 shadow">
-                <h4 className="font-semibold text-gray-700 mb-2">📍 Sitios</h4>
-                <p className="text-sm text-gray-600">
-                  Insertados: <span className="font-bold text-green-600">{result.resultados.sitios.insertados || 0}</span>
-                </p>
-                <p className="text-sm text-gray-600">
-                  Actualizados: <span className="font-bold text-blue-600">{result.resultados.sitios.actualizados || 0}</span>
-                </p>
+              <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4">
+                <h4 className="font-bold text-slate-800 mb-2">📍 Sitios</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="bg-white border border-green-200 rounded-xl px-3 py-2">
+                    Insertados: <span className="font-bold text-green-700">{getVal(result.resultados.sitios, 'insertados', 'insertadas')}</span>
+                  </div>
+                  <div className="bg-white border border-blue-200 rounded-xl px-3 py-2">
+                    Actualizados: <span className="font-bold text-blue-700">{getVal(result.resultados.sitios, 'actualizados', 'actualizadas')}</span>
+                  </div>
+                </div>
               </div>
 
               {/* Usuarios */}
-              <div className="bg-white rounded-lg p-4 shadow">
-                <h4 className="font-semibold text-gray-700 mb-2">👥 Usuarios</h4>
-                <p className="text-sm text-gray-600">
-                  Insertados: <span className="font-bold text-green-600">{result.resultados.usuarios.insertados || 0}</span>
-                </p>
-                <p className="text-sm text-gray-600">
-                  Actualizados: <span className="font-bold text-blue-600">{result.resultados.usuarios.actualizados || 0}</span>
-                </p>
+              <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4">
+                <h4 className="font-bold text-slate-800 mb-2">👥 Usuarios</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="bg-white border border-green-200 rounded-xl px-3 py-2">
+                    Insertados: <span className="font-bold text-green-700">{getVal(result.resultados.usuarios, 'insertados', 'insertadas')}</span>
+                  </div>
+                  <div className="bg-white border border-blue-200 rounded-xl px-3 py-2">
+                    Actualizados: <span className="font-bold text-blue-700">{getVal(result.resultados.usuarios, 'actualizados', 'actualizadas')}</span>
+                  </div>
+                </div>
               </div>
 
               {/* Instrumentos-Usuarios */}
-              <div className="bg-white rounded-lg p-4 shadow">
-                <h4 className="font-semibold text-gray-700 mb-2">🔗 Relaciones Instrumento-Usuario</h4>
-                <p className="text-sm text-gray-600">
-                  Insertadas: <span className="font-bold text-green-600">{result.resultados.instrumentos_usuarios.insertados || 0}</span>
-                </p>
-                <p className="text-sm text-gray-600">
-                  Errores: <span className="font-bold text-red-600">{result.resultados.instrumentos_usuarios.errores || 0}</span>
-                </p>
+              <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4">
+                <h4 className="font-bold text-slate-800 mb-2">🔗 Instrumentos-Usuarios</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="bg-white border border-green-200 rounded-xl px-3 py-2">
+                    Insertadas: <span className="font-bold text-green-700">{getVal(result.resultados.instrumentos_usuarios, 'insertados', 'insertadas')}</span>
+                  </div>
+                  <div className="bg-white border border-red-200 rounded-xl px-3 py-2">
+                    Errores: <span className="font-bold text-red-700">{result.resultados.instrumentos_usuarios.errores ?? 0}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         )}
-
-        {/* Instrucciones */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            📋 Instrucciones
-          </h2>
-          <ol className="list-decimal list-inside space-y-2 text-gray-700">
-            <li>Descarga la plantilla Excel haciendo clic en el botón verde</li>
-            <li>Abre el archivo y completa las 4 hojas con tus datos:
-              <ul className="list-disc list-inside ml-6 mt-2 text-sm text-gray-600">
-                <li><strong>Zonas:</strong> Nombres de las zonas geográficas</li>
-                <li><strong>Sitios:</strong> Nombre del sitio, coordenadas (latitud/longitud), zona y evento asociado</li>
-                <li><strong>Usuarios:</strong> Personas del sistema con nombre, contraseña, rol, zona y sitio (opcional)</li>
-                <li><strong>Instrumentos_Usuarios:</strong> Relaciones entre usuarios e instrumentos (solo 2 columnas: usuario e instrumento)</li>
+        
+        {/* Tips/ayuda */}
+        <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-2xl p-5 shadow-md">
+          <div className="flex items-start gap-3">
+            <div className="bg-blue-100 p-3 rounded-xl shadow-sm flex-shrink-0">
+              <AlertCircle className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <h4 className="text-base font-bold text-blue-900 mb-1">Instrucciones</h4>
+              <ul className="list-disc ml-5 text-sm text-blue-800 space-y-1">
+                <li>Descargá la plantilla, completá las 4 hojas y guardá el archivo.</li>
+                <li>Arrastrá el Excel a la zona de carga o hacé clic para seleccionarlo.</li>
+                <li>Presioná “Importar Datos” y revisá el resumen de la importación.</li>
+                <li>Eventos e instrumentos deben existir previamente en la base de datos.</li>
               </ul>
-            </li>
-            <li>Guarda el archivo Excel</li>
-            <li>Arrastra el archivo a la zona de carga o haz clic para seleccionarlo</li>
-            <li>Presiona el botón "Importar Datos"</li>
-            <li>Espera a que se complete la importación y verifica los resultados</li>
-          </ol>
-          
-          <div className="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
-            <p className="text-sm text-yellow-800">
-              <strong>⚠️ IMPORTANTE:</strong> Los eventos e instrumentos deben existir previamente en la base de datos. 
-            </p>
+            </div>
           </div>
-
         </div>
       </div>
     </div>

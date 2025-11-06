@@ -1,5 +1,15 @@
 import { useState, useEffect } from "react";
-import { FileSpreadsheet, Download, AlertCircle, CheckCircle, Calendar, MapPin, User, Filter } from "lucide-react";
+import {
+  FileSpreadsheet,
+  Download,
+  AlertCircle,
+  CheckCircle2,
+  Calendar,
+  MapPin,
+  User as UserIcon,
+  Filter,
+  Loader2,
+} from "lucide-react";
 import BackButton from "../../BackButton";
 
 interface Zona {
@@ -16,51 +26,44 @@ export default function ExportExcel() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Filtros de fecha
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-  
-  // Nuevos filtros
+
+  // Filtros adicionales
   const [zonaId, setZonaId] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
   const [year, setYear] = useState<string>("");
   const [month, setMonth] = useState<string>("");
   const [day, setDay] = useState<string>("");
-  
-  // Datos para los selectores
+
+  // Datos para selectores
   const [zonas, setZonas] = useState<Zona[]>([]);
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
-  // Cargar zonas, usuarios y años disponibles al montar el componente
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [zonasRes, usuariosRes, yearsRes] = await Promise.all([
-          fetch('http://localhost:8000/api/zonas'),
-          fetch('http://localhost:8000/api/usuarios'),
-          fetch('http://localhost:8000/api/reportes/available-years')
+          fetch("http://localhost:8000/api/zonas"),
+          fetch("http://localhost:8000/api/usuarios"),
+          fetch("http://localhost:8000/api/reportes/available-years"),
         ]);
-        
+
         const zonasData = await zonasRes.json();
         const usuariosData = await usuariosRes.json();
         const yearsData = await yearsRes.json();
-        
-        // La API de zonas devuelve un array directo
+
         setZonas(Array.isArray(zonasData) ? zonasData : []);
-        
-        // La API de usuarios devuelve { users: [...] }
         setUsuarios(usuariosData.users || []);
-        
-        // La API de años devuelve { years: [2025, 2024, ...] }
         setAvailableYears(yearsData.years || []);
       } catch (err) {
-        console.error('Error al cargar datos:', err);
+        console.error("Error al cargar datos:", err);
         setZonas([]);
         setUsuarios([]);
-        // Si falla, al menos mostrar el año actual
         setAvailableYears([new Date().getFullYear()]);
       } finally {
         setLoadingData(false);
@@ -76,35 +79,27 @@ export default function ExportExcel() {
     setSuccess(false);
 
     try {
-      // Construir la URL con parámetros opcionales
-      let url = 'http://localhost:8000/api/download/reports';
+      let url = "http://localhost:8000/api/download/reports";
       const params = new URLSearchParams();
-      
-      if (startDate) params.append('start_date', startDate);
-      if (endDate) params.append('end_date', endDate);
-      if (zonaId) params.append('zona_id', zonaId);
-      if (userId) params.append('user_id', userId);
-      if (year) params.append('year', year);
-      if (month) params.append('month', month);
-      if (day) params.append('day', day);
-      
-      if (params.toString()) {
-        url += '?' + params.toString();
-      }
 
-      const response = await fetch(url, {
-        method: 'GET',
-      });
+      if (startDate) params.append("start_date", startDate);
+      if (endDate) params.append("end_date", endDate);
+      if (zonaId) params.append("zona_id", zonaId);
+      if (userId) params.append("user_id", userId);
+      if (year) params.append("year", year);
+      if (month) params.append("month", month);
+      if (day) params.append("day", day);
 
-      if (!response.ok) {
-        throw new Error('Error al descargar el archivo');
-      }
+      if (params.toString()) url += "?" + params.toString();
+
+      const response = await fetch(url, { method: "GET" });
+      if (!response.ok) throw new Error("Error al descargar el archivo");
 
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = downloadUrl;
-      a.download = `reportes_diarios_${new Date().toISOString().split('T')[0]}.xlsx`;
+      a.download = `reportes_diarios_${new Date().toISOString().split("T")[0]}.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(downloadUrl);
@@ -113,7 +108,7 @@ export default function ExportExcel() {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
       setLoading(false);
     }
@@ -131,7 +126,6 @@ export default function ExportExcel() {
 
   const hasFilters = startDate || endDate || zonaId || userId || year || month || day;
 
-  // Meses
   const months = [
     { value: "1", label: "Enero" },
     { value: "2", label: "Febrero" },
@@ -148,255 +142,219 @@ export default function ExportExcel() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 flex flex-col">
-      
-      {/* Back Button flotante */}
-      <div className="absolute top-6 left-6 z-50">
-        <div className="backdrop-blur-xl transition-all duration-300">
-          <BackButton />
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+      <div className="w-full max-w-7xl mx-auto">
+        <BackButton />
 
-      {/* Contenido principal */}
-      <div className="flex flex-1 items-center justify-center p-8">
-        <div className="w-full max-w-6xl">
-          
-          {/* Header */}
-          <div className="backdrop-blur-2xl bg-white/50 border border-white/60 rounded-3xl shadow-2xl p-10 mb-8">
-            <div className="flex items-center justify-center gap-4 mb-3">
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-xl border border-white/40">
-                <FileSpreadsheet className="w-10 h-10 text-green-700" />
-              </div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
-                Exportar a Excel
-              </h1>
+        {/* Header estilo ShowReport */}
+        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center gap-4">
+            <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/30">
+              <FileSpreadsheet className="w-8 h-8 text-white" />
             </div>
-            <p className="text-center text-slate-600 text-base font-medium">
-              Descarga los datos en formato Excel para análisis externo
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+                Exportación a Excel
+              </h1>
+              <p className="text-base text-slate-600 mt-1 font-medium">
+                Descargá reportes aplicando filtros opcionales
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card principal estilo ShowReport */}
+        <div className="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-3xl shadow-xl p-6 md:p-8">
+          {/* Info */}
+          <div className="mb-8 p-5 rounded-2xl bg-blue-50/70 border-2 border-blue-200/70">
+            <p className="text-slate-700">
+              Seleccioná filtros para descargar un subconjunto de reportes o dejá todo vacío para descargar todo.
             </p>
           </div>
 
-          {/* Card principal */}
-          <div className="backdrop-blur-2xl bg-white/40 border border-white/60 rounded-3xl shadow-2xl p-10">
-            
-            {/* Información */}
-            <div className="mb-8 p-5 rounded-xl bg-blue-50/50 border border-blue-200/50">
-              <p className="text-base text-slate-700">
-                Aplica filtros para exportar reportes específicos o descarga todos los datos disponibles.
+          {/* Filtros */}
+          <div className="space-y-8">
+            {/* Rango de fechas */}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <Calendar className="w-6 h-6 text-slate-600" />
+                <h3 className="text-base font-semibold text-slate-700">Rango de fechas</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Fecha inicial</label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Fecha final</label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Por período */}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <Calendar className="w-6 h-6 text-slate-600" />
+                <h3 className="text-base font-semibold text-slate-700">Filtros por período</h3>
+                <span className="text-sm text-slate-500">(independientes)</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Año</label>
+                  <select
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    disabled={loadingData}
+                    className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
+                  >
+                    <option value="">Todos</option>
+                    {availableYears.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Mes</label>
+                  <select
+                    value={month}
+                    onChange={(e) => setMonth(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  >
+                    <option value="">Todos</option>
+                    {months.map((m) => (
+                      <option key={m.value} value={m.value}>
+                        {m.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Día</label>
+                  <select
+                    value={day}
+                    onChange={(e) => setDay(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  >
+                    <option value="">Todos</option>
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <p className="text-sm text-slate-500 mt-3">
+                💡 Por ejemplo: elegir solo "Octubre" descarga todos los reportes de octubre de cualquier año.
               </p>
             </div>
 
-            {/* FILTROS */}
-            <div className="mb-8 space-y-8">
-              
-              {/* Filtros por Rango de Fechas */}
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <Calendar className="w-6 h-6 text-slate-600" />
-                  <h3 className="text-base font-semibold text-slate-700">Rango de Fechas</h3>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 mb-2">
-                      Fecha inicial
-                    </label>
-                    <input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full px-5 py-3 text-base rounded-xl border border-slate-300 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 mb-2">
-                      Fecha final
-                    </label>
-                    <input
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="w-full px-5 py-3 text-base rounded-xl border border-slate-300 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all"
-                    />
-                  </div>
-                </div>
+            {/* Zona */}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <MapPin className="w-6 h-6 text-slate-600" />
+                <h3 className="text-base font-semibold text-slate-700">Filtrar por zona</h3>
               </div>
-
-              {/* Filtros por Año, Mes, Día */}
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <Calendar className="w-6 h-6 text-slate-600" />
-                  <h3 className="text-base font-semibold text-slate-700">Filtros por Periodo</h3>
-                  <span className="text-sm text-slate-500">(Independientes)</span>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 mb-2">
-                      Año (todos los reportes del año)
-                    </label>
-                    <select
-                      value={year}
-                      onChange={(e) => setYear(e.target.value)}
-                      disabled={loadingData}
-                      className="w-full px-5 py-3 text-base rounded-xl border border-slate-300 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all disabled:opacity-50"
-                    >
-                      <option value="">Todos los años</option>
-                      {availableYears.map((y) => (
-                        <option key={y} value={y}>{y}</option>
-                      ))}
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 mb-2">
-                      Mes (todos los reportes del mes)
-                    </label>
-                    <select
-                      value={month}
-                      onChange={(e) => setMonth(e.target.value)}
-                      className="w-full px-5 py-3 text-base rounded-xl border border-slate-300 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all"
-                    >
-                      <option value="">Todos los meses</option>
-                      {months.map((m) => (
-                        <option key={m.value} value={m.value}>{m.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-slate-600 mb-2">
-                      Día (todos los reportes del día)
-                    </label>
-                    <select
-                      value={day}
-                      onChange={(e) => setDay(e.target.value)}
-                      className="w-full px-5 py-3 text-base rounded-xl border border-slate-300 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all"
-                    >
-                      <option value="">Todos los días</option>
-                      {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                        <option key={d} value={d}>{d}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                
-                <p className="text-sm text-slate-500 mt-3">
-                  💡 Estos filtros son independientes. Por ejemplo: seleccionar "Octubre" mostrará todos los reportes de octubre de cualquier año.
-                </p>
-              </div>
-
-              {/* Filtro por Zona */}
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <MapPin className="w-6 h-6 text-slate-600" />
-                  <h3 className="text-base font-semibold text-slate-700">Filtrar por Zona</h3>
-                </div>
-                
-                <select
-                  value={zonaId}
-                  onChange={(e) => setZonaId(e.target.value)}
-                  disabled={loadingData}
-                  className="w-full px-5 py-3 text-base rounded-xl border border-slate-300 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all disabled:opacity-50"
-                >
-                  <option value="">Todas las zonas</option>
-                  {zonas.map((zona) => (
-                    <option key={zona.id} value={zona.id}>
-                      {zona.locality}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Filtro por Usuario */}
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <User className="w-6 h-6 text-slate-600" />
-                  <h3 className="text-base font-semibold text-slate-700">Filtrar por Usuario</h3>
-                </div>
-                
-                <select
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  disabled={loadingData}
-                  className="w-full px-5 py-3 text-base rounded-xl border border-slate-300 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all disabled:opacity-50"
-                >
-                  <option value="">Todos los usuarios</option>
-                  {usuarios.map((usuario) => (
-                    <option key={usuario.id} value={usuario.id}>
-                      {usuario.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Botón para limpiar filtros */}
-              {hasFilters && (
-                <button
-                  onClick={handleClearFilters}
-                  className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800 underline transition-colors"
-                >
-                  <Filter className="w-4 h-4" />
-                  Limpiar todos los filtros
-                </button>
-              )}
+              <select
+                value={zonaId}
+                onChange={(e) => setZonaId(e.target.value)}
+                disabled={loadingData}
+                className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
+              >
+                <option value="">Todas</option>
+                {zonas.map((z) => (
+                  <option key={z.id} value={z.id}>
+                    {z.locality}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {/* Mensajes de estado */}
+            {/* Usuario */}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <UserIcon className="w-6 h-6 text-slate-600" />
+                <h3 className="text-base font-semibold text-slate-700">Filtrar por usuario</h3>
+              </div>
+              <select
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                disabled={loadingData}
+                className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
+              >
+                <option value="">Todos</option>
+                {usuarios.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Limpiar filtros */}
+            {hasFilters && (
+              <button
+                onClick={handleClearFilters}
+                className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800 underline transition-colors"
+              >
+                <Filter className="w-4 h-4" />
+                Limpiar todos los filtros
+              </button>
+            )}
+          </div>
+
+          {/* Estados */}
+          <div className="mt-8 space-y-4">
             {success && (
-              <div className="mb-6 p-5 rounded-xl bg-green-50 border border-green-200 flex items-center gap-3">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-                <p className="text-base text-green-700 font-medium">
-                  ¡Archivo descargado exitosamente!
-                </p>
+              <div className="p-5 rounded-2xl bg-green-50 border-2 border-green-200 flex items-center gap-3">
+                <CheckCircle2 className="w-6 h-6 text-green-600" />
+                <p className="text-green-700 font-medium">¡Archivo descargado exitosamente!</p>
               </div>
             )}
-
             {error && (
-              <div className="mb-6 p-5 rounded-xl bg-red-50 border border-red-200 flex items-center gap-3">
-                <AlertCircle className="w-6 h-6 text-red-600" />
-                <p className="text-base text-red-700 font-medium">
-                  {error}
-                </p>
+              <div className="p-5 rounded-2xl bg-red-50 border-2 border-red-200 flex items-start gap-3">
+                <AlertCircle className="w-6 h-6 text-red-600 mt-0.5" />
+                <div className="text-red-700">{error}</div>
               </div>
             )}
+          </div>
 
-            {/* Botón de descarga */}
-            <button
-              onClick={handleDownloadExcel}
-              disabled={loading || loadingData}
-              className="group relative overflow-hidden w-full backdrop-blur-xl bg-gradient-to-r from-green-500/10 to-emerald-600/10 hover:from-green-500/20 hover:to-emerald-600/20 border border-green-300/40 hover:border-green-400/60 rounded-2xl p-7 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {/* Efecto de brillo */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-              
-              <div className="relative flex items-center justify-center gap-4">
-                {loading ? (
-                  <>
-                    <div className="w-7 h-7 border-3 border-green-600 border-t-transparent rounded-full animate-spin" />
-                    <span className="text-xl font-bold text-green-900">Descargando...</span>
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-7 h-7 text-green-700" />
-                    <span className="text-xl font-bold text-green-900">Descargar Excel</span>
-                  </>
-                )}
-              </div>
-            </button>
+          {/* Botón descargar */}
+          <button
+            onClick={handleDownloadExcel}
+            disabled={loading || loadingData}
+            className={`mt-6 w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-bold transition-all shadow-lg ${
+              loading || loadingData
+                ? "bg-slate-200 text-slate-500 cursor-not-allowed"
+                : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-blue-600/30 hover:shadow-xl"
+            }`}
+          >
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-6 h-6" />}
+            {loading ? "Preparando archivo..." : "Descargar Excel"}
+          </button>
 
-            {/* Información adicional */}
-            <div className="mt-8 p-5 rounded-xl bg-slate-50/50 border border-slate-200/50">
-              <h3 className="text-base font-semibold text-slate-700 mb-3">Ejemplos de uso:</h3>
-              <ul className="text-sm text-slate-600 space-y-2">
-                <li>• <strong>Año 2025 + Mes Octubre:</strong> Todos los reportes de octubre 2025</li>
-                <li>• <strong>Mes Octubre:</strong> Todos los reportes de octubre (cualquier año)</li>
-                <li>• <strong>Día 15:</strong> Todos los reportes del día 15 (cualquier mes/año)</li>
-                <li>• <strong>Usuario + Zona:</strong> Reportes de un usuario específico en una zona</li>
-              </ul>
-            </div>
-
+          {/* Ayuda */}
+          <div className="mt-8 bg-blue-50 border-2 border-blue-200 rounded-2xl p-5">
+            <h3 className="text-base font-semibold text-blue-900 mb-2">Ejemplos de uso</h3>
+            <ul className="list-disc ml-5 text-sm text-blue-800 space-y-1">
+              <li>Año 2025 + Mes Octubre: todos los reportes de octubre 2025</li>
+              <li>Mes Octubre: todos los reportes de octubre (cualquier año)</li>
+              <li>Día 15: todos los reportes del día 15 (cualquier mes/año)</li>
+              <li>Usuario + Zona: reportes de un usuario específico en una zona</li>
+            </ul>
           </div>
         </div>
       </div>
