@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
-import { getUsersByWord, saveUser, getAllUsers, deleteUser } from "../../../services/userService";
+import {
+  getUsersByWord,
+  saveUser,
+  getAllUsers,
+  deleteUser,
+} from "../../../services/userService";
 import FormEditUser from "./FormEditUser";
 import SearchUser from "./searchUser";
 import useNavegation from "../../../hooks/useNavegation";
 import BackButton from "../../BackButton";
-
 import {
   UserPlus,
   Pencil,
   Trash2,
   Users,
   Loader2,
-  Search,
   MapPin,
   Shield,
   User,
@@ -19,10 +22,10 @@ import {
   AlertCircle,
   X,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
 } from "lucide-react";
 
-type ModalType = 'success' | 'error' | 'confirm' | null;
+type ModalType = "success" | "error" | "confirm" | null;
 
 const ViewManagementUsers = () => {
   const [users, setUsers] = useState([]);
@@ -30,7 +33,7 @@ const ViewManagementUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  
+
   // Estados para modales
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<ModalType>(null);
@@ -40,7 +43,6 @@ const ViewManagementUsers = () => {
 
   const { goAddUser, goBack } = useNavegation();
 
-  // Cargar usuarios al montar el componente
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -49,31 +51,27 @@ const ViewManagementUsers = () => {
     setLoading(true);
     try {
       const data = await getAllUsers();
-      console.log("Usuarios obtenidos:", data);
       setUsers(Array.isArray(data.users) ? data.users : data);
-    } catch (error) {
-      console.error("Error al cargar usuarios:", error);
+    } catch {
       setUsers([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const showModal = (type: ModalType, title: string, message: string, onConfirm?: () => void) => {
+  const showModal = (
+    type: ModalType,
+    title: string,
+    message: string,
+    onConfirm?: () => void
+  ) => {
     setModalType(type);
     setModalTitle(title);
     setModalMessage(message);
     setModalOpen(true);
-    
-    if (onConfirm) {
-      setConfirmAction(() => onConfirm);
-    }
-    
-    // Auto-cerrar solo para success y error, no para confirm
-    if (type !== 'confirm') {
-      setTimeout(() => {
-        setModalOpen(false);
-      }, 3000);
+    if (onConfirm) setConfirmAction(() => onConfirm);
+    if (type !== "confirm") {
+      setTimeout(() => setModalOpen(false), 2800);
     }
   };
 
@@ -83,37 +81,33 @@ const ViewManagementUsers = () => {
   };
 
   const handleConfirm = () => {
-    if (confirmAction) {
-      confirmAction();
-    }
+    if (confirmAction) confirmAction();
     closeModal();
   };
 
   const handleOptionUser = async (option, user) => {
     if (option === "editar") {
-      // Crear una copia profunda del usuario para evitar mutaciones
       setSelectedUser({
         ...user,
         site: user.site ? { ...user.site } : null,
-        zona: user.zona ? { ...user.zona } : null
+        zona: user.zona ? { ...user.zona } : null,
       });
       setShowEditModal(true);
     }
-    
+
     if (option === "eliminar") {
       showModal(
-        'confirm',
-        'Confirmar eliminación',
+        "confirm",
+        "Confirmar eliminación",
         `¿Estás seguro que querés eliminar a ${user.name}? Esta acción no se puede deshacer.`,
         async () => {
           setDeleting(true);
           try {
             await deleteUser(user.id);
-            showModal('success', 'Usuario eliminado', `Usuario ${user.name} eliminado exitosamente`);
+            showModal("success", "Usuario eliminado", `Usuario ${user.name} eliminado exitosamente`);
             await fetchUsers();
-          } catch (error) {
-            console.error("Error al eliminar usuario:", error);
-            showModal('error', 'Error al eliminar', "No se pudo eliminar el usuario. Por favor intenta nuevamente.");
+          } catch {
+            showModal("error", "Error al eliminar", "No se pudo eliminar el usuario. Por favor intenta nuevamente.");
           } finally {
             setDeleting(false);
           }
@@ -125,22 +119,15 @@ const ViewManagementUsers = () => {
   const search = async (word) => {
     setLoading(true);
     try {
-      if (!word || word.trim() === "") {
-        await fetchUsers();
-      } else {
-        const data = await getUsersByWord(word);
-        console.log("Resultado de búsqueda:", data);
-        setUsers(Array.isArray(data.users) ? data.users : Array.isArray(data) ? data : []);
-      }
-    } catch (error) {
-      console.error("Error al buscar usuarios:", error);
+      if (!word.trim()) return await fetchUsers();
+      const data = await getUsersByWord(word);
+      setUsers(Array.isArray(data.users) ? data.users : data);
+    } catch {
       setUsers([]);
     } finally {
       setLoading(false);
     }
   };
-
-  const isEmpty = !users || users.length === 0;
 
   if (loading) {
     return (
@@ -152,6 +139,8 @@ const ViewManagementUsers = () => {
       </div>
     );
   }
+
+  const isEmpty = !users || users.length === 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -213,36 +202,38 @@ const ViewManagementUsers = () => {
                 </p>
               </div>
             </div>
-            
-            <div className="mt-6 flex justify-end gap-3">
-              {modalType === 'confirm' ? (
-                <>
-                  <button
-                    onClick={closeModal}
-                    className="px-4 py-2 rounded-lg font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleConfirm}
-                    className="px-4 py-2 rounded-lg font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors"
-                  >
-                    Eliminar
-                  </button>
-                </>
-              ) : (
+
+            {modalType === 'confirm' && (
+              <div className="flex gap-3 mt-6">
                 <button
                   onClick={closeModal}
-                  className={`px-4 py-2 rounded-lg font-semibold text-white transition-colors ${
+                  className="flex-1 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirm}
+                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-colors"
+                >
+                  Eliminar
+                </button>
+              </div>
+            )}
+
+            {modalType !== 'confirm' && (
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={closeModal}
+                  className={`px-6 py-2 rounded-xl font-semibold transition-colors ${
                     modalType === 'success'
-                      ? 'bg-green-600 hover:bg-green-700'
-                      : 'bg-red-600 hover:bg-red-700'
+                      ? 'bg-green-600 hover:bg-green-700 text-white'
+                      : 'bg-red-600 hover:bg-red-700 text-white'
                   }`}
                 >
                   Entendido
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}
