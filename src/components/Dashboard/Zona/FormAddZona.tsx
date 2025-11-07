@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { postNewZona, getAllZonas } from "../../../services/zonaService";
 import BackButton from "../../BackButton";
 import { Plus, MapPin, CheckCircle2, AlertCircle, Loader2, MapPinned, X } from "lucide-react";
+import IconNavMenu from "../../IconNavMenu";
 
 type Zona = {
   id: number;
@@ -79,6 +80,7 @@ const FormAddZona = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+      <IconNavMenu />
       <div className="w-full max-w-7xl mx-auto">
         <BackButton />
 

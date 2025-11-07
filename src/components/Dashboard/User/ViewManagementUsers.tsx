@@ -9,6 +9,8 @@ import FormEditUser from "./FormEditUser";
 import SearchUser from "./searchUser";
 import useNavegation from "../../../hooks/useNavegation";
 import BackButton from "../../BackButton";
+import IconNavMenu from "../../IconNavMenu";
+
 import {
   UserPlus,
   Pencil,
@@ -146,6 +148,7 @@ const ViewManagementUsers = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+      <IconNavMenu />
       <div className="w-full max-w-7xl mx-auto">
         <BackButton />
         

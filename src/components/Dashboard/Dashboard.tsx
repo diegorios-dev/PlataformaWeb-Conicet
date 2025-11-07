@@ -4,6 +4,7 @@ import BackButton from "../BackButton";
 import { FileText, Users, MapPin, LogOut, Shield , TrendingUp, Upload} from "lucide-react";
 import { FileSpreadsheet } from "lucide-react";
 import DashboardButton from "../DashboardButton";
+import IconNavMenu from "../IconNavMenu";
 
 const Dashboard = () => {
   const [currentView, setCurrentView] = useState<"menu" | "instrumentos">("menu");
@@ -11,6 +12,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 flex flex-col">
+      {/* Icon navigation sidebar */}
       
       {/* Back Button flotante */}
       <div className="absolute top-3 left-3 z-50">
@@ -20,7 +22,7 @@ const Dashboard = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="flex flex-1 items-center justify-center p-3 md:p-5">
+  <div className="flex flex-1 items-center justify-center p-3 md:p-5 md:ml-16">
         <div className="w-full max-w-3xl">
           
           {/* Header con glassmorphism */}

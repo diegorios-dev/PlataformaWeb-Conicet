@@ -4,6 +4,7 @@ import useNavegation from "../../../hooks/useNavegation";
 import { getAllZonas } from "../../../services/zonaService";
 import { ArrowLeft, Pencil, Search, Filter, Droplet, Snowflake, FileText, AlertTriangle, MapPin, Volume2, Play, Pause, X } from "lucide-react";
 import BackButton from "../../BackButton";
+import IconNavMenu from "../../IconNavMenu";
 
 const ShowReport = () => {
   const [search, setSearch] = useState("");
@@ -94,6 +95,9 @@ const ShowReport = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
       <div className="w-full max-w-7xl mx-auto">
         <BackButton />
+
+        <IconNavMenu />
+
         
         {/* Header mejorado */}
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

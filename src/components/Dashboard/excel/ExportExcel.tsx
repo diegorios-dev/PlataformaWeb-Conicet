@@ -11,6 +11,7 @@ import {
   Loader2,
 } from "lucide-react";
 import BackButton from "../../BackButton";
+import IconNavMenu from "../../IconNavMenu";
 
 interface Zona {
   id: number;
@@ -143,6 +144,7 @@ export default function ExportExcel() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+      <IconNavMenu />
       <div className="w-full max-w-7xl mx-auto">
         <BackButton />
 
