@@ -68,22 +68,22 @@ export default function DashboardButton({
   return (
     <button
       onClick={onClick}
-      className={`group relative overflow-hidden backdrop-blur-xl bg-gradient-to-r ${colors.gradient} border ${colors.border} rounded-2xl p-6 transition-all duration-300 hover:shadow-lg ${colors.shadow} hover:scale-[1.01]`}
+      className={`group relative overflow-hidden backdrop-blur-xl bg-gradient-to-r ${colors.gradient} border ${colors.border} rounded-xl p-3.5 md:p-4 transition-all duration-300 hover:shadow-lg ${colors.shadow} hover:scale-[1.01]`}
     >
       {/* Efecto de brillo */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
 
       <div className="relative flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className={`p-3 rounded-xl ${colors.icon} backdrop-blur-sm border`}>
-            <Icon className={`w-6 h-6 ${colors.iconColor} transition-colors`} />
+        <div className="flex items-center gap-2.5 md:gap-3">
+          <div className={`p-2 md:p-2.5 rounded-lg ${colors.icon} backdrop-blur-sm border`}>
+            <Icon className={`w-5 h-5 md:w-5 md:h-5 ${colors.iconColor} transition-colors`} />
           </div>
           <div className="text-left">
-            <h3 className={`text-lg font-bold ${colors.title} transition-colors`}>{title}</h3>
-            <p className="text-sm text-slate-600">{description}</p>
+            <h3 className={`text-sm md:text-base font-bold ${colors.title} transition-colors`}>{title}</h3>
+            <p className="text-xs md:text-sm text-slate-600">{description}</p>
           </div>
         </div>
-        <ChevronRight className={`w-6 h-6 ${colors.chevron} group-hover:translate-x-1 transition-all`} />
+        <ChevronRight className={`w-5 h-5 md:w-5 md:h-5 ${colors.chevron} group-hover:translate-x-1 transition-all`} />
       </div>
     </button>
   );

@@ -1,305 +1,294 @@
 import { useState, useEffect } from "react";
 import { postNewZona, getAllZonas } from "../../../services/zonaService";
-import useNavegation from "../../../hooks/useNavegation";
 import BackButton from "../../BackButton";
 import { Plus, MapPin, CheckCircle2, AlertCircle, Loader2, MapPinned, X } from "lucide-react";
+import IconNavMenu from "../../IconNavMenu";
 
 type Zona = {
-    id: number;
-    locality: string;
+  id: number;
+  locality: string;
 };
 
-type ModalType = 'success' | 'error' | null;
+type ModalType = "success" | "error" | null;
 
 const FormAddZona = () => {
-    const [zonas, setZonas] = useState<Zona[]>([]);
-    const [formData, setFormData] = useState({
-        locality: "",
-        site: { latitude: "", longitude: "" },
-    });
-    const [loading, setLoading] = useState(false);
-    const [loadingZonas, setLoadingZonas] = useState(true);
-    const [modalOpen, setModalOpen] = useState(false);
-    const [modalType, setModalType] = useState<ModalType>(null);
-    const [modalMessage, setModalMessage] = useState("");
-    
-    const { goBack } = useNavegation();
+  const [zonas, setZonas] = useState<Zona[]>([]);
+  const [formData, setFormData] = useState({
+    locality: "",
+    site: { latitude: "", longitude: "" },
+  });
+  const [loading, setLoading] = useState(false);
+  const [loadingZonas, setLoadingZonas] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<ModalType>(null);
+  const [modalMessage, setModalMessage] = useState("");
 
-    useEffect(() => {
-        fetchZonas();
-    }, []);
+  useEffect(() => {
+    fetchZonas();
+  }, []);
 
-    const fetchZonas = async () => {
-        try {
-            const zonasData = await getAllZonas();
-            setZonas(zonasData);
-        } catch (err) {
-            console.error("Error fetching zonas:", err);
-            showModal('error', "Error al cargar las zonas");
-        } finally {
-            setLoadingZonas(false);
-        }
-    };
+  const fetchZonas = async () => {
+    try {
+      const zonasData = await getAllZonas();
+      setZonas(zonasData);
+    } catch (err) {
+      console.error("Error fetching zonas:", err);
+      showModal("error", "Error al cargar las zonas");
+    } finally {
+      setLoadingZonas(false);
+    }
+  };
 
-    const showModal = (type: ModalType, message: string) => {
-        setModalType(type);
-        setModalMessage(message);
-        setModalOpen(true);
-        
-        // Auto-cerrar después de 3 segundos
-        setTimeout(() => {
-            setModalOpen(false);
-        }, 3000);
-    };
+  const showModal = (type: ModalType, message: string) => {
+    setModalType(type);
+    setModalMessage(message);
+    setModalOpen(true);
+    setTimeout(() => setModalOpen(false), 3000);
+  };
 
-    const closeModal = () => {
-        setModalOpen(false);
-    };
+  const closeModal = () => setModalOpen(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        
-        if (!formData.locality.trim()) {
-            showModal('error', "Por favor ingresa una localidad");
-            return;
-        }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-        setLoading(true);
+    if (!formData.locality.trim()) {
+      showModal("error", "Por favor ingresa una localidad");
+      return;
+    }
 
-        try {
-            await postNewZona(formData);
-            showModal('success', "¡Zona agregada exitosamente!");
-            setFormData({ locality: "", site: { latitude: "", longitude: "" } });
-            await fetchZonas();
-        } catch (error) {
-            console.error("Error creating zona:", error);
-            showModal('error', "Error al crear la zona. Por favor intenta nuevamente.");
-        } finally {
-            setLoading(false);
-        }
-    };
+    setLoading(true);
+    try {
+      await postNewZona(formData);
+      showModal("success", "¡Zona agregada exitosamente!");
+      setFormData({ locality: "", site: { latitude: "", longitude: "" } });
+      await fetchZonas();
+    } catch (error) {
+      console.error("Error creating zona:", error);
+      showModal("error", "Error al crear la zona. Por favor intenta nuevamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-            {/* Modal de notificaciones */}
-            {modalOpen && (
-                <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4">
-                    <div 
-                        className="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity"
-                        onClick={closeModal}
-                    ></div>
-                    
-                    <div className={`relative bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full transform transition-all duration-300 ${
-                        modalOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-                    }`}>
-                        <button
-                            onClick={closeModal}
-                            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
-                        >
-                            <X size={20} />
-                        </button>
-                        
-                        <div className="flex items-start gap-4">
-                            <div className={`p-3 rounded-full ${
-                                modalType === 'success' 
-                                    ? 'bg-green-100' 
-                                    : 'bg-red-100'
-                            }`}>
-                                {modalType === 'success' ? (
-                                    <CheckCircle2 className="w-6 h-6 text-green-600" />
-                                ) : (
-                                    <AlertCircle className="w-6 h-6 text-red-600" />
-                                )}
-                            </div>
-                            
-                            <div className="flex-1 pt-1">
-                                <h3 className={`text-lg font-bold mb-1 ${
-                                    modalType === 'success' 
-                                        ? 'text-green-900' 
-                                        : 'text-red-900'
-                                }`}>
-                                    {modalType === 'success' ? 'Éxito' : 'Error'}
-                                </h3>
-                                <p className={`text-sm ${
-                                    modalType === 'success' 
-                                        ? 'text-green-700' 
-                                        : 'text-red-700'
-                                }`}>
-                                    {modalMessage}
-                                </p>
-                            </div>
-                        </div>
-                        
-                        <div className="mt-6 flex justify-end">
-                            <button
-                                onClick={closeModal}
-                                className={`px-4 py-2 rounded-lg font-semibold text-white transition-colors ${
-                                    modalType === 'success'
-                                        ? 'bg-green-600 hover:bg-green-700'
-                                        : 'bg-red-600 hover:bg-red-700'
-                                }`}
-                            >
-                                Entendido
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+      <IconNavMenu />
+      <div className="w-full max-w-7xl mx-auto">
+        <BackButton />
 
-            {/* Header */}
-            <div className="backdrop-blur-sm">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <BackButton />
-                    <div className="flex items-center gap-3">
-                        <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl shadow-lg">
-                            <MapPinned className="w-5 h-5 text-white" />
-                        </div>
-                        <h1 className="text-xl font-bold text-slate-800">Gestión de Zonas</h1>
-                    </div>
-                    <div className="w-20"></div>
-                </div>
+        {/* Header estilo ShowReport */}
+        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center gap-4">
+            <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/30">
+              <MapPinned className="w-8 h-8 text-white" />
             </div>
-
-            {/* Contenido Principal */}
-            <div className="flex items-start justify-center p-6 md:p-8">
-                <div className="w-full max-w-4xl space-y-6">
-                    
-                    {/* Formulario de agregar zona */}
-                    <div className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6 md:p-8">
-                        <div className="mb-6">
-                            <h2 className="text-2xl font-bold text-slate-800 mb-2">Agregar Nueva Zona</h2>
-                            <p className="text-sm text-slate-600">Registra una nueva localidad en el sistema</p>
-                        </div>
-
-                        <div className="space-y-6">
-                            {/* Input de localidad */}
-                            <div>
-                                <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-                                    <MapPin size={18} className="text-slate-500" />
-                                    Nombre de la Localidad
-                                </label>
-                                <input
-                                    type="text"
-                                    name="locality"
-                                    value={formData.locality}
-                                    onChange={handleChange}
-                                    placeholder="Ej: Ing. Jacobacci"
-                                    className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition"
-                                    required
-                                />
-                            </div>
-
-                            {/* Botón agregar */}
-                            <button
-                                type="button"
-                                onClick={handleSubmit}
-                                disabled={loading || !formData.locality.trim()}
-                                className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg group"
-                            >
-                                {loading ? (
-                                    <>
-                                        <Loader2 size={20} className="animate-spin" />
-                                        Agregando zona...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Plus size={20} className="transition-transform group-hover:rotate-90" />
-                                        Agregar Zona
-                                    </>
-                                )}
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Lista de zonas */}
-                    <div className="bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
-                        <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-200 px-6 py-4">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <div className="bg-blue-100 p-2 rounded-lg">
-                                        <MapPin size={20} className="text-blue-600" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-bold text-slate-800">Zonas Registradas</h3>
-                                        <p className="text-xs text-slate-600">
-                                            {zonas.length} {zonas.length === 1 ? 'zona disponible' : 'zonas disponibles'}
-                                        </p>
-                                    </div>
-                                </div>
-                                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold">
-                                    {zonas.length}
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Contenido de la lista */}
-                        <div className="max-h-96 overflow-y-auto">
-                            {loadingZonas ? (
-                                <div className="flex flex-col items-center justify-center py-12">
-                                    <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-3" />
-                                    <p className="text-sm text-slate-600">Cargando zonas...</p>
-                                </div>
-                            ) : zonas.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center py-12">
-                                    <div className="bg-slate-100 rounded-full p-6 mb-4">
-                                        <MapPin className="w-10 h-10 text-slate-400" />
-                                    </div>
-                                    <h4 className="text-lg font-semibold text-slate-700 mb-2">No hay zonas registradas</h4>
-                                    <p className="text-sm text-slate-500">Agrega tu primera zona usando el formulario</p>
-                                </div>
-                            ) : (
-                                <div className="divide-y divide-slate-100">
-                                    {zonas.map((zona, index) => (
-                                        <div
-                                            key={zona.id}
-                                            className="group px-6 py-4 hover:bg-slate-50 transition-colors duration-150 flex items-center justify-between"
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <div className="bg-blue-100 group-hover:bg-blue-200 p-2 rounded-lg transition-colors">
-                                                    <MapPin size={18} className="text-blue-600" />
-                                                </div>
-                                                <div>
-                                                    <span className="font-semibold text-slate-800 block">{zona.locality}</span>
-                                                    <span className="text-xs text-slate-500">ID: {zona.id}</span>
-                                                </div>
-                                            </div>
-                                            <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-medium">
-                                                #{index + 1}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Información */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                        <div className="flex items-start gap-3">
-                            <div className="bg-blue-100 p-2 rounded-lg flex-shrink-0">
-                                <AlertCircle className="w-5 h-5 text-blue-600" />
-                            </div>
-                            <div>
-                                <h4 className="text-sm font-semibold text-blue-900 mb-1">Información importante</h4>
-                                <p className="text-xs text-blue-800">
-                                    Las zonas registradas se utilizan para clasificar y organizar los reportes de precipitación. 
-                                    Asegúrate de ingresar nombres claros y específicos para facilitar la búsqueda.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+                Gestión de Zonas
+              </h1>
+              <p className="text-base text-slate-600 mt-1 font-medium">
+                {zonas.length} {zonas.length === 1 ? "zona registrada" : "zonas registradas"}
+              </p>
             </div>
+          </div>
         </div>
-    );
+
+        {/* Card de formulario estilo ShowReport */}
+        <div className="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-3xl shadow-xl p-6 md:p-8 mb-6">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">Agregar Nueva Zona</h2>
+            <p className="text-sm text-slate-600">Registra una nueva localidad en el sistema</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">
+                <MapPin size={18} className="text-blue-600" />
+                Localidad
+              </label>
+              <input
+                type="text"
+                name="locality"
+                value={formData.locality}
+                onChange={handleChange}
+                placeholder="Ej: Ing. Jacobacci"
+                className="w-full px-4 py-4 bg-slate-50/80 border-2 border-slate-200 rounded-2xl 
+                           focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 
+                           transition-all duration-200 text-slate-700 placeholder:text-slate-400 hover:border-slate-300 shadow-sm"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || !formData.locality.trim()}
+              className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 
+                         hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl font-bold 
+                         disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 
+                         shadow-lg shadow-blue-600/30 hover:shadow-xl hover:scale-[1.01] group"
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" />
+                  Agregando zona...
+                </>
+              ) : (
+                <>
+                  <Plus size={20} className="transition-transform group-hover:rotate-90" />
+                  Agregar Zona
+                </>
+              )}
+            </button>
+          </form>
+        </div>
+
+        {/* Lista de zonas estilo ShowReport */}
+        <div className="bg-white/90 backdrop-blur-md border-2 border-slate-200 rounded-3xl shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-slate-50 to-blue-50 p-6 border-b-2 border-slate-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-blue-100 p-2 rounded-lg">
+                  <MapPin size={20} className="text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-800">Zonas Registradas</h3>
+                  <p className="text-xs text-slate-600">
+                    {zonas.length} {zonas.length === 1 ? "zona disponible" : "zonas disponibles"}
+                  </p>
+                </div>
+              </div>
+              <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                {zonas.length}
+              </span>
+            </div>
+          </div>
+
+          <div className="max-h-96 overflow-y-auto">
+            {loadingZonas ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="w-10 h-10 text-blue-500 animate-spin mb-3" />
+                <p className="text-sm text-slate-600">Cargando zonas...</p>
+              </div>
+            ) : zonas.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="bg-slate-100 rounded-full p-6 mb-4">
+                  <MapPin className="w-10 h-10 text-slate-400" />
+                </div>
+                <h4 className="text-lg font-semibold text-slate-700 mb-2">No hay zonas registradas</h4>
+                <p className="text-sm text-slate-500">Agrega tu primera zona usando el formulario</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100 bg-white">
+                {zonas.map((zona, index) => (
+                  <div
+                    key={zona.id}
+                    className="group px-6 py-4 hover:bg-blue-50/50 transition-colors duration-150 flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="bg-blue-100 group-hover:bg-blue-200 p-2 rounded-lg transition-colors">
+                        <MapPin size={18} className="text-blue-600" />
+                      </div>
+                      <div>
+                        <span className="font-semibold text-slate-800 block">{zona.locality}</span>
+                        <span className="text-xs text-slate-500">ID: {zona.id}</span>
+                      </div>
+                    </div>
+                    <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-medium">
+                      #{index + 1}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Información */}
+        <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-2xl p-5 shadow-md">
+          <div className="flex items-start gap-3">
+            <div className="bg-blue-100 p-3 rounded-xl shadow-sm flex-shrink-0">
+              <AlertCircle className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <h4 className="text-base font-bold text-blue-900 mb-1">Información importante</h4>
+              <p className="text-sm text-blue-800">
+                Las zonas registradas se utilizan para clasificar y organizar los reportes de precipitación.
+                Asegúrate de ingresar nombres claros y específicos para facilitar la búsqueda.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal estilo ShowReport */}
+      {modalOpen && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={closeModal}
+        >
+          <div
+            className="relative bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 text-slate-600 p-2 rounded-xl transition-all duration-200 hover:scale-110"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex flex-col items-center text-center">
+              <div
+                className={`p-4 rounded-2xl mb-4 ${
+                  modalType === "success" ? "bg-green-100" : "bg-red-100"
+                }`}
+              >
+                {modalType === "success" ? (
+                  <CheckCircle2 className="w-12 h-12 text-green-600" />
+                ) : (
+                  <AlertCircle className="w-12 h-12 text-red-600" />
+                )}
+              </div>
+
+              <h3
+                className={`text-2xl font-bold mb-2 ${
+                  modalType === "success" ? "text-green-900" : "text-red-900"
+                }`}
+              >
+                {modalType === "success" ? "Éxito" : "Error"}
+              </h3>
+              <p
+                className={`text-base mb-6 ${
+                  modalType === "success" ? "text-green-700" : "text-red-700"
+                }`}
+              >
+                {modalMessage}
+              </p>
+
+              <button
+                onClick={closeModal}
+                className={`px-8 py-3 rounded-xl font-bold text-white transition-all duration-200 hover:scale-105 shadow-lg ${
+                  modalType === "success"
+                    ? "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-green-600/30"
+                    : "bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 shadow-red-600/30"
+                }`}
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default FormAddZona;

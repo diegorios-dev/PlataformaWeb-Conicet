@@ -22,6 +22,8 @@ import PatronMensual from "./PatronMensual";
 import AnalisisFrecuencia from "./AnalisisFrecuencia";
 import ComparativaAnual from "./ComparativaAnual";
 import YearPicker from "./YearPicker";
+import IconNavMenu from "../../IconNavMenu";
+
 // Importar servicios de la API
 import { getTotalAcumuladoPorZona, getTopZonasPorRegistro } from "../../../services/zonaService";
 import {
@@ -487,6 +489,7 @@ const ShowCharts = () => {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 p-6">
+      <IconNavMenu />
       {/* Back Button */}
       <div className="absolute top-6 left-6 z-50">
         <BackButton />
