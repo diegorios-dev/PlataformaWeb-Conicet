@@ -20,7 +20,6 @@ const HeatMapView = () => {
       try {
         setLoading(true);
         const data = await getReportes();
-        console.log("Datos completos de API:", data);
         setReportes(data);
       } catch (error) {
         console.error("Error al cargar reportes:", error);
@@ -69,7 +68,6 @@ const HeatMapView = () => {
       reportId: report.id,
     }));
 
-  console.log("Datos mapeados:", pluvData);
 
   useEffect(() => {
     if (!mapInstance || loading) return;
@@ -83,7 +81,6 @@ const HeatMapView = () => {
     setMarkers([]);
 
     if (pluvData.length === 0) {
-      console.log("No hay datos procesados del API");
       return;
     }
 

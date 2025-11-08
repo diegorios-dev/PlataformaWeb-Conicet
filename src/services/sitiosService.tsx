@@ -10,7 +10,6 @@ export const getSitio = async (tipo: string) => {
 export const getAllSitios = async () => {
   try {
     const { data } = await axios.get(`${API_URL}/sitios`);
-    console.log("Sitios obtenidos:", data);
     return data;
   } catch (error) {
     console.error("Error al obtener sitios:", error);
@@ -28,17 +27,16 @@ export const getReportsForSite = async (siteId: number, year?: number) => {
 
 export const getAvailableYears = async () => {
   const { data } = await axios.get(`${API_URL}/reportes/available-years`);
-  console.log("Años disponibles obtenidos del backend:", data);
   return data;
 };
 
 export const postNewSite = async (newSite) => {
   try {
     const { data } = await axios.post(`${API_URL}/site/register`, newSite);
-    console.log("Sitio creado:", data);
     return data;
   } catch (error) {
     console.error("Error al crear sitio:", error);
     throw error;
   }
 };
+

@@ -79,6 +79,25 @@
   z-index: 1000 !important;
 }
 
+/* Animación flotante para iconos del mapa */
+@keyframes float-marker {
+  0%, 100% {
+    transform: translateY(0) translateZ(0);
+  }
+  50% {
+    transform: translateY(-4px) translateZ(0);
+  }
+}
+
+@keyframes pulse-shadow {
+  0%, 100% {
+    filter: drop-shadow(0 2px 4px rgba(6, 182, 212, 0.15));
+  }
+  50% {
+    filter: drop-shadow(0 4px 8px rgba(6, 182, 212, 0.25));
+  }
+}
+
 /* Animación de shake para errores */
 @keyframes shake {
   0%, 100% {
