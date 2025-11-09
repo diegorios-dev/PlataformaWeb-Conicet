@@ -1,5 +1,5 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { getAvailableYears, getReportsForSites } from "../services/sitiosService";
+import { getAvailableYears, getReportsForSites, getReportsForSite , getStatusSite } from "../services/sitiosService";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MapPin, Droplet, CalendarDays } from "lucide-react";
 import L from "leaflet";
@@ -54,12 +54,13 @@ const getCustomIcon = (tipo: string) => {
         justify-content: center;
         filter: drop-shadow(0 2px 4px ${iconConfig.shadow});
         -webkit-filter: drop-shadow(0 2px 4px ${iconConfig.shadow});
+        animation: float-marker 3s ease-in-out infinite, pulse-shadow 3s ease-in-out infinite;
         transform: translateZ(0);
-        will-change: transform;
+        will-change: transform, filter;
         transition: transform 0.2s ease;
       "
-      onmouseover="this.style.transform='scale(1.15) translateZ(0)'"
-      onmouseout="this.style.transform='translateZ(0)'"
+      onmouseover="this.style.animation='none'; this.style.transform='scale(1.15) translateZ(0)'"
+      onmouseout="this.style.animation='float-marker 3s ease-in-out infinite, pulse-shadow 3s ease-in-out infinite'; this.style.transform='translateZ(0)'"
       >
         <img src="${iconReporteRegular}" 
              style="
