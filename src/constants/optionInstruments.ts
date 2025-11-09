@@ -1,7 +1,7 @@
 
 export const OPTION_INSTRUMENTS = [
-  { instrumento: "Ver Pluviometro", event: "Lluvia" },
-  { instrumento: "Ver Regla", event: "Nieve" },
+  { instrumento: "Ver Pluviometros", event: "Lluvia" },
+  { instrumento: "Ver Reglas", event: "Nieve" },
 ];
 
 

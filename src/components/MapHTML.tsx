@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { getReportsForSite, getAvailableYears } from "../services/sitiosService";
-import { useEffect, useState } from "react";
+import { getAvailableYears, getReportsForSites } from "../services/sitiosService";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MapPin, Droplet, CalendarDays } from "lucide-react";
 import L from "leaflet";
 import iconReporteRegular from "../assets/iconReporteRegular.png";
@@ -118,6 +118,9 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
     fetchAvailableYears();
   }, []);
 
+  const siteIds = useMemo(() => (position || []).filter(p => p.idSitio).map(p => p.idSitio), [position]);
+  const lastQueryKeyRef = useRef<string | null>(null);
+
   useEffect(() => {
     const fetchAllReports = async () => {
       if (!position || position.length === 0) {
@@ -125,50 +128,56 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
         return;
       }
 
-      // Iniciar carga
+      const queryKey = `${selectedYear ?? 'all'}|${siteIds.join(',')}`;
+
+      // Evita refetch innecesario si el conjunto de sitios y el año no cambiaron
+      if (lastQueryKeyRef.current === queryKey && siteReports.size > 0) {
+        setLoadingReports(false);
+        return;
+      }
+
       setLoadingReports(true);
       const reportsMap = new Map<number, SiteData>();
-
       try {
-        for (const coord of position) {
-          if (coord.idSitio) {
-            const reports = await getReportsForSite(coord.idSitio, selectedYear || undefined);
+        // Llamada batch (con fallback interno)
+        const batchResults = await getReportsForSites(siteIds, selectedYear || undefined);
 
-            if (reports && reports.length > 0) {
-              const totalAmount = reports.reduce((acc: number, report: any) => {
-                const amount = parseFloat(report.amount) || 0;
-                return acc + amount;
-              }, 0);
+        batchResults.forEach(({ siteId, reports }) => {
+          if (!siteId) return;
+          if (reports && reports.length > 0) {
+            const totalAmount = reports.reduce((acc: number, report: any) => {
+              const amount = parseFloat(report.amount) || 0;
+              return acc + amount;
+            }, 0);
 
-              const lastReport = reports[reports.length - 1];
-              const lastReportAmount = parseFloat(lastReport.amount) || 0;
-              const lastReportDate = lastReport.report?.date || null;
+            const lastReport = reports[reports.length - 1];
+            const lastReportAmount = parseFloat(lastReport.amount) || 0;
+            const lastReportDate = lastReport.report?.date || null;
 
-              reportsMap.set(coord.idSitio, {
-                totalAmount,
-                lastReportAmount,
-                lastReportDate
-              });
-            } else {
-              reportsMap.set(coord.idSitio, {
-                totalAmount: 0,
-                lastReportAmount: 0,
-                lastReportDate: null
-              });
-            }
+            reportsMap.set(siteId, {
+              totalAmount,
+              lastReportAmount,
+              lastReportDate
+            });
+          } else {
+            reportsMap.set(siteId, {
+              totalAmount: 0,
+              lastReportAmount: 0,
+              lastReportDate: null
+            });
           }
-        }
+        });
 
         setSiteReports(reportsMap);
+        lastQueryKeyRef.current = queryKey;
       } catch (error) {
-        console.error("Error fetching reports:", error);
+        console.error('Error fetching batch reports:', error);
       } finally {
         setLoadingReports(false);
       }
     };
-
     fetchAllReports();
-  }, [position, selectedYear]);
+  }, [position, siteIds, selectedYear]);
 
   // Mostrar loading mientras carga datos externos
   if (externalLoading) {

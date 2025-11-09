@@ -5,6 +5,7 @@ import { getAllZonas } from "../../../services/zonaService";
 import { ArrowLeft, Pencil, Search, Filter, Droplet, Snowflake, FileText, AlertTriangle, MapPin, Volume2, Play, Pause, X } from "lucide-react";
 import BackButton from "../../BackButton";
 import IconNavMenu from "../../IconNavMenu";
+import { buildImageUrl, buildAudioUrl } from "../../../utils/urlBuilder";
 
 const ShowReport = () => {
   const [search, setSearch] = useState("");
@@ -94,6 +95,7 @@ const ShowReport = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
       <div className="w-full max-w-7xl mx-auto">
+        
         <BackButton />
 
         <IconNavMenu />
@@ -326,9 +328,9 @@ const ShowReport = () => {
                     <div className="w-32 h-32 flex-shrink-0">
                       {reporte.image ? (
                         <img
-                          src={reporte.image}
+                          src={buildImageUrl(reporte.image)}
                           alt="Reporte"
-                          onClick={() => openImageModal(reporte.image)}
+                          onClick={() => openImageModal(buildImageUrl(reporte.image))}
                           className="w-full h-full object-cover rounded-2xl border-2 border-slate-200 shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer"
                         />
                       ) : (
@@ -354,10 +356,10 @@ const ShowReport = () => {
                       onPlay={() => handleAudioPlay(reporte.id)}
                       onPause={handleAudioPause}
                       >
-                      <source src={reporte.audio} type="audio/mpeg" />
-                      <source src={reporte.audio} type="audio/wav" />
-                      <source src={reporte.audio} type="audio/ogg" />
-                      <source src={reporte.audio} type="audio/mp4" />
+                      <source src={buildAudioUrl(reporte.audio)} type="audio/mpeg" />
+                      <source src={buildAudioUrl(reporte.audio)} type="audio/wav" />
+                      <source src={buildAudioUrl(reporte.audio)} type="audio/ogg" />
+                      <source src={buildAudioUrl(reporte.audio)} type="audio/mp4" />
                       Tu navegador no soporta el elemento de audio.
                       </audio>  
                     </div>
