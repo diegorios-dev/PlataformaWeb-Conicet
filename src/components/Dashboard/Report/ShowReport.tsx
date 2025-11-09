@@ -6,6 +6,7 @@ import { ArrowLeft, Pencil, Search, Filter, Droplet, Snowflake, FileText, AlertT
 import BackButton from "../../BackButton";
 import IconNavMenu from "../../IconNavMenu";
 import { buildImageUrl, buildAudioUrl } from "../../../utils/urlBuilder";
+import { EmptyState } from "../../ui/LoadingState";
 
 const ShowReport = () => {
   const [search, setSearch] = useState("");
@@ -252,16 +253,13 @@ const ShowReport = () => {
             </span>
           </div>
         </div>
-
         {/* Lista de reportes */}
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 bg-white/60 backdrop-blur-sm border-2 border-slate-200 rounded-3xl">
-            <div className="bg-slate-100 rounded-full p-6 mb-4 shadow-lg shadow-slate-500/10">
-              <Search className="w-10 h-10 text-slate-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-700 mb-2">No se encontraron reportes</h3>
-            <p className="text-base text-slate-500">Intenta ajustar los filtros o la búsqueda</p>
-          </div>
+          <EmptyState
+            icon={Search}
+            title="No se encontraron reportes"
+            description="Intenta ajustar los filtros o la búsqueda"
+          />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filtered.map((reporte) => (

@@ -1,10 +1,12 @@
 import { useState, useCallback, useRef } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart3, FileText } from "lucide-react";
 import { useFetchData } from "../../hooks/useFetchData";
 import BackButton from "../BackButton";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { FileText } from "lucide-react";
+import { LoadingSpinner, EmptyState } from "../ui/LoadingState";
+
 import "jspdf-autotable";
 
 export default function BaseHistograma({
@@ -172,13 +174,17 @@ export default function BaseHistograma({
 
           {/* Estado */}
           <div className="mt-5">
-            {loading && <p className="text-center text-slate-500">Cargando datos...</p>}
-            {error && <p className="text-center text-red-600">Error: {error}</p>}
+            {loading && <LoadingSpinner message="Cargando histograma..." />}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                <p className="text-center text-red-600 font-medium">Error: {error}</p>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Gráfico */}
-        {!loading && !error && data && (
+        {!loading && !error && data && data.length > 0 && (
           <div className="bg-white/85 backdrop-blur-md border border-white/70 rounded-2xl p-4 shadow-[0_8px_24px_-12px_rgba(2,6,23,0.18)]">
             {/* Contenedor sin blur para captura PDF */}
             <div ref={chartRef} className="bg-white rounded-xl p-2">
@@ -192,6 +198,15 @@ export default function BaseHistograma({
               </ResponsiveContainer>
             </div>
           </div>
+        )}
+
+        {/* Estado vacío */}
+        {!loading && !error && (!data || data.length === 0) && (
+          <EmptyState
+            icon={BarChart3}
+            title="Sin datos disponibles"
+            description={`No hay registros para ${periodo === 'dia' ? 'este día' : periodo === 'mes' ? 'este mes' : 'este año'}`}
+          />
         )}
       </div>
     </div>

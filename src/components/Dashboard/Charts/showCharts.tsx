@@ -23,6 +23,8 @@ import AnalisisFrecuencia from "./AnalisisFrecuencia";
 import ComparativaAnual from "./ComparativaAnual";
 import YearPicker from "./YearPicker";
 import IconNavMenu from "../../IconNavMenu";
+import { LoadingSpinner } from "../../ui/LoadingState";
+import { API_URL } from "../../../config/api";
 
 // Importar servicios de la API
 import useChartsData from "./useChartsData";
@@ -96,7 +98,7 @@ const ShowCharts = () => {
               <h3 className="text-red-800 font-semibold mb-1">Error al cargar datos</h3>
               <p className="text-red-600 text-sm">{error}</p>
               <p className="text-red-500 text-xs mt-2">
-                Verifica que el backend esté corriendo en http://localhost:8000
+                Verifica que el backend esté corriendo en {API_URL}
               </p>
             </div>
           </div>
@@ -308,7 +310,7 @@ const ShowCharts = () => {
                   🌐 Conectado al Backend Laravel
                 </p>
                 <p className="text-slate-600 text-xs">
-                  http://localhost:8000/api
+                  {API_URL}
                 </p>
               </div>
             </div>

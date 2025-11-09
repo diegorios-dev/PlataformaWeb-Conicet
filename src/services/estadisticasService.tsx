@@ -1,49 +1,50 @@
 import axios from "axios";
+import { API_URL } from "../config/api";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL_SERVICE = API_URL;
 
 // Precipitación total por zona
 export const getPrecipitacionPorZona = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/precipitacion-por-zona`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/precipitacion-por-zona`);
   return data;
 };
 
 // Reportes por instrumento
 export const getReportesPorInstrumento = async () => {
-  const { data } = await axios.get(`${API_URL}/reportes/por-instrumento`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/reportes/por-instrumento`);
   return data.data || data;
 };
 
 // Top zonas por cantidad de registros
 export const getTopZonasPorRegistro = async (limit: number = 10) => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/top-zonas-por-registro?limit=${limit}`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/top-zonas-por-registro?limit=${limit}`);
   return data;
 };
 
 // Distribución de instrumentos por tipo
 export const getDistribucionInstrumentos = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/distribucion-instrumentos`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/distribucion-instrumentos`);
   return data;
 };
 
 // Reportes por mes/año
 export const getReportesPorPeriodo = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/reportes-por-periodo`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/reportes-por-periodo`);
   return data;
 };
 
 // Evolución temporal por zona
 export const getEvolucionPorZona = async (zonaId?: number) => {
   const url = zonaId 
-    ? `${API_URL}/estadisticas/evolucion-por-zona?zonaId=${zonaId}`
-    : `${API_URL}/estadisticas/evolucion-por-zona`;
+    ? `${API_URL_SERVICE}/estadisticas/evolucion-por-zona?zonaId=${zonaId}`
+    : `${API_URL_SERVICE}/estadisticas/evolucion-por-zona`;
   const { data } = await axios.get(url);
   return data;
 };
 
 // Comparativa multi-sitio
 export const getComparativaSitios = async (sitioIds: number[]) => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/comparativa-sitios`, {
+  const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/comparativa-sitios`, {
     params: { sitioIds: sitioIds.join(',') }
   });
   return data;
@@ -51,28 +52,28 @@ export const getComparativaSitios = async (sitioIds: number[]) => {
 
 // Tendencia de caudal
 export const getTendenciaCaudal = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/tendencia-caudal`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/tendencia-caudal`);
   return data;
 };
 
 // Serie temporal por tipo de precipitación
 export const getSeriePorTipo = async () => {
-  const { data } = await axios.get(`${API_URL}/estadisticas/serie-por-tipo`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/serie-por-tipo`);
   return data;
 };
 
 // Distribución porcentual por tipo
 export const getDistribucionPorTipo = async (periodo?: string) => {
   const url = periodo && periodo !== 'todos' 
-    ? `${API_URL}/eventos/distribucion-reportes?periodo=${periodo}`
-    : `${API_URL}/eventos/distribucion-reportes`;
+    ? `${API_URL_SERVICE}/eventos/distribucion-reportes?periodo=${periodo}`
+    : `${API_URL_SERVICE}/eventos/distribucion-reportes`;
   const { data } = await axios.get(url);
   return data.data || data;
 };
 
 // Evolución mensual
 export const getEvolucionMensual = async (periodo?: string, anio?: number) => {
-  let url = `${API_URL}/reportes/evolucion-mensual`;
+  let url = `${API_URL_SERVICE}/reportes/evolucion-mensual`;
   
   if (anio) {
     url += `?anio=${anio}`;
@@ -86,7 +87,7 @@ export const getEvolucionMensual = async (periodo?: string, anio?: number) => {
 
 // Precipitación vs coordenadas (scatter)
 export const getPrecipitacionCoordenadas = async (periodo?: string, tipoEvento?: string) => {
-  let url = `${API_URL}/sitios/precipitacion-coordenadas`;
+  let url = `${API_URL_SERVICE}/sitios/precipitacion-coordenadas`;
   const params = new URLSearchParams();
   
   if (periodo && periodo !== 'todos') {
@@ -125,7 +126,7 @@ export const getPrecipitacionCoordenadas = async (periodo?: string, tipoEvento?:
 
 // Patrón mensual (radar)
 export const getPatronMensual = async (periodo?: string, tipoEvento?: string) => {
-  let url = `${API_URL}/reportes/patron-mensual`;
+  let url = `${API_URL_SERVICE}/reportes/patron-mensual`;
   const params = new URLSearchParams();
   
   if (periodo && periodo !== 'todos') {
@@ -146,7 +147,7 @@ export const getPatronMensual = async (periodo?: string, tipoEvento?: string) =>
 
 // Análisis de frecuencia (histograma)
 export const getAnalisisFrecuencia = async (periodo?: string, tipoEvento?: string, rango?: number) => {
-  let url = `${API_URL}/histograma`;
+  let url = `${API_URL_SERVICE}/histograma`;
   const params = new URLSearchParams();
   
   if (periodo && periodo !== 'todos') {
@@ -170,7 +171,7 @@ export const getAnalisisFrecuencia = async (periodo?: string, tipoEvento?: strin
 
 // Comparativa año a año
 export const getComparativaAnual = async (anios?: string, tipoEvento?: string, mesInicio?: number, mesFin?: number) => {
-  let url = `${API_URL}/reportes/comparativa-anual`;
+  let url = `${API_URL_SERVICE}/reportes/comparativa-anual`;
   const params = new URLSearchParams();
   
   if (anios) {

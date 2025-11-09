@@ -19,6 +19,7 @@
 import { useState, useEffect } from 'react';
 import { getTotalAcumuladoPorZona } from '../services/zonaService';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { API_URL } from '../config/api';
 
 const TestBackend = () => {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -99,7 +100,7 @@ const TestBackend = () => {
                   <p className="font-semibold mb-2">Posibles causas:</p>
                   <ul className="list-disc list-inside space-y-1 ml-2">
                     <li>El backend no está corriendo</li>
-                    <li>URL incorrecta (debe ser http://localhost:8000)</li>
+                    <li>URL incorrecta (debe ser {API_URL})</li>
                     <li>CORS no está configurado</li>
                     <li>No hay datos en la base de datos</li>
                   </ul>
@@ -121,7 +122,7 @@ const TestBackend = () => {
               <div className="flex justify-between">
                 <span className="text-slate-600">Backend URL:</span>
                 <code className="bg-slate-200 px-2 py-1 rounded text-slate-800">
-                  http://localhost:8000/api
+                  {API_URL}
                 </code>
               </div>
               <div className="flex justify-between">

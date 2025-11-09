@@ -1,17 +1,18 @@
 // services/reportes.ts (CORRECCIÓN)
 
 import axios from "axios";
+import { API_URL } from "../config/api";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL_SERVICE = API_URL;
 
 export const getReportes = async () => {
-  const { data } = await axios.get(`${API_URL}/reportes`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/reportes`);
   return data;
 };
 
 export const updateReporte = async (id: number, data: any) => {
   try {   
-    const response = await axios.put(`${API_URL}/reportes/${id}`, data);
+    const response = await axios.put(`${API_URL_SERVICE}/reportes/${id}`, data);
     return response.data;
   } catch (error: any) {
     console.error("Error en updateReporte:", error);
@@ -59,7 +60,7 @@ export async function getHistograma(
     params.append('month', month.toString());
   }
   
-  const url = `${API_URL}/histograma-temporal?${params.toString()}`;
+  const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
   
   const res = await fetch(url);
   if (!res.ok) {
@@ -103,7 +104,7 @@ export async function getHistogramaNieve(
   if (year) params.append('year', year.toString());
   if (month && periodo === 'dia') params.append('month', month.toString());
   
-  const url = `${API_URL}/histograma-temporal?${params.toString()}`;
+  const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
   
   const res = await fetch(url);
   if (!res.ok) {
@@ -145,7 +146,7 @@ export async function getHistogramaCaudalimetro(
   if (year) params.append('year', year.toString());
   if (month && periodo === 'dia') params.append('month', month.toString());
   
-  const url = `${API_URL}/histograma-temporal?${params.toString()}`;
+  const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
   
   const res = await fetch(url);
   if (!res.ok) {

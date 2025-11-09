@@ -4,17 +4,7 @@
  * El frontend concatena con la base del API para obtener la URL completa
  */
 
-// 🔧 CONFIGURACIÓN: Cambiar según el entorno
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 💻 Development (localhost):
-const API_BASE = "http://localhost:8000";
-
-// 🌐 LAN (otros dispositivos en tu red):
-// const API_BASE = "http://192.168.1.36:8000";
-
-// 🚀 Production:
-// const API_BASE = "https://api.produccion.com";
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+import { API_BASE } from "../config/api";
 
 /**
  * Construye la URL completa de un recurso a partir de su path relativo

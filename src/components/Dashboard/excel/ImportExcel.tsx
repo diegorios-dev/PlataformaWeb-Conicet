@@ -12,8 +12,7 @@ import {
   X,
   Trash2,
 } from 'lucide-react';
-
-const API_URL = 'http://localhost:8000/api';
+import { API_URL } from '../../../config/api';
 
 interface ImportResult {
   insertadas?: number;

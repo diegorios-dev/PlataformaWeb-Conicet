@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_URL } from "../config/api";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL_SERVICE = API_URL;
 
 export const postNewUser = async (newUser) => {
   try {
@@ -13,7 +14,7 @@ export const postNewUser = async (newUser) => {
       zona_id: newUser.zona_id
     };
 
-    const { data } = await axios.post(`${API_URL}/user/register`, payload);
+    const { data } = await axios.post(`${API_URL_SERVICE}/user/register`, payload);
     return data;
   } catch (error) {
     console.error("Error completo:", error);
@@ -25,19 +26,19 @@ export const postNewUser = async (newUser) => {
 };
 
 export const login = async (password) => {
-  const { data } = await axios.post(`${API_URL}/auth/login`, {
+  const { data } = await axios.post(`${API_URL_SERVICE}/auth/login`, {
     password, 
   });  
   return data;
 };
 
 export const getAllUsers = async () => {
-  const { data } = await axios.get(`${API_URL}/usuarios`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/usuarios`);
   return data;
 };
 
 export const getUsersByWord = async (word = "") => {
-  const { data } = await axios.get(`${API_URL}/usuario?word=${encodeURIComponent(word)}`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/usuario?word=${encodeURIComponent(word)}`);
   return data;
 };
 
@@ -51,7 +52,7 @@ export const saveUser = async (user) => {
   };
 
   try {
-    const { data } = await axios.put(`${API_URL}/usuario/${user.id}`, payload);
+    const { data } = await axios.put(`${API_URL_SERVICE}/usuario/${user.id}`, payload);
     return data;
   } catch (error) {
     console.error("Error al actualizar usuario:", error);
@@ -61,7 +62,7 @@ export const saveUser = async (user) => {
 
 export const deleteUser = async (userId) => {
   try {
-    const { data } = await axios.delete(`${API_URL}/usuario/${userId}`);
+    const { data } = await axios.delete(`${API_URL_SERVICE}/usuario/${userId}`);
     return data;
   } catch (error) {
     console.error("Error al eliminar usuario:", error);

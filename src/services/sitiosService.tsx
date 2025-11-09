@@ -1,15 +1,16 @@
 import axios from "axios";
+import { API_URL } from "../config/api";
 
-const API_URL = "http://localhost:8000/api";
+const API_URL_SERVICE = API_URL;
 
 export const getSitio = async (tipo: string) => {
-  const { data } = await axios.get(`${API_URL}/reporte/${tipo}`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/reporte/${tipo}`);
   return data;
 };
 
 export const getAllSitios = async () => {
   try {
-    const { data } = await axios.get(`${API_URL}/sitios`);
+    const { data } = await axios.get(`${API_URL_SERVICE}/sitios`);
     return data;
   } catch (error) {
     console.error("Error al obtener sitios:", error);
@@ -19,8 +20,8 @@ export const getAllSitios = async () => {
 
 export const getReportsForSite = async (siteId: number, year?: number) => {
   const url = year 
-    ? `${API_URL}/reportes/regular/site/${siteId}/${year}`
-    : `${API_URL}/reportes/regular/site/${siteId}`;
+    ? `${API_URL_SERVICE}/reportes/regular/site/${siteId}/${year}`
+    : `${API_URL_SERVICE}/reportes/regular/site/${siteId}`;
   const { data } = await axios.get(url);
   return data;
 };
@@ -43,7 +44,7 @@ export const getReportsForSites = async (siteIds: number[], year?: number): Prom
   if (year) params.append('year', String(year));
 
   try {
-    const { data } = await axios.get(`${API_URL}/reportes/regular/sites?${params.toString()}`);
+    const { data } = await axios.get(`${API_URL_SERVICE}/reportes/regular/sites?${params.toString()}`);
     // Normalizamos a array de { siteId, reports }
     if (Array.isArray(data)) {
       return data.map(item => ({ siteId: item.siteId || item.site_id || item.id, reports: item.reports || item.data || [] }));
@@ -70,13 +71,13 @@ export const getReportsForSites = async (siteIds: number[], year?: number): Prom
 };
 
 export const getAvailableYears = async () => {
-  const { data } = await axios.get(`${API_URL}/reportes/available-years`);
+  const { data } = await axios.get(`${API_URL_SERVICE}/reportes/available-years`);
   return data;
 };
 
 export const postNewSite = async (newSite: Record<string, any>) => {
   try {
-    const { data } = await axios.post(`${API_URL}/site/register`, newSite);
+    const { data } = await axios.post(`${API_URL_SERVICE}/site/register`, newSite);
     return data;
   } catch (error) {
     console.error("Error al crear sitio:", error);
