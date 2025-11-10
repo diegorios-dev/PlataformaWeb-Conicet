@@ -3,8 +3,7 @@ import { login } from '../services/userService';
 
 type User = {
   rol: string;
-  nombre?: string;
-  username?: string;
+  name?: string;
 };
 
 function useUser() {
@@ -92,7 +91,7 @@ function useUser() {
   };
 
   const getUsername = () => {
-    return user?.nombre || user?.username || "Usuario";
+    return user?.name || "Usuario";
   };
 
   return {

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useMemo, useCallback } from "react";
 import type { ReactNode } from "react";
 import useUser from "../hooks/useUser";
 
@@ -21,28 +21,33 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [report, setReport] = useState<any | null>(null);
 
-  const handleSelectReport = (report: any) => {
+  // ⚡ Memorizar función para evitar re-renders
+  const handleSelectReport = useCallback((report: any) => {
     setReport(report);
-  };
+  }, []);
 
   const { user, fetchGetUserByPassword, isLogin, password, error, loading, handleSavePassword, handleLogout, getUsername } = useUser();
 
+  // ⚡ Memorizar el value del context para evitar re-renders innecesarios
+  const contextValue = useMemo(
+    () => ({
+      user,
+      password,
+      error,
+      loading,
+      fetchGetUserByPassword,
+      handleSavePassword,
+      handleSelectReport,
+      report,
+      isLogin,
+      handleLogout,
+      getUsername,
+    }),
+    [user, password, error, loading, fetchGetUserByPassword, handleSavePassword, handleSelectReport, report, isLogin, handleLogout, getUsername]
+  );
+
   return (
-    <UserContext.Provider
-      value={{
-        user,
-        password,
-        error,
-        loading,
-        fetchGetUserByPassword,
-        handleSavePassword,
-        handleSelectReport,
-        report,
-        isLogin,
-        handleLogout,
-        getUsername,
-      }}
-    >
+    <UserContext.Provider value={contextValue}>
       {children}
     </UserContext.Provider>
   );

@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   BarChart3,
   TrendingUp,
@@ -22,481 +21,42 @@ import PatronMensual from "./PatronMensual";
 import AnalisisFrecuencia from "./AnalisisFrecuencia";
 import ComparativaAnual from "./ComparativaAnual";
 import YearPicker from "./YearPicker";
-import IconNavMenu from "../../IconNavMenu";
+import IconNavMenu from "../../Menu/IconNavMenu";
+import { API_URL } from "../../../config/api";
 
 // Importar servicios de la API
-import { getTotalAcumuladoPorZona, getTopZonasPorRegistro } from "../../../services/zonaService";
-import {
-  getReportesPorInstrumento,
-  getDistribucionPorTipo,
-  getEvolucionMensual,
-  getPrecipitacionCoordenadas,
-  getPatronMensual,
-  getAnalisisFrecuencia,
-  getComparativaAnual,
-} from "../../../services/estadisticasService";
+import useChartsData from "./useChartsData";
 
 const ShowCharts = () => {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    loading, error,
+    precipitacionPorZona, reportesPorInstrumento, topSitios, distribucionTipo, evolucionMensual,
+    precipitacionCoordenadas, patronMensual, analisisFrecuencia, comparativaAnual,
+    estadisticasFrecuencia, totalesComparativa, configuracionComparativa,
+    periodoPrecipitacion, setPeriodoPrecipitacion,
+    periodoTopZonas, setPeriodoTopZonas,
+    periodoDistribucion, setPeriodoDistribucion,
+    periodoEvolucion, setPeriodoEvolucion,
+    periodoCoordenadas, setPeriodoCoordenadas,
+    tipoEventoCoordenadas, setTipoEventoCoordenadas,
+    periodoPatronMensual, setPeriodoPatronMensual,
+    tipoEventoPatronMensual, setTipoEventoPatronMensual,
+    periodoAnalisisFrecuencia, setPeriodoAnalisisFrecuencia,
+    rangoAnalisisFrecuencia, setRangoAnalisisFrecuencia,
+    selectedYearsComparativa, setSelectedYearsComparativa,
+    loadingCoordenadas, loadingPatronMensual, loadingAnalisisFrecuencia, loadingComparativa,
+    refreshAll,
+  } = useChartsData();
 
-  // Estados para datos de la API
-  const [precipitacionPorZona, setPrecipitacionPorZona] = useState<any[]>([]);
-  const [reportesPorInstrumento, setReportesPorInstrumento] = useState<any[]>([]);
-  const [topSitios, setTopSitios] = useState<any[]>([]);
-  const [distribucionTipo, setDistribucionTipo] = useState<any[]>([]);
-  const [evolucionMensual, setEvolucionMensual] = useState<any[]>([]);
-  const [precipitacionCoordenadas, setPrecipitacionCoordenadas] = useState<any[]>([]);
-  const [patronMensual, setPatronMensual] = useState<any[]>([]);
-  const [analisisFrecuencia, setAnalisisFrecuencia] = useState<any[]>([]);
-  const [comparativaAnual, setComparativaAnual] = useState<any[]>([]);
-
-  // Estados para períodos de cada gráfico
-  const [periodoPrecipitacion, setPeriodoPrecipitacion] = useState("todos");
-  const [periodoTopZonas, setPeriodoTopZonas] = useState("anio");
-  const [periodoDistribucion, setPeriodoDistribucion] = useState("todos");
-  const [periodoEvolucion, setPeriodoEvolucion] = useState("anio");
-  const [periodoCoordenadas, setPeriodoCoordenadas] = useState("todos");
-  const [tipoEventoCoordenadas, setTipoEventoCoordenadas] = useState<string | undefined>();
-  const [periodoPatronMensual, setPeriodoPatronMensual] = useState("anio");
-  const [tipoEventoPatronMensual, setTipoEventoPatronMensual] = useState<string | undefined>();
-  const [periodoAnalisisFrecuencia, setPeriodoAnalisisFrecuencia] = useState("anio");
-  const [rangoAnalisisFrecuencia, setRangoAnalisisFrecuencia] = useState(10);
-  const [selectedYearsComparativa, setSelectedYearsComparativa] = useState<number[]>([]);
-  // const [tipoEventoComparativa, setTipoEventoComparativa] = useState<string | undefined>();
-  // Loading específico para el gráfico de coordenadas (evita usar el loading global que desmonta children)
-  const [loadingCoordenadas, setLoadingCoordenadas] = useState(false);
-  const [loadingPatronMensual, setLoadingPatronMensual] = useState(false);
-  const [loadingAnalisisFrecuencia, setLoadingAnalisisFrecuencia] = useState(false);
-  const [loadingComparativa, setLoadingComparativa] = useState(false);
-  // Estados para estadísticas adicionales
-  const [estadisticasFrecuencia, setEstadisticasFrecuencia] = useState<any>(null);
-  const [totalesComparativa, setTotalesComparativa] = useState<any>(null);
-  const [configuracionComparativa, setConfiguracionComparativa] = useState<any>(null);
-
-  // Cargar datos del backend
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  // Recargar cuando cambien los períodos
-  useEffect(() => {
-    fetchPrecipitacion();
-  }, [periodoPrecipitacion]);
-
-  useEffect(() => {
-    fetchTopZonas();
-  }, [periodoTopZonas]);
-
-  useEffect(() => {
-    fetchDistribucion();
-  }, [periodoDistribucion]);
-
-  useEffect(() => {
-    fetchEvolucion();
-  }, [periodoEvolucion]);
-
-  useEffect(() => {
-    fetchCoordenadas();
-  }, [periodoCoordenadas, tipoEventoCoordenadas]);
-
-  useEffect(() => {
-    fetchPatronMensual();
-  }, [periodoPatronMensual, tipoEventoPatronMensual]);
-
-  useEffect(() => {
-    fetchAnalisisFrecuencia();
-  }, [periodoAnalisisFrecuencia, rangoAnalisisFrecuencia]);
-
-  useEffect(() => {
-    fetchComparativaAnual();
-  }, [selectedYearsComparativa]);
-
-  const fetchCoordenadas = async () => {
-    try {
-      // usar loading específico para evitar que ChartCard muestre el spinner global y desmonte el gráfico
-      setLoadingCoordenadas(true);
-      const data = await getPrecipitacionCoordenadas(periodoCoordenadas, tipoEventoCoordenadas);
-      
-      if (!data || !Array.isArray(data)) {
-        console.warn('⚠️ Los datos recibidos no son un array:', data);
-        setPrecipitacionCoordenadas([]);
-        return;
-      }
-      
-      setPrecipitacionCoordenadas(data);
-    } catch (err) {
-      console.error('❌ Error al cargar datos de coordenadas:', err);
-      // NO modificar el estado error global - solo loguear el error
-      setPrecipitacionCoordenadas([]);
-    } finally {
-      setLoadingCoordenadas(false);
-    }
-  };
-
-  const fetchPatronMensual = async () => {
-    try {
-      setLoadingPatronMensual(true);
-      const data = await getPatronMensual(periodoPatronMensual, tipoEventoPatronMensual);
-      
-      if (!data || !Array.isArray(data)) {
-        console.warn('⚠️ Los datos recibidos no son un array:', data);
-        setPatronMensual([]);
-        return;
-      }
-      
-      setPatronMensual(data);
-    } catch (err) {
-      console.error('❌ Error al cargar patrón mensual:', err);
-      setPatronMensual([]);
-    } finally {
-      setLoadingPatronMensual(false);
-    }
-  };
-
-  const fetchAnalisisFrecuencia = async () => {
-    try {
-      setLoadingAnalisisFrecuencia(true);
-      
-      // 🌊 Hacer 3 llamadas simultáneas: una por cada tipo de evento
-      const [responseLluvia, responseNieve, responseCaudal] = await Promise.all([
-        getAnalisisFrecuencia(periodoAnalisisFrecuencia, 'Lluvia', rangoAnalisisFrecuencia),
-        getAnalisisFrecuencia(periodoAnalisisFrecuencia, 'Nieve', rangoAnalisisFrecuencia),
-        getAnalisisFrecuencia(periodoAnalisisFrecuencia, 'Caudal', rangoAnalisisFrecuencia),
-      ]);
-      
-      // Extraer los arrays de datos de cada respuesta
-      const dataLluvia = Array.isArray(responseLluvia) ? responseLluvia : (responseLluvia?.data || []);
-      const dataNieve = Array.isArray(responseNieve) ? responseNieve : (responseNieve?.data || []);
-      const dataCaudal = Array.isArray(responseCaudal) ? responseCaudal : (responseCaudal?.data || []);
-      
-      // Combinar los 3 datasets en uno solo
-      // Crear un mapa de rangos para combinar frecuencias
-      const rangoMap = new Map();
-      
-      // Procesar datos de Lluvia
-      dataLluvia.forEach((item: any) => {
-        rangoMap.set(item.rango, {
-          rango: item.rango,
-          rango_inicio: item.rango_inferior || item.rango_inicio || 0,
-          rango_fin: item.rango_firt || item.rango_fin || 0,
-          frecuencia_lluvia: item.frecuencia || 0,
-          frecuencia_nieve: 0,
-          frecuencia_caudal: 0,
-          porcentaje: item.porcentaje || 0,
-        });
-      });
-      
-      // Agregar datos de Nieve
-      dataNieve.forEach((item: any) => {
-        const existing = rangoMap.get(item.rango);
-        if (existing) {
-          existing.frecuencia_nieve = item.frecuencia || 0;
-        } else {
-          rangoMap.set(item.rango, {
-            rango: item.rango,
-            rango_inicio: item.rango_inferior || item.rango_inicio || 0,
-            rango_fin: item.rango_firt || item.rango_fin || 0,
-            frecuencia_lluvia: 0,
-            frecuencia_nieve: item.frecuencia || 0,
-            frecuencia_caudal: 0,
-            porcentaje: item.porcentaje || 0,
-          });
-        }
-      });
-      
-      // Agregar datos de Caudal
-      dataCaudal.forEach((item: any) => {
-        const existing = rangoMap.get(item.rango);
-        if (existing) {
-          existing.frecuencia_caudal = item.frecuencia || 0;
-        } else {
-          rangoMap.set(item.rango, {
-            rango: item.rango,
-            rango_inicio: item.rango_inferior || item.rango_inicio || 0,
-            rango_fin: item.rango_firt || item.rango_fin || 0,
-            frecuencia_lluvia: 0,
-            frecuencia_nieve: 0,
-            frecuencia_caudal: item.frecuencia || 0,
-            porcentaje: item.porcentaje || 0,
-          });
-        }
-      });
-      
-      // Convertir el mapa a array y ordenar por rango_inicio
-      const combinedData = Array.from(rangoMap.values()).sort((a, b) => a.rango_inicio - b.rango_inicio);
-      
-      // 🌊 DEBUG: Ver datos finales combinados
-      console.log('🌊 Gráfico de Olas - Datos combinados:', combinedData.length, 'rangos');
-      if (combinedData.length > 0) {
-        console.log('🌊 Ejemplo:', combinedData[0]);
-      }
-      
-      setAnalisisFrecuencia(combinedData);
-      
-      // Usar estadísticas de la primera respuesta (Lluvia) como referencia
-      const estadisticas = responseLluvia?.estadisticas || null;
-      setEstadisticasFrecuencia(estadisticas);
-      
-    } catch (err) {
-      console.error('❌ Error al cargar análisis de frecuencia:', err);
-      setAnalisisFrecuencia([]);
-      setEstadisticasFrecuencia(null);
-    } finally {
-      setLoadingAnalisisFrecuencia(false);
-    }
-  };
-
-  const fetchComparativaAnual = async () => {
-    try {
-      setLoadingComparativa(true);
-      
-      // Si hay años seleccionados, usarlos; sino, usar los últimos 3 años por defecto
-      const aniosParam = selectedYearsComparativa.length > 0 
-        ? selectedYearsComparativa.sort((a, b) => a - b).join(',')
-        : undefined;
-      
-      const response = await getComparativaAnual(aniosParam);
-      
-      if (response && response.data) {
-        setComparativaAnual(response.data);
-        setTotalesComparativa(response.totales_por_anio || null);
-        setConfiguracionComparativa(response.configuracion || null);
-        
-        // Si no había años seleccionados, usar los que devolvió el backend
-        if (selectedYearsComparativa.length === 0 && response.configuracion?.anios_comparados) {
-          setSelectedYearsComparativa(response.configuracion.anios_comparados);
-        }
-      } else {
-        setComparativaAnual([]);
-        setTotalesComparativa(null);
-        setConfiguracionComparativa(null);
-      }
-    } catch (err) {
-      console.error('❌ Error al cargar comparativa anual:', err);
-      setComparativaAnual([]);
-      setTotalesComparativa(null);
-      setConfiguracionComparativa(null);
-    } finally {
-      setLoadingComparativa(false);
-    }
-  };
-
-  const fetchData = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Cargar solo el endpoint principal primero
-      const zonasData = await getTotalAcumuladoPorZona().catch((err) => { 
-        console.error('❌ Error en zonas/total-acumulado:', err.response?.status, err.message); 
-        return []; 
-      });
-
-
-      // Helper para asegurar que sea un array
-      const ensureArray = (data: any) => {
-        if (Array.isArray(data)) return data;
-        if (data && typeof data === 'object') return [data];
-        return [];
-      };
-
-      // Transformar datos de zonas para el gráfico
-      const zonasArray = ensureArray(zonasData);
-      const zonasFormateadas = zonasArray.map((zona: any) => ({
-        zona: zona.locality || zona.nombre || "Sin nombre",
-        precipitacion: parseFloat((parseFloat(zona.total_acumulado) || 0).toFixed(2)),
-      }));
-
-      // Para top zonas, intentar el endpoint nuevo, si falla usar los datos de zonas principales
-      let topFormateadas = [];
-      try {
-        const topZonasData = await getTopZonasPorRegistro("anio", 8);
-        const topZonasArray = ensureArray(topZonasData);
-        // Mantener la estructura original del backend
-        topFormateadas = topZonasArray;
-      } catch (err: any) {
-        console.warn('⚠️ Endpoint /zonas/top-registros no disponible');
-        topFormateadas = [];
-      }
-
-      // Cargar el resto de endpoints en paralelo (opcionales)
-      const [
-        reportesData,
-        distribucionData,
-        evolucionData,
-        coordenadasData,
-        patronData,
-        frecuenciaLluviaData,
-        frecuenciaNieveData,
-        frecuenciaCaudalData,
-        anualData,
-      ] = await Promise.all([
-        getReportesPorInstrumento().catch(() => []),
-        getDistribucionPorTipo().catch(() => []),
-        getEvolucionMensual(periodoEvolucion).catch(() => []),
-        getPrecipitacionCoordenadas().catch(() => []),
-        getPatronMensual(periodoPatronMensual, tipoEventoPatronMensual).catch(() => []),
-        getAnalisisFrecuencia(periodoAnalisisFrecuencia, 'Lluvia', rangoAnalisisFrecuencia).catch(() => []),
-        getAnalisisFrecuencia(periodoAnalisisFrecuencia, 'Nieve', rangoAnalisisFrecuencia).catch(() => []),
-        getAnalisisFrecuencia(periodoAnalisisFrecuencia, 'Caudal', rangoAnalisisFrecuencia).catch(() => []),
-        getComparativaAnual().catch(() => []),
-      ]);
-
-      // Actualizar estados con validación
-      setPrecipitacionPorZona(zonasFormateadas);
-      setReportesPorInstrumento(ensureArray(reportesData));
-      setTopSitios(topFormateadas);
-      setDistribucionTipo(ensureArray(distribucionData));
-      setEvolucionMensual(ensureArray(evolucionData));
-      setPrecipitacionCoordenadas(ensureArray(coordenadasData));
-      setPatronMensual(ensureArray(patronData));
-      
-      // Combinar datos de frecuencia de los 3 tipos
-      const dataLluvia = Array.isArray(frecuenciaLluviaData) ? frecuenciaLluviaData : (frecuenciaLluviaData?.data || []);
-      const dataNieve = Array.isArray(frecuenciaNieveData) ? frecuenciaNieveData : (frecuenciaNieveData?.data || []);
-      const dataCaudal = Array.isArray(frecuenciaCaudalData) ? frecuenciaCaudalData : (frecuenciaCaudalData?.data || []);
-      
-      const rangoMap = new Map();
-      
-      // Procesar Lluvia
-      dataLluvia.forEach((item: any) => {
-        rangoMap.set(item.rango, {
-          rango: item.rango,
-          rango_inicio: item.rango_inferior || item.rango_inicio || 0,
-          rango_fin: item.rango_firt || item.rango_fin || 0,
-          frecuencia_lluvia: item.frecuencia || 0,
-          frecuencia_nieve: 0,
-          frecuencia_caudal: 0,
-          porcentaje: item.porcentaje || 0,
-        });
-      });
-      
-      // Procesar Nieve
-      dataNieve.forEach((item: any) => {
-        const existing = rangoMap.get(item.rango);
-        if (existing) {
-          existing.frecuencia_nieve = item.frecuencia || 0;
-        } else {
-          rangoMap.set(item.rango, {
-            rango: item.rango,
-            rango_inicio: item.rango_inferior || item.rango_inicio || 0,
-            rango_fin: item.rango_firt || item.rango_fin || 0,
-            frecuencia_lluvia: 0,
-            frecuencia_nieve: item.frecuencia || 0,
-            frecuencia_caudal: 0,
-            porcentaje: item.porcentaje || 0,
-          });
-        }
-      });
-      
-      // Procesar Caudal
-      dataCaudal.forEach((item: any) => {
-        const existing = rangoMap.get(item.rango);
-        if (existing) {
-          existing.frecuencia_caudal = item.frecuencia || 0;
-        } else {
-          rangoMap.set(item.rango, {
-            rango: item.rango,
-            rango_inicio: item.rango_inferior || item.rango_inicio || 0,
-            rango_fin: item.rango_firt || item.rango_fin || 0,
-            frecuencia_lluvia: 0,
-            frecuencia_nieve: 0,
-            frecuencia_caudal: item.frecuencia || 0,
-            porcentaje: item.porcentaje || 0,
-          });
-        }
-      });
-      
-      const combinedFrecuencia = Array.from(rangoMap.values()).sort((a, b) => a.rango_inicio - b.rango_inicio);
-      setAnalisisFrecuencia(combinedFrecuencia);
-      
-      // Usar estadísticas de la primera respuesta
-      const estadisticas = frecuenciaLluviaData?.estadisticas || null;
-      setEstadisticasFrecuencia(estadisticas);
-      
-      // Procesar comparativa anual
-      if (anualData && anualData.data) {
-        setComparativaAnual(anualData.data);
-        setTotalesComparativa(anualData.totales_por_anio || null);
-        setConfiguracionComparativa(anualData.configuracion || null);
-      } else {
-        setComparativaAnual(ensureArray(anualData));
-        setTotalesComparativa(null);
-        setConfiguracionComparativa(null);
-      }
-
-    } catch (err: any) {
-      console.error("❌ Error crítico al cargar datos:", err);
-      setError(err.message || "Error al cargar datos del servidor");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Funciones individuales para recargar gráficos específicos
-  const ensureArray = (data: any) => {
-    if (Array.isArray(data)) return data;
-    if (data && typeof data === 'object') return [data];
-    return [];
-  };
-
-  const fetchPrecipitacion = async () => {
-    try {
-      const zonasData = await getTotalAcumuladoPorZona(periodoPrecipitacion);
-      const zonasArray = ensureArray(zonasData);
-      const zonasFormateadas = zonasArray.map((zona: any) => ({
-        zona: zona.locality || zona.nombre || "Sin nombre",
-        precipitacion: parseFloat((parseFloat(zona.total_acumulado) || 0).toFixed(2)),
-      }));
-      setPrecipitacionPorZona(zonasFormateadas);
-    } catch (err) {
-      console.warn('⚠️ Error al recargar precipitación por zona');
-      setPrecipitacionPorZona([]);
-    }
-  };
-
-  const fetchTopZonas = async () => {
-    try {
-      const topZonasData = await getTopZonasPorRegistro(periodoTopZonas, 8);
-      const topZonasArray = ensureArray(topZonasData);
-      setTopSitios(topZonasArray);
-    } catch (err) {
-      console.warn('⚠️ Error al recargar top zonas');
-      setTopSitios([]);
-    }
-  };
-
-  const fetchDistribucion = async () => {
-    try {
-      const distribucionData = await getDistribucionPorTipo(periodoDistribucion);
-      setDistribucionTipo(ensureArray(distribucionData));
-    } catch (err) {
-      console.warn('⚠️ Error al recargar distribución');
-      setDistribucionTipo([]);
-    }
-  };
-
-  const fetchEvolucion = async () => {
-    try {
-      const evolucionData = await getEvolucionMensual(periodoEvolucion);
-      setEvolucionMensual(ensureArray(evolucionData));
-    } catch (err) {
-      console.warn('⚠️ Error al recargar evolución');
-      setEvolucionMensual([]);
-    }
-  };
-
+ 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 p-6">
+
       <IconNavMenu />
-      {/* Back Button */}
-      <div className="absolute top-6 left-6 z-50">
-        <BackButton />
-      </div>
 
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8 mt-16">
+        <BackButton />
         <div className="backdrop-blur-2xl bg-white/50 border border-white/60 rounded-3xl shadow-2xl p-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -515,7 +75,7 @@ const ShowCharts = () => {
             
             {/* Botón de refresh */}
             <button
-              onClick={fetchData}
+              onClick={refreshAll}
               disabled={loading}
               className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
@@ -535,7 +95,7 @@ const ShowCharts = () => {
               <h3 className="text-red-800 font-semibold mb-1">Error al cargar datos</h3>
               <p className="text-red-600 text-sm">{error}</p>
               <p className="text-red-500 text-xs mt-2">
-                Verifica que el backend esté corriendo en http://localhost:8000
+                Verifica que el backend esté corriendo en {API_URL}
               </p>
             </div>
           </div>
@@ -745,9 +305,6 @@ const ShowCharts = () => {
               <div>
                 <p className="text-slate-800 font-semibold text-sm">
                   🌐 Conectado al Backend Laravel
-                </p>
-                <p className="text-slate-600 text-xs">
-                  http://localhost:8000/api
                 </p>
               </div>
             </div>

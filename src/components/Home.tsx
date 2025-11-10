@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import useSitio from "../hooks/useSitio";
 import MapHTML from "./MapHTML";
 import { useUserContext } from "../context/UserContext";
@@ -39,57 +39,86 @@ const Home = () => {
     }
   }, [isLogin]);
 
-  const handleLogoutClick = () => {
+  // ⚡ Memorizar función de logout para evitar re-renders
+  const handleLogoutClick = useCallback(() => {
     handleLogout();
     goLogin();
-  };
+  }, [handleLogout, goLogin]);
 
   useEffect(() => {
     console.log("Instrumento seleccionado:", selectOptionMenu);
     console.log("Sitios cargados:", sitios);
-  }, [selectOptionMenu]);
+  }, [selectOptionMenu, sitios]);
 
-  const OPTION_COMPLEMENTS = [
+  // ⚡ Memorizar opciones de menú complement
+  const OPTION_COMPLEMENTS = useMemo(() => [
     { option: "Ver Histograma", onClick: goAHistograma },
     { option: "Ver Mapa de Calor", onClick: goHeatMap },
-  ];
+  ], [goAHistograma, goHeatMap]);
 
   // 🧠 Memorizar los puntos para no cambiar referencia en cada render
   const pointsMap = useMemo(() => sitios, [sitios]);
 
+  // Estilos coherentes (paleta azul CONICET + gris claro, radio consistente y variantes)
+  const btnBase =
+    "group relative w-full flex items-center gap-3 px-5 py-3 rounded-xl text-[15px] font-semibold transition-all duration-200 overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300";
+  const btnPrimary =
+    `${btnBase} bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-600/20 hover:shadow-blue-700/30 hover:scale-[1.01] active:scale-[0.99]`;
+  const btnWarn =
+    `${btnBase} bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-lg shadow-amber-600/20 hover:shadow-amber-600/30 hover:scale-[1.01] active:scale-[0.99]`;
+  const btnGhost =
+    `${btnBase} bg-white/70 text-slate-700 border border-slate-200 hover:bg-white/90`;
+
   return (
-    <div className="flex h-screen bg-gray-50 relative">
-      {/* Mensaje de bienvenida */}
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 to-slate-100 relative">
+      {/* Mensaje de bienvenida - iOS Style */}
+      {/* Mensaje de bienvenida - Coherente con estética de la web */}
       {showWelcome && (
-        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-          <div className="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3">
-            <CheckCircle className="w-6 h-6" />
-            <span className="font-semibold text-lg">
-              Has ingresado con el usuario: {getUsername()}
-            </span>
+        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
+          <div className="backdrop-blur-2xl bg-white/80 border border-white/70 px-10 py-6 rounded-2xl shadow-2xl shadow-blue-500/20 flex items-center gap-5 min-w-[480px]">
+            {/* Icono con efecto de pulso */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-20"></div>
+              <div className="relative p-3.5 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg shadow-blue-600/40">
+                <CheckCircle className="w-7 h-7 text-white" strokeWidth={2.5} />
+              </div>
+            </div>
+            
+            {/* Texto con gradiente */}
+            <div className="flex-1">
+              <p className="text-sm font-bold text-slate-600 mb-1 tracking-wide uppercase">
+                Sesión iniciada correctamente
+              </p>
+              <p className="text-xl font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">
+                {getUsername()}
+              </p>
+            </div>
+
+            {/* Indicador de éxito */}
+            <div className="h-14 w-1 bg-gradient-to-b from-blue-400 to-blue-700 rounded-full shadow-sm"></div>
           </div>
         </div>
       )}
 
-      <aside className="w-96 bg-white border-r border-gray-200 flex flex-col justify-between text-[17px]">
-        <div className="p-10">
+      {/* Sidebar con glassmorphism */}
+      <aside className="w-96 bg-white/60 backdrop-blur-md border-r border-white/60 shadow-xl supports-[backdrop-filter]:bg-white/50 flex flex-col justify-between text-[16px]">
+        <div className="p-8">
           <div className="flex justify-center">
-            <img src={img} alt="Logo Conicet" className="max-w-[180px] mb-6" />
+            <img src={img} alt="Logo Conicet" className="max-w-[170px] mb-6 drop-shadow-sm" />
           </div>
 
           <div className="mb-12">
-            <h3 className="text-base font-bold text-gray-500 mb-5 tracking-wider uppercase">
+            <h3 className="text-sm font-bold text-slate-600 mb-4 tracking-wider uppercase">
               Análisis
             </h3>
 
             {isLogin && (
               <button
                 onClick={goAdminUi}
-                className="group relative flex items-center gap-3 w-full px-6 py-4 rounded-2xl text-lg font-semibold bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 mb-4 overflow-hidden"
+                className={`${btnPrimary} mb-4 justify-start`}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                <Wrench className="w-6 h-6 relative z-10" />
-                <span className="relative z-10">Panel Admin</span>
+                <Wrench className="w-5 h-5" />
+                <span>Panel Admin</span>
               </button>
             )}
 
@@ -101,40 +130,38 @@ const Home = () => {
           </div>
 
           <div>
-            <h3 className="text-base font-semibold text-gray-500 mb-5 tracking-wider uppercase">
+            <h3 className="text-sm font-bold text-slate-600 mb-4 tracking-wider uppercase">
               Visualización
             </h3>
             <ViewComplementMenu complements={OPTION_COMPLEMENTS} />
           </div>
         </div>
 
-        <div className="p-10 border-t border-gray-200">
+        <div className="p-8 border-t border-white/60">
           {isLogin ? (
             <button
               onClick={handleLogoutClick}
-              className="group relative w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl text-lg font-semibold bg-gradient-to-br from-yellow-500 to-amber-600 text-white shadow-lg shadow-yellow-500/30 hover:shadow-xl hover:shadow-yellow-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 overflow-hidden"
+              className={`${btnWarn} justify-center`}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-              <LogOut className="w-6 h-6 relative z-10" />
-              <span className="relative z-10">Cerrar Sesión</span>
+              <LogOut className="w-5 h-5" />
+              <span>Cerrar Sesión</span>
             </button>
           ) : (
             <button
               onClick={goLogin}
-              className="group relative w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl text-lg font-semibold bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 overflow-hidden"
+              className={`${btnPrimary} justify-center`}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-              <LogIn className="w-6 h-6 relative z-10" />
-              <span className="relative z-10">Login</span>
+              <LogIn className="w-5 h-5" />
+              <span>Login</span>
             </button>
           )}
         </div>
       </aside>
 
-      <main className="flex-1 bg-gray-50 flex items-center justify-center">
+      <main className="flex-1 bg-transparent flex items-center justify-center">
         {error ? (
           <div className="max-w-md w-full mx-auto p-8">
-            <div className="bg-red-50 border border-red-200 rounded-xl p-6 shadow-lg">
+            <div className="bg-red-50/90 border border-red-200 rounded-xl p-6 shadow-lg backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-3">
                 <AlertCircle className="w-8 h-8 text-red-600" />
                 <h3 className="text-lg font-bold text-red-900">Error al cargar datos</h3>
@@ -142,7 +169,7 @@ const Home = () => {
               <p className="text-red-700 mb-4">{error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+                className="w-full px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300"
               >
                 Recargar página
               </button>

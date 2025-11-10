@@ -1,10 +1,12 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { getReportsForSite, getAvailableYears, getStatusSite } from "../services/sitiosService";
-import { useEffect, useState } from "react";
 import { MapPin, Droplet, CalendarDays, AlertTriangle } from "lucide-react";
 import L from "leaflet";
 import iconReporteRegular from "../assets/iconReporteRegular.png";
 import iconReporteInstrumentoRoto from "../assets/iconReporteIntrumentroRoto.png";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { LoadingMap, LoadingSpinner } from "./ui/LoadingState";
+
 
 interface Coord {
   coordenadas: [number, number];
@@ -170,6 +172,8 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
 
     fetchSiteStatus();
   }, [position]);
+  const siteIds = useMemo(() => (position || []).filter(p => p.idSitio).map(p => p.idSitio), [position]);
+  const lastQueryKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     const fetchAllReports = async () => {
@@ -178,118 +182,65 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
         return;
       }
 
-      // Iniciar carga
+      const queryKey = `${selectedYear ?? 'all'}|${siteIds.join(',')}`;
+
+      // Evita refetch innecesario si el conjunto de sitios y el año no cambiaron
+      if (lastQueryKeyRef.current === queryKey && siteReports.size > 0) {
+        setLoadingReports(false);
+        return;
+      }
+
       setLoadingReports(true);
       const reportsMap = new Map<number, SiteData>();
-
       try {
-        for (const coord of position) {
-          if (coord.idSitio) {
-            const reports = await getReportsForSite(coord.idSitio, selectedYear || undefined);
+        // Llamada batch (con fallback interno)
+        const batchResults = await getReportsForSites(siteIds, selectedYear || undefined);
 
-            if (reports && reports.length > 0) {
-              const totalAmount = reports.reduce((acc: number, report: any) => {
-                const amount = parseFloat(report.amount) || 0;
-                return acc + amount;
-              }, 0);
+        batchResults.forEach(({ siteId, reports }) => {
+          if (!siteId) return;
+          if (reports && reports.length > 0) {
+            const totalAmount = reports.reduce((acc: number, report: any) => {
+              const amount = parseFloat(report.amount) || 0;
+              return acc + amount;
+            }, 0);
 
-              const lastReport = reports[reports.length - 1];
-              const lastReportAmount = parseFloat(lastReport.amount) || 0;
-              const lastReportDate = lastReport.report?.date || null;
+            const lastReport = reports[reports.length - 1];
+            const lastReportAmount = parseFloat(lastReport.amount) || 0;
+            const lastReportDate = lastReport.report?.date || null;
 
-              reportsMap.set(coord.idSitio, {
-                totalAmount,
-                lastReportAmount,
-                lastReportDate
-              });
-            } else {
-              reportsMap.set(coord.idSitio, {
-                totalAmount: 0,
-                lastReportAmount: 0,
-                lastReportDate: null
-              });
-            }
+            reportsMap.set(siteId, {
+              totalAmount,
+              lastReportAmount,
+              lastReportDate
+            });
+          } else {
+            reportsMap.set(siteId, {
+              totalAmount: 0,
+              lastReportAmount: 0,
+              lastReportDate: null
+            });
           }
-        }
+        });
 
         setSiteReports(reportsMap);
+        lastQueryKeyRef.current = queryKey;
       } catch (error) {
-        console.error("Error fetching reports:", error);
+        console.error('Error fetching batch reports:', error);
       } finally {
         setLoadingReports(false);
       }
     };
-
     fetchAllReports();
-  }, [position, selectedYear]);
+  }, [position, siteIds, selectedYear]);
 
   // Mostrar loading mientras carga datos externos
   if (externalLoading) {
-    return (
-      <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="text-center p-10">
-          {/* Animación de mapa cargando */}
-          <div className="relative w-24 h-24 mx-auto mb-6">
-            <div className="absolute inset-0 border-4 border-blue-200 rounded-full animate-ping"></div>
-            <div className="absolute inset-0 border-4 border-blue-500 rounded-full animate-pulse"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <MapPin className="w-10 h-10 text-blue-600 animate-bounce" />
-            </div>
-          </div>
-          
-          <h3 className="text-2xl font-bold text-gray-800 mb-3">
-            Cargando sitios...
-          </h3>
-          <p className="text-gray-600 mb-4">
-            Obteniendo ubicaciones de instrumentos
-          </p>
-          
-          {/* Barra de progreso indeterminada */}
-          <div className="w-80 h-2 bg-gray-200 rounded-full overflow-hidden mx-auto relative">
-            <div className="absolute inset-0 w-1/3 h-full bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-progress"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingMap message="Cargando sitios..." siteCount={0} />;
   }
 
   // Mostrar loading mientras carga los reportes/puntos del mapa
   if (loadingReports) {
-    return (
-      <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="text-center p-10">
-          {/* Animación de puntos del mapa */}
-          <div className="relative w-24 h-24 mx-auto mb-6">
-            {/* Círculos animados */}
-            <div className="absolute inset-0 border-4 border-blue-200 rounded-full animate-ping"></div>
-            <div className="absolute inset-0 border-4 border-blue-400 rounded-full animate-pulse"></div>
-            
-            {/* Puntos simulando carga de marcadores */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-16 h-16">
-                <MapPin className="absolute top-0 left-0 w-5 h-5 text-blue-500 animate-bounce" style={{ animationDelay: '0ms' }} />
-                <MapPin className="absolute top-0 right-0 w-5 h-5 text-blue-600 animate-bounce" style={{ animationDelay: '150ms' }} />
-                <MapPin className="absolute bottom-0 left-0 w-5 h-5 text-blue-700 animate-bounce" style={{ animationDelay: '300ms' }} />
-                <MapPin className="absolute bottom-0 right-0 w-5 h-5 text-blue-800 animate-bounce" style={{ animationDelay: '450ms' }} />
-              </div>
-            </div>
-          </div>
-          
-          {/* Texto */}
-          <h3 className="text-2xl font-bold text-gray-800 mb-3">
-            Cargando puntos del mapa
-          </h3>
-          <p className="text-gray-600 mb-4">
-            Obteniendo reportes de {position?.length || 0} sitios...
-          </p>
-          
-          {/* Barra de progreso */}
-          <div className="w-80 h-2 bg-gray-200 rounded-full overflow-hidden mx-auto relative">
-            <div className="absolute inset-0 w-1/3 h-full bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-progress"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner message={`Cargando datos de ${position?.length || 0} reportes...`} size="lg" />;
   }
 
   // Si terminó de cargar pero no hay datos

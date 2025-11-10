@@ -12,7 +12,7 @@ import {
   LogOut,
   BarChart3,
 } from "lucide-react";
-import useNavegation from "../hooks/useNavegation";
+import useNavegation from "../../hooks/useNavegation";
 
 // Simple mapping type for menu items
 interface NavItemConfig {
@@ -152,7 +152,7 @@ const IconNavMenu: React.FC = () => {
           </button>
 
           {/* Menu Items */}
-          <nav className="flex-1 flex flex-col gap-2 px-2 overflow-y-auto">
+          <nav className="flex-1 flex flex-col gap-2 px-2">
             {items.map((item) => {
               const ActiveIcon = item.icon;
               const active = isActive(item);
@@ -279,35 +279,6 @@ const IconNavMenu: React.FC = () => {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Mobile Bottom Bar */}
-      <div className="fixed z-40 bottom-0 left-0 w-full md:hidden backdrop-blur-xl bg-white/70 border-t border-white/60 shadow-lg flex justify-around py-2">
-        {items.map((item) => {
-          const ActiveIcon = item.icon;
-          const active = isActive(item);
-          return (
-            <button
-              key={item.key}
-              aria-label={item.label}
-              onClick={item.action}
-              className={cn(
-                "flex flex-col items-center justify-center px-2 py-1 rounded-lg",
-                active
-                  ? "bg-gradient-to-br from-indigo-500/20 to-blue-500/20 shadow"
-                  : "hover:bg-white/80"
-              )}
-            >
-              <ActiveIcon
-                className={cn(
-                  "w-5 h-5",
-                  active ? "text-indigo-700" : item.color || "text-slate-600"
-                )}
-              />
-              <span className="text-[10px] mt-1 font-medium text-slate-600">{item.label}</span>
-            </button>
-          );
-        })}
       </div>
     </>
   );

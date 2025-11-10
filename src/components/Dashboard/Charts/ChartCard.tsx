@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { HelpCircle, Calendar, ChevronDown, Check } from "lucide-react";
 
 interface ChartCardProps {
@@ -13,7 +13,8 @@ interface ChartCardProps {
   onPeriodChange?: (period: string) => void;
 }
 
-const ChartCard = ({ 
+// ⚡ Memorizar componente para evitar re-renders innecesarios
+const ChartCard = memo(({ 
   title, 
   subtitle, 
   description, 
@@ -140,6 +141,9 @@ const ChartCard = ({
     )}
   </div>
 );
-};
+});
+
+// ⚡ Nombre de display para debugging
+ChartCard.displayName = 'ChartCard';
 
 export default ChartCard;

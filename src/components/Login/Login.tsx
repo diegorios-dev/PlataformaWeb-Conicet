@@ -26,7 +26,6 @@ const Login = () => {
             alt="CONICET"
             className="w-40 mb-6 drop-shadow-lg"
           />
-          <h1 className="text-3xl font-semibold tracking-wide">CONICET</h1>
         </div>
       </div>
 

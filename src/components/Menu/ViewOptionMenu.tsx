@@ -1,4 +1,5 @@
 import { Droplet, Ruler } from "lucide-react";
+import { memo } from "react";
 
 const icons = {
   Lluvia: <Droplet className="w-6 h-6" />,
@@ -6,7 +7,8 @@ const icons = {
   Regla: <Ruler className="w-6 h-6" />,
 };
 
-const ViewOptionMenu = ({ instruments, selectedInstrument, onSelectInstrument }) => {
+// ⚡ Memorizar componente
+const ViewOptionMenu = memo(({ instruments, selectedInstrument, onSelectInstrument }) => {
   return (
     <div className="flex flex-col gap-2 md:gap-2.5">
       {instruments.map((item, index) => (
@@ -31,6 +33,8 @@ const ViewOptionMenu = ({ instruments, selectedInstrument, onSelectInstrument })
       ))}
     </div>
   );
-};
+});
+
+ViewOptionMenu.displayName = 'ViewOptionMenu';
 
 export default ViewOptionMenu;

@@ -11,7 +11,8 @@ import {
   Loader2,
 } from "lucide-react";
 import BackButton from "../../BackButton";
-import IconNavMenu from "../../IconNavMenu";
+import { API_URL } from "../../../config/api";
+import IconNavMenu from "../../Menu/IconNavMenu";
 
 interface Zona {
   id: number;
@@ -49,9 +50,9 @@ export default function ExportExcel() {
     const fetchData = async () => {
       try {
         const [zonasRes, usuariosRes, yearsRes] = await Promise.all([
-          fetch("http://localhost:8000/api/zonas"),
-          fetch("http://localhost:8000/api/usuarios"),
-          fetch("http://localhost:8000/api/reportes/available-years"),
+          fetch(`${API_URL}/zonas`),
+          fetch(`${API_URL}/usuarios`),
+          fetch(`${API_URL}/reportes/available-years`),
         ]);
 
         const zonasData = await zonasRes.json();
@@ -80,7 +81,7 @@ export default function ExportExcel() {
     setSuccess(false);
 
     try {
-      let url = "http://localhost:8000/api/download/reports";
+      let url = `${API_URL}/download/reports`;
       const params = new URLSearchParams();
 
       if (startDate) params.append("start_date", startDate);

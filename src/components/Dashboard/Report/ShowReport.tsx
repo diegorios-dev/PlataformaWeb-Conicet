@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import useReports from "../../../hooks/useReports";
 import useNavegation from "../../../hooks/useNavegation";
 import { getAllZonas } from "../../../services/zonaService";
-import { ArrowLeft, Pencil, Search, Filter, Droplet, Snowflake, FileText, AlertTriangle, MapPin, Volume2, Play, Pause, X } from "lucide-react";
+import {Pencil, Search, Droplet, Snowflake, FileText, AlertTriangle, MapPin, Waves, Mic, X } from "lucide-react";
 import BackButton from "../../BackButton";
-import IconNavMenu from "../../IconNavMenu";
+import IconNavMenu from "../../Menu/IconNavMenu";
+import { buildImageUrl, buildAudioUrl } from "../../../utils/urlBuilder";
+import { EmptyState } from "../../ui/LoadingState";
 
 const ShowReport = () => {
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState<any[]>([]);
   const [filterType, setFilterType] = useState<"all" | "regular" | "rotura">("all");
-  const [filterPrecipitation, setFilterPrecipitation] = useState<"all" | "lluvia" | "nieve">("all");
+  const [filterPrecipitation, setFilterPrecipitation] = useState<"all" | "lluvia" | "nieve" | "caudal">("all");
   const [filterZona, setFilterZona] = useState<string>("all");
   const [zonas, setZonas] = useState<any[]>([]);
   const [playingAudio, setPlayingAudio] = useState<number | null>(null);
@@ -51,6 +53,7 @@ const ShowReport = () => {
       result = result.filter((r) => {
         if (filterPrecipitation === "lluvia") return r.site?.event_id === 1;
         if (filterPrecipitation === "nieve") return r.site?.event_id === 2;
+        if (filterPrecipitation === "caudal") return r.site?.event_id === 3;
         return true;
       });
     }
@@ -94,6 +97,7 @@ const ShowReport = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
       <div className="w-full max-w-7xl mx-auto">
+        
         <BackButton />
 
         <IconNavMenu />
@@ -183,12 +187,12 @@ const ShowReport = () => {
             <div className="space-y-3">
               <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
               <Droplet className="w-5 h-5 text-blue-600" />
-              Precipitación
+              Evento
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setFilterPrecipitation("all")}
-                className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base transition-all duration-200
+                className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200
                   ${filterPrecipitation === "all"
                     ? "bg-slate-900 text-white shadow-lg shadow-slate-900/30 scale-105"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:scale-105"
@@ -198,30 +202,42 @@ const ShowReport = () => {
               </button>
               <button
                 onClick={() => setFilterPrecipitation("lluvia")}
-                className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base transition-all duration-200 flex items-center justify-center gap-2
+                className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-1.5
                   ${filterPrecipitation === "lluvia"
                     ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-105"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:scale-105"
                   }`}
               >
-                <Droplet className="w-5 h-5" />
+                <Droplet className="w-4 h-4" />
                 Lluvia
               </button>
               <button
                 onClick={() => setFilterPrecipitation("nieve")}
-                className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base transition-all duration-200 flex items-center justify-center gap-2
+                className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-1.5
                   ${filterPrecipitation === "nieve"
                     ? "bg-cyan-600 text-white shadow-lg shadow-cyan-600/30 scale-105"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:scale-105"
                   }`}
               >
-                <Snowflake className="w-5 h-5" />
+                <Snowflake className="w-4 h-4" />
                 Nieve
               </button>
+              <button
+                onClick={() => setFilterPrecipitation("caudal")}
+                className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-1.5
+                  ${filterPrecipitation === "caudal"
+                    ? "bg-teal-600 text-white shadow-lg shadow-teal-600/30 scale-105"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:scale-105"
+                  }`}
+              >
+                <Waves className="w-4 h-4" />
+                Caudal
+              </button>
+
               </div>
             </div>
 
-            {/* Filtro: Zona (dinámico) */}
+            {/* Filtro: Zona (dinámico) - Más compacto */}
             <div className="space-y-3">
               <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
                 <MapPin className="w-5 h-5 text-blue-600" />
@@ -230,7 +246,7 @@ const ShowReport = () => {
               <select
                 value={filterZona}
                 onChange={(e) => setFilterZona(e.target.value)}
-                className="w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-400 hover:border-slate-300 text-slate-700 font-medium text-base transition-all duration-200"
+                className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-400 hover:border-slate-300 text-slate-700 font-medium text-sm transition-all duration-200"
               >
                 <option value="all">Todas las zonas</option>
                 {zonas.map((zona) => (
@@ -250,16 +266,13 @@ const ShowReport = () => {
             </span>
           </div>
         </div>
-
         {/* Lista de reportes */}
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 bg-white/60 backdrop-blur-sm border-2 border-slate-200 rounded-3xl">
-            <div className="bg-slate-100 rounded-full p-6 mb-4 shadow-lg shadow-slate-500/10">
-              <Search className="w-10 h-10 text-slate-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-700 mb-2">No se encontraron reportes</h3>
-            <p className="text-base text-slate-500">Intenta ajustar los filtros o la búsqueda</p>
-          </div>
+          <EmptyState
+            icon={Search}
+            title="No se encontraron reportes"
+            description="Intenta ajustar los filtros o la búsqueda"
+          />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filtered.map((reporte) => (
@@ -326,9 +339,9 @@ const ShowReport = () => {
                     <div className="w-32 h-32 flex-shrink-0">
                       {reporte.image ? (
                         <img
-                          src={reporte.image}
+                          src={buildImageUrl(reporte.image)}
                           alt="Reporte"
-                          onClick={() => openImageModal(reporte.image)}
+                          onClick={() => openImageModal(buildImageUrl(reporte.image))}
                           className="w-full h-full object-cover rounded-2xl border-2 border-slate-200 shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer"
                         />
                       ) : (
@@ -344,7 +357,7 @@ const ShowReport = () => {
                     <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 shadow-md">
                       <div className="flex items-center gap-3 mb-2">
                       <div className="bg-slate-200 p-2 rounded-xl shadow-sm">
-                        <Volume2 className="w-5 h-5 text-slate-600" />
+                        <Mic className="w-5 h-5 text-slate-600" />
                       </div>
                       <span className="text-base font-bold text-slate-800">Audio del Reporte</span>
                       </div>
@@ -354,10 +367,10 @@ const ShowReport = () => {
                       onPlay={() => handleAudioPlay(reporte.id)}
                       onPause={handleAudioPause}
                       >
-                      <source src={reporte.audio} type="audio/mpeg" />
-                      <source src={reporte.audio} type="audio/wav" />
-                      <source src={reporte.audio} type="audio/ogg" />
-                      <source src={reporte.audio} type="audio/mp4" />
+                      <source src={buildAudioUrl(reporte.audio)} type="audio/mpeg" />
+                      <source src={buildAudioUrl(reporte.audio)} type="audio/wav" />
+                      <source src={buildAudioUrl(reporte.audio)} type="audio/ogg" />
+                      <source src={buildAudioUrl(reporte.audio)} type="audio/mp4" />
                       Tu navegador no soporta el elemento de audio.
                       </audio>  
                     </div>

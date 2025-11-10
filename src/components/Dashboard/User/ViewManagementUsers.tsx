@@ -9,7 +9,7 @@ import FormEditUser from "./FormEditUser";
 import SearchUser from "./searchUser";
 import useNavegation from "../../../hooks/useNavegation";
 import BackButton from "../../BackButton";
-import IconNavMenu from "../../IconNavMenu";
+import IconNavMenu from "../../Menu/IconNavMenu";
 
 import {
   UserPlus,
@@ -130,19 +130,6 @@ const ViewManagementUsers = () => {
       setLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30">
-        <div className="bg-white/60 backdrop-blur-sm border-2 border-slate-200 rounded-3xl p-20 flex flex-col items-center justify-center shadow-xl">
-          <div className="bg-slate-100 rounded-full p-6 mb-4 shadow-lg shadow-slate-500/10">
-            <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-          </div>
-          <p className="text-xl font-semibold text-slate-700">Cargando usuarios...</p>
-        </div>
-      </div>
-    );
-  }
 
   const isEmpty = !users || users.length === 0;
 

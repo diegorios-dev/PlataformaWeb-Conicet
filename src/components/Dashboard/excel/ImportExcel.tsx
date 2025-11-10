@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import BackButton from '../../BackButton';
-import IconNavMenu from '../../IconNavMenu';
+import IconNavMenu from '../../Menu/IconNavMenu';
 import {
   FileSpreadsheet,
   Download,
@@ -12,8 +12,7 @@ import {
   X,
   Trash2,
 } from 'lucide-react';
-
-const API_URL = 'http://localhost:8000/api';
+import { API_URL } from '../../../config/api';
 
 interface ImportResult {
   insertadas?: number;
