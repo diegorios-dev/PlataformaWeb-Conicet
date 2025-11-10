@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { API_URL } from "../config/api";
+import { invalidateEstadisticasCache } from "./estadisticasService";
 
 const API_URL_SERVICE = API_URL;
 
@@ -13,6 +14,10 @@ export const getReportes = async () => {
 export const updateReporte = async (id: number, data: any) => {
   try {   
     const response = await axios.put(`${API_URL_SERVICE}/reportes/${id}`, data);
+    
+    // Invalidar cache de estadísticas cuando se actualiza un reporte
+    invalidateEstadisticasCache();
+    
     return response.data;
   } catch (error: any) {
     console.error("Error en updateReporte:", error);

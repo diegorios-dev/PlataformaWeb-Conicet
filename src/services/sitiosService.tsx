@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../config/api";
+import { invalidateEstadisticasCache } from "./estadisticasService";
 
 const API_URL_SERVICE = API_URL;
 
@@ -78,6 +79,10 @@ export const getAvailableYears = async () => {
 export const postNewSite = async (newSite: Record<string, any>) => {
   try {
     const { data } = await axios.post(`${API_URL_SERVICE}/site/register`, newSite);
+    
+    // Invalidar cache cuando se crea un nuevo sitio
+    invalidateEstadisticasCache();
+    
     return data;
   } catch (error) {
     console.error("Error al crear sitio:", error);

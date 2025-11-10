@@ -1,7 +1,10 @@
 import axios from "axios";
 import { API_URL } from "../config/api";
+import { invalidateEstadisticasCache } from "./estadisticasService";
+import { getCachedData } from "../utils/simpleCache";
 
 const API_URL_SERVICE = API_URL;
+const DEFAULT_TTL = 5 * 60 * 1000; // 5 minutos
 
 
 export const postNewZona = async (newZona) => {
@@ -22,6 +25,10 @@ export const postNewZona = async (newZona) => {
     }
     
     const { data } = await axios.post(`${API_URL_SERVICE}/zona/register/`, newZona);
+    
+    // Invalidar cache cuando se crea una nueva zona
+    invalidateEstadisticasCache();
+    
     return data;
   } catch (error) {
     console.error("Error al crear la nueva zona:", error);
@@ -54,28 +61,34 @@ export const getZonaByLocality = async (zona) => {
 
 // **NUEVO ENDPOINT PRINCIPAL** - Precipitación total acumulada por zona
 export const getTotalAcumuladoPorZona = async (periodo?: string) => {
-  try {
-    let url = `${API_URL_SERVICE}/zonas/total-acumulado`;
-    if (periodo && periodo !== 'todos') {
-      url += `?periodo=${periodo}`;
-    }
-    const { data } = await axios.get(url);
-    return data.data || data;
-  } catch (error) {
-    console.error("Error al obtener total acumulado por zona:", error);
-    throw error;
-  }
+  const cacheKey = `zonas:total-acumulado:${periodo || 'todos'}`;
+  
+  return getCachedData(
+    cacheKey,
+    async () => {
+      let url = `${API_URL_SERVICE}/zonas/total-acumulado`;
+      if (periodo && periodo !== 'todos') {
+        url += `?periodo=${periodo}`;
+      }
+      const { data } = await axios.get(url);
+      return data.data || data;
+    },
+    DEFAULT_TTL
+  );
 };
 
 // Top zonas por cantidad de registros
 export const getTopZonasPorRegistro = async (periodo = "anio", limit = 8) => {
-  try {
-    const { data } = await axios.get(
-      `${API_URL_SERVICE}/zonas/top-registros?periodo=${periodo}&limit=${limit}`
-    );
-    return data.data || data;
-  } catch (error) {
-    console.error("Error al obtener top zonas por registro:", error);
-    throw error;
-  }
+  const cacheKey = `zonas:top-registros:${periodo}:${limit}`;
+  
+  return getCachedData(
+    cacheKey,
+    async () => {
+      const { data } = await axios.get(
+        `${API_URL_SERVICE}/zonas/top-registros?periodo=${periodo}&limit=${limit}`
+      );
+      return data.data || data;
+    },
+    DEFAULT_TTL
+  );
 };

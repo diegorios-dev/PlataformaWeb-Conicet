@@ -48,8 +48,7 @@ const ShowCharts = () => {
     refreshAll,
   } = useChartsData();
 
-  // showCharts ahora usa el hook y solo renderiza
-
+ 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 p-6">
 
@@ -306,9 +305,6 @@ const ShowCharts = () => {
               <div>
                 <p className="text-slate-800 font-semibold text-sm">
                   🌐 Conectado al Backend Laravel
-                </p>
-                <p className="text-slate-600 text-xs">
-                  {API_URL}
                 </p>
               </div>
             </div>

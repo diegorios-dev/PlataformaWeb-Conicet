@@ -8,6 +8,7 @@ import {
   getPatronMensual,
   getAnalisisFrecuencia,
   getComparativaAnual,
+  invalidateEstadisticasCache,
 } from '../../../services/estadisticasService';
 
 // 80/20: concentrar toda la lógica de carga y estados aquí para aligerar showCharts.tsx
@@ -224,6 +225,22 @@ export function useChartsData() {
   useEffect(() => { fetchAnalisisFrecuencia(); }, [fetchAnalisisFrecuencia]);
   useEffect(() => { fetchComparativaAnual(); }, [fetchComparativaAnual]);
 
+  // Función para refrescar todo limpiando cache
+  const refreshAll = useCallback(() => {
+    console.log('🔄 Limpiando cache y recargando datos...');
+    invalidateEstadisticasCache();
+    fetchData();
+    fetchPrecipitacion();
+    fetchTopZonas();
+    fetchDistribucion();
+    fetchEvolucion();
+    fetchCoordenadas();
+    fetchPatronMensual();
+    fetchAnalisisFrecuencia();
+    fetchComparativaAnual();
+  }, [fetchData, fetchPrecipitacion, fetchTopZonas, fetchDistribucion, fetchEvolucion, 
+      fetchCoordenadas, fetchPatronMensual, fetchAnalisisFrecuencia, fetchComparativaAnual]);
+
   return {
     // estados
     loading, error,
@@ -245,7 +262,7 @@ export function useChartsData() {
     // loading específicos
     loadingCoordenadas, loadingPatronMensual, loadingAnalisisFrecuencia, loadingComparativa,
     // acciones
-    refreshAll: fetchData,
+    refreshAll,
   };
 }
 

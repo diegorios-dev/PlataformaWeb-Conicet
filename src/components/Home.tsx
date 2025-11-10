@@ -71,14 +71,31 @@ const Home = () => {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 to-slate-100 relative">
-      {/* Mensaje de bienvenida */}
+      {/* Mensaje de bienvenida - iOS Style */}
+      {/* Mensaje de bienvenida - Coherente con estética de la web */}
       {showWelcome && (
-        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-          <div className="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3">
-            <CheckCircle className="w-6 h-6" />
-            <span className="font-semibold text-lg">
-              Has ingresado con el usuario: {getUsername()}
-            </span>
+        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
+          <div className="backdrop-blur-2xl bg-white/80 border border-white/70 px-10 py-6 rounded-2xl shadow-2xl shadow-blue-500/20 flex items-center gap-5 min-w-[480px]">
+            {/* Icono con efecto de pulso */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-20"></div>
+              <div className="relative p-3.5 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg shadow-blue-600/40">
+                <CheckCircle className="w-7 h-7 text-white" strokeWidth={2.5} />
+              </div>
+            </div>
+            
+            {/* Texto con gradiente */}
+            <div className="flex-1">
+              <p className="text-sm font-bold text-slate-600 mb-1 tracking-wide uppercase">
+                Sesión iniciada correctamente
+              </p>
+              <p className="text-xl font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">
+                {getUsername()}
+              </p>
+            </div>
+
+            {/* Indicador de éxito */}
+            <div className="h-14 w-1 bg-gradient-to-b from-blue-400 to-blue-700 rounded-full shadow-sm"></div>
           </div>
         </div>
       )}

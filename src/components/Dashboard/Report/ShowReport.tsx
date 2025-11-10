@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useReports from "../../../hooks/useReports";
 import useNavegation from "../../../hooks/useNavegation";
 import { getAllZonas } from "../../../services/zonaService";
-import {Pencil, Search, Droplet, Snowflake, FileText, AlertTriangle, MapPin, Volume2, X } from "lucide-react";
+import {Pencil, Search, Droplet, Snowflake, FileText, AlertTriangle, MapPin, Waves, Mic, X } from "lucide-react";
 import BackButton from "../../BackButton";
 import IconNavMenu from "../../Menu/IconNavMenu";
 import { buildImageUrl, buildAudioUrl } from "../../../utils/urlBuilder";
@@ -12,7 +12,7 @@ const ShowReport = () => {
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState<any[]>([]);
   const [filterType, setFilterType] = useState<"all" | "regular" | "rotura">("all");
-  const [filterPrecipitation, setFilterPrecipitation] = useState<"all" | "lluvia" | "nieve">("all");
+  const [filterPrecipitation, setFilterPrecipitation] = useState<"all" | "lluvia" | "nieve" | "caudal">("all");
   const [filterZona, setFilterZona] = useState<string>("all");
   const [zonas, setZonas] = useState<any[]>([]);
   const [playingAudio, setPlayingAudio] = useState<number | null>(null);
@@ -53,6 +53,7 @@ const ShowReport = () => {
       result = result.filter((r) => {
         if (filterPrecipitation === "lluvia") return r.site?.event_id === 1;
         if (filterPrecipitation === "nieve") return r.site?.event_id === 2;
+        if (filterPrecipitation === "caudal") return r.site?.event_id === 3;
         return true;
       });
     }
@@ -186,12 +187,12 @@ const ShowReport = () => {
             <div className="space-y-3">
               <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
               <Droplet className="w-5 h-5 text-blue-600" />
-              Precipitación
+              Evento
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setFilterPrecipitation("all")}
-                className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base transition-all duration-200
+                className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200
                   ${filterPrecipitation === "all"
                     ? "bg-slate-900 text-white shadow-lg shadow-slate-900/30 scale-105"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:scale-105"
@@ -201,30 +202,42 @@ const ShowReport = () => {
               </button>
               <button
                 onClick={() => setFilterPrecipitation("lluvia")}
-                className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base transition-all duration-200 flex items-center justify-center gap-2
+                className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-1.5
                   ${filterPrecipitation === "lluvia"
                     ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 scale-105"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:scale-105"
                   }`}
               >
-                <Droplet className="w-5 h-5" />
+                <Droplet className="w-4 h-4" />
                 Lluvia
               </button>
               <button
                 onClick={() => setFilterPrecipitation("nieve")}
-                className={`flex-1 px-4 py-3 rounded-xl font-semibold text-base transition-all duration-200 flex items-center justify-center gap-2
+                className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-1.5
                   ${filterPrecipitation === "nieve"
                     ? "bg-cyan-600 text-white shadow-lg shadow-cyan-600/30 scale-105"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:scale-105"
                   }`}
               >
-                <Snowflake className="w-5 h-5" />
+                <Snowflake className="w-4 h-4" />
                 Nieve
               </button>
+              <button
+                onClick={() => setFilterPrecipitation("caudal")}
+                className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-1.5
+                  ${filterPrecipitation === "caudal"
+                    ? "bg-teal-600 text-white shadow-lg shadow-teal-600/30 scale-105"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:scale-105"
+                  }`}
+              >
+                <Waves className="w-4 h-4" />
+                Caudal
+              </button>
+
               </div>
             </div>
 
-            {/* Filtro: Zona (dinámico) */}
+            {/* Filtro: Zona (dinámico) - Más compacto */}
             <div className="space-y-3">
               <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
                 <MapPin className="w-5 h-5 text-blue-600" />
@@ -233,7 +246,7 @@ const ShowReport = () => {
               <select
                 value={filterZona}
                 onChange={(e) => setFilterZona(e.target.value)}
-                className="w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-400 hover:border-slate-300 text-slate-700 font-medium text-base transition-all duration-200"
+                className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-400 hover:border-slate-300 text-slate-700 font-medium text-sm transition-all duration-200"
               >
                 <option value="all">Todas las zonas</option>
                 {zonas.map((zona) => (
@@ -344,7 +357,7 @@ const ShowReport = () => {
                     <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 shadow-md">
                       <div className="flex items-center gap-3 mb-2">
                       <div className="bg-slate-200 p-2 rounded-xl shadow-sm">
-                        <Volume2 className="w-5 h-5 text-slate-600" />
+                        <Mic className="w-5 h-5 text-slate-600" />
                       </div>
                       <span className="text-base font-bold text-slate-800">Audio del Reporte</span>
                       </div>
