@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import BackButton from '../../BackButton';
-import IconNavMenu from '../../IconNavMenu';
+import IconNavMenu from '../../Menu/IconNavMenu';
 import {
   FileSpreadsheet,
   Download,

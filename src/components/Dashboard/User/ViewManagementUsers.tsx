@@ -9,7 +9,7 @@ import FormEditUser from "./FormEditUser";
 import SearchUser from "./searchUser";
 import useNavegation from "../../../hooks/useNavegation";
 import BackButton from "../../BackButton";
-import IconNavMenu from "../../IconNavMenu";
+import IconNavMenu from "../../Menu/IconNavMenu";
 
 import {
   UserPlus,

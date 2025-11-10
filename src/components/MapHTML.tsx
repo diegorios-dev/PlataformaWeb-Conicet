@@ -188,7 +188,7 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
 
   // Mostrar loading mientras carga los reportes/puntos del mapa
   if (loadingReports) {
-    return <LoadingSpinner message={`Cargando datos de ${position?.length || 0} sitios...`} size="lg" />;
+    return <LoadingSpinner message={`Cargando datos de ${position?.length || 0} reportes...`} size="lg" />;
   }
 
   // Si terminó de cargar pero no hay datos

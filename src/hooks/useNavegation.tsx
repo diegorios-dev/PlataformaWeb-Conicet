@@ -1,32 +1,34 @@
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
+import { useCallback } from "react";
 
 const useNavegation = () => {  
   const {handleSelectReport} = useUserContext();
   
   const navigate = useNavigate();
 
-  const goHome = () => navigate("/")
+  // ⚡ Memorizar todas las funciones de navegación
+  const goHome = useCallback(() => navigate("/"), [navigate]);
 
-  const goAdminUi = () => navigate("/dashboard")
+  const goAdminUi = useCallback(() => navigate("/dashboard"), [navigate]);
 
-  const goLogin = () => navigate("/login") 
+  const goLogin = useCallback(() => navigate("/login"), [navigate]);
 
-  const goReports = () => navigate("/dashboard/administration/report") 
+  const goReports = useCallback(() => navigate("/dashboard/administration/report"), [navigate]);
 
-  const goConfigUsers = () => navigate("/dashboard/administration/user")
+  const goConfigUsers = useCallback(() => navigate("/dashboard/administration/user"), [navigate]);
 
-  const goAddZona = () => navigate("/dashboard/Zona/FormAddZona.tsx")
+  const goAddZona = useCallback(() => navigate("/dashboard/Zona/FormAddZona.tsx"), [navigate]);
 
-  const goHeatMap = () => navigate("/components/MapHeatView.tsx")
+  const goHeatMap = useCallback(() => navigate("/components/MapHeatView.tsx"), [navigate]);
 
-  const goAHistograma = () => navigate("/histograma")
+  const goAHistograma = useCallback(() => navigate("/histograma"), [navigate]);
 
-   const goAddSite = () => navigate("/dashboard/site/add");
+   const goAddSite = useCallback(() => navigate("/dashboard/site/add"), [navigate]);
 
-   const goExportExcel = () => navigate("/dashboard/export/excel");
+   const goExportExcel = useCallback(() => navigate("/dashboard/export/excel"), [navigate]);
 
-   const goImportExcel = () => navigate("/dashboard/import/excel");
+   const goImportExcel = useCallback(() => navigate("/dashboard/import/excel"), [navigate]);
 
    const goEstadisticas = () => navigate("/estadisticas")
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { postNewZona, getAllZonas } from "../../../services/zonaService";
 import BackButton from "../../BackButton";
 import { Plus, MapPin, CheckCircle2, AlertCircle, Loader2, MapPinned, X } from "lucide-react";
-import IconNavMenu from "../../IconNavMenu";
+import IconNavMenu from "../../Menu/IconNavMenu";
 
 type Zona = {
   id: number;

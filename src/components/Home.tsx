@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import useSitio from "../hooks/useSitio";
 import MapHTML from "./MapHTML";
 import { useUserContext } from "../context/UserContext";
@@ -39,20 +39,22 @@ const Home = () => {
     }
   }, [isLogin]);
 
-  const handleLogoutClick = () => {
+  // ⚡ Memorizar función de logout para evitar re-renders
+  const handleLogoutClick = useCallback(() => {
     handleLogout();
     goLogin();
-  };
+  }, [handleLogout, goLogin]);
 
   useEffect(() => {
     console.log("Instrumento seleccionado:", selectOptionMenu);
     console.log("Sitios cargados:", sitios);
-  }, [selectOptionMenu]);
+  }, [selectOptionMenu, sitios]);
 
-  const OPTION_COMPLEMENTS = [
+  // ⚡ Memorizar opciones de menú complement
+  const OPTION_COMPLEMENTS = useMemo(() => [
     { option: "Ver Histograma", onClick: goAHistograma },
     { option: "Ver Mapa de Calor", onClick: goHeatMap },
-  ];
+  ], [goAHistograma, goHeatMap]);
 
   // 🧠 Memorizar los puntos para no cambiar referencia en cada render
   const pointsMap = useMemo(() => sitios, [sitios]);

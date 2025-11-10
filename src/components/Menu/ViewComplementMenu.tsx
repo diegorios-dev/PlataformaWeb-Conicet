@@ -1,4 +1,5 @@
 import { BarChart3, MapPin, ChevronRight, TrendingUp } from "lucide-react";
+import { memo } from "react";
 
 const icons = {
   "Ver Histograma": <BarChart3 className="w-6 h-6" />,
@@ -6,7 +7,8 @@ const icons = {
   "Ver Estadísticas": <TrendingUp className="w-6 h-6" />,
 };
 
-const ViewComplementMenu = ({ complements }) => {
+// ⚡ Memorizar componente
+const ViewComplementMenu = memo(({ complements }) => {
   return (
     <div className="flex flex-col gap-3">
       {complements.map((item, index) => {
@@ -36,6 +38,8 @@ const ViewComplementMenu = ({ complements }) => {
       })}
     </div>
   );
-};
+});
+
+ViewComplementMenu.displayName = 'ViewComplementMenu';
 
 export default ViewComplementMenu;

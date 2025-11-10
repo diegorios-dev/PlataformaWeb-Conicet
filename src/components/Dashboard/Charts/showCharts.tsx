@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   BarChart3,
   TrendingUp,
@@ -22,8 +21,7 @@ import PatronMensual from "./PatronMensual";
 import AnalisisFrecuencia from "./AnalisisFrecuencia";
 import ComparativaAnual from "./ComparativaAnual";
 import YearPicker from "./YearPicker";
-import IconNavMenu from "../../IconNavMenu";
-import { LoadingSpinner } from "../../ui/LoadingState";
+import IconNavMenu from "../../Menu/IconNavMenu";
 import { API_URL } from "../../../config/api";
 
 // Importar servicios de la API

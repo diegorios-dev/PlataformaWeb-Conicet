@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import BackButton from "../../BackButton";
 import { API_URL } from "../../../config/api";
-import IconNavMenu from "../../IconNavMenu";
+import IconNavMenu from "../../Menu/IconNavMenu";
 
 interface Zona {
   id: number;

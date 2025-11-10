@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import useReports from "../../../hooks/useReports";
 import useNavegation from "../../../hooks/useNavegation";
 import { getAllZonas } from "../../../services/zonaService";
-import { ArrowLeft, Pencil, Search, Filter, Droplet, Snowflake, FileText, AlertTriangle, MapPin, Volume2, Play, Pause, X } from "lucide-react";
+import {Pencil, Search, Droplet, Snowflake, FileText, AlertTriangle, MapPin, Volume2, X } from "lucide-react";
 import BackButton from "../../BackButton";
-import IconNavMenu from "../../IconNavMenu";
+import IconNavMenu from "../../Menu/IconNavMenu";
 import { buildImageUrl, buildAudioUrl } from "../../../utils/urlBuilder";
 import { EmptyState } from "../../ui/LoadingState";
 
