@@ -17,7 +17,7 @@ import HeatMapView from "./components/MapHeatView";
 import FormAddSite from "./components/Dashboard/site/FormAddSite";
 import ShowCharts from "./components/Dashboard/Charts/ShowCharts";
 import ImportExcel from "./components/Dashboard/excel/ImportExcel";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/PrivatedRoute/ProtectedRoute";
 import ExportExcel from "./components/Dashboard/excel/ExportExcel";
 
 export default function App() {

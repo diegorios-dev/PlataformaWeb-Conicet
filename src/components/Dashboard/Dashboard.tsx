@@ -3,7 +3,7 @@ import useNavegation from "../../hooks/useNavegation";
 import BackButton from "../BackButton";
 import { FileText, Users, MapPin, LogOut, Shield , TrendingUp, Upload} from "lucide-react";
 import { FileSpreadsheet } from "lucide-react";
-import DashboardButton from "../DashboardButton";
+import DashboardButton from "./DashboardButton";
 
 const Dashboard = () => {
   const [currentView, setCurrentView] = useState<"menu" | "instrumentos">("menu");
