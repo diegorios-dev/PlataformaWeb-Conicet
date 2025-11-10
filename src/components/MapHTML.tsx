@@ -1,9 +1,10 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { getReportsForSite, getAvailableYears, getStatusSite } from "../services/sitiosService";
 import { useEffect, useState } from "react";
-import { MapPin, Droplet, CalendarDays } from "lucide-react";
+import { MapPin, Droplet, CalendarDays, AlertTriangle } from "lucide-react";
 import L from "leaflet";
 import iconReporteRegular from "../assets/iconReporteRegular.png";
+import iconReporteInstrumentoRoto from "../assets/iconReporteIntrumentroRoto.png";
 
 interface Coord {
   coordenadas: [number, number];
@@ -24,8 +25,20 @@ interface SiteData {
   lastReportDate: string | null;
 }
 
-// Función para crear iconos personalizados según el tipo de instrumento
-const getCustomIcon = (tipo: string) => {
+interface SiteStatus {
+  status: boolean;
+  tiene_instrumentos_averiados: boolean;
+  instrumentos_averiados: Array<{
+    instrument_id: number;
+    instrument_name: string;
+    description: string;
+    last_breakage_date: string;
+    cantidad_reportes_rotura: number;
+  }>;
+}
+
+// Función para crear iconos personalizados según el tipo de instrumento y estado
+const getCustomIcon = (tipo: string, isHealthy: boolean = true) => {
   const config = {
     'Lluvia': {
       color: '#3b82f6',      // Azul
@@ -41,7 +54,9 @@ const getCustomIcon = (tipo: string) => {
     }
   };
 
-  const iconConfig = config[tipo as keyof typeof config] || config['Lluvia'];
+  // Si hay instrumentos averiados, usar sombra roja
+  const shadowColor = !isHealthy ? 'rgba(239, 68, 68, 0.15)' : (config[tipo as keyof typeof config] || config['Lluvia']).shadow;
+  const iconSrc = !isHealthy ? iconReporteInstrumentoRoto : iconReporteRegular;
 
   return L.divIcon({
     className: '',
@@ -52,8 +67,8 @@ const getCustomIcon = (tipo: string) => {
         display: flex;
         align-items: center;
         justify-content: center;
-        filter: drop-shadow(0 2px 4px ${iconConfig.shadow});
-        -webkit-filter: drop-shadow(0 2px 4px ${iconConfig.shadow});
+        filter: drop-shadow(0 2px 4px ${shadowColor});
+        -webkit-filter: drop-shadow(0 2px 4px ${shadowColor});
         animation: float-marker 3s ease-in-out infinite, pulse-shadow 3s ease-in-out infinite;
         transform: translateZ(0);
         will-change: transform, filter;
@@ -62,7 +77,7 @@ const getCustomIcon = (tipo: string) => {
       onmouseover="this.style.animation='none'; this.style.transform='scale(1.15) translateZ(0)'"
       onmouseout="this.style.animation='float-marker 3s ease-in-out infinite, pulse-shadow 3s ease-in-out infinite'; this.style.transform='translateZ(0)'"
       >
-        <img src="${iconReporteRegular}" 
+        <img src="${iconSrc}" 
              style="
                width: 48px; 
                height: 48px;
@@ -80,6 +95,7 @@ const getCustomIcon = (tipo: string) => {
 
 const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
   const [siteReports, setSiteReports] = useState<Map<number, SiteData>>(new Map());
+  const [siteStatus, setSiteStatus] = useState<Map<number, SiteStatus>>(new Map());
   const [loadingReports, setLoadingReports] = useState(true);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
@@ -118,6 +134,42 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
     };
     fetchAvailableYears();
   }, []);
+
+  // Fetch site status (instrumentos averiados)
+  useEffect(() => {
+    const fetchSiteStatus = async () => {
+      if (!position || position.length === 0) {
+        return;
+      }
+
+      const statusMap = new Map<number, SiteStatus>();
+
+      try {
+        for (const coord of position) {
+          if (coord.idSitio) {
+            try {
+              const status = await getStatusSite(coord.idSitio);
+              statusMap.set(coord.idSitio, status);
+            } catch (error) {
+              console.error(`Error fetching status for site ${coord.idSitio}:`, error);
+              // Si hay error, asumir que el sitio está sano
+              statusMap.set(coord.idSitio, {
+                status: true,
+                tiene_instrumentos_averiados: false,
+                instrumentos_averiados: []
+              });
+            }
+          }
+        }
+
+        setSiteStatus(statusMap);
+      } catch (error) {
+        console.error("Error fetching site statuses:", error);
+      }
+    };
+
+    fetchSiteStatus();
+  }, [position]);
 
   useEffect(() => {
     const fetchAllReports = async () => {
@@ -338,11 +390,15 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
             return null;
           }
 
+          // Obtener el estado del sitio para determinar el icono
+          const status = siteStatus.get(coords.idSitio);
+          const isHealthy = status?.status !== false; // Si status es false, el sitio tiene instrumentos averiados
+
           return (
             <Marker 
               key={index} 
               position={coords.coordenadas}
-              icon={getCustomIcon(coords.tipo)}
+              icon={getCustomIcon(coords.tipo, isHealthy)}
             >
               <Popup>
                 <div className="font-sans p-3 min-w-[260px] bg-white rounded-xl">
@@ -403,6 +459,34 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
                         {reportYear}
                       </span>
                     </div>
+
+                    {/* Instrumentos averiados */}
+                    {status && !status.status && status.instrumentos_averiados.length > 0 && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <AlertTriangle className="w-4 h-4 text-red-600" />
+                          <span className="text-xs font-semibold text-red-700 uppercase tracking-wide">
+                            Instrumentos Averiados
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          {status.instrumentos_averiados.map((inst, idx) => (
+                            <div key={idx} className="bg-white rounded p-2 border border-red-100">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-xs font-bold text-slate-800">{inst.instrument_name}</span>
+                                <span className="text-xs text-red-600 bg-red-100 px-2 py-0.5 rounded">
+                                  {inst.cantidad_reportes_rotura} reporte{inst.cantidad_reportes_rotura > 1 ? 's' : ''}
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-600 mb-1">{inst.description}</p>
+                              <p className="text-xs text-slate-500">
+                                Última rotura: {new Date(inst.last_breakage_date).toLocaleDateString('es-AR')}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </Popup>

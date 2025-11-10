@@ -30,6 +30,32 @@ export const getAvailableYears = async () => {
   return data;
 };
 
+export const getStatusSite = async (siteId: number) => {
+  try {
+    // Obtener todos los sitios y filtrar por el ID requerido
+    const allSites = await getAllSitios();
+    const site = allSites.find((s: any) => s.id === siteId);
+    
+    if (site) {
+      return {
+        status: site.status,
+        tiene_instrumentos_averiados: site.tiene_instrumentos_averiados,
+        instrumentos_averiados: site.instrumentos_averiados || []
+      };
+    }
+    
+    // Si no se encuentra el sitio, retornar estado sano por defecto
+    return {
+      status: true,
+      tiene_instrumentos_averiados: false,
+      instrumentos_averiados: []
+    };
+  } catch (error) {
+    console.error(`Error al obtener status del sitio ${siteId}:`, error);
+    throw error;
+  }
+};
+
 export const postNewSite = async (newSite) => {
   try {
     const { data } = await axios.post(`${API_URL}/site/register`, newSite);
