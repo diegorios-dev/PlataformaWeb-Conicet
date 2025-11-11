@@ -27,6 +27,54 @@ export const updateReporte = async (id: number, data: any) => {
 };
 
 /**
+ * Crea un nuevo reporte de rotura
+ * @param data FormData con los campos del reporte de rotura
+ */
+export const createReporteRotura = async (data: FormData) => {
+  try {
+    const response = await axios.post(`${API_URL_SERVICE}/reportes/rotura`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    // Invalidar cache de estadísticas cuando se crea un reporte
+    invalidateEstadisticasCache();
+    
+    return response.data;
+  } catch (error: any) {
+    console.error("Error en createReporteRotura:", error);
+    console.error("Respuesta del error:", error.response?.data);
+    throw error;
+  }
+};
+
+/**
+ * Resuelve un reporte de rotura marcándolo como reparado
+ * @param id ID del reporte de rotura
+ * @param data FormData con la información de resolución
+ */
+export const resolveReporteRotura = async (id: number, data: FormData) => {
+  try {
+    const response = await axios.delete(`${API_URL_SERVICE}/reportes/rotura/${id}/resolve`, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      data: data, // En DELETE, el body se envía como 'data'
+    });
+    
+    // Invalidar cache de estadísticas cuando se resuelve un reporte
+    invalidateEstadisticasCache();
+    
+    return response.data;
+  } catch (error: any) {
+    console.error("Error en resolveReporteRotura:", error);
+    console.error("Respuesta del error:", error.response?.data);
+    throw error;
+  }
+};
+
+/**
  * Obtiene el histograma temporal (agregado por día/mes/año)
  * 
  * Backend espera:

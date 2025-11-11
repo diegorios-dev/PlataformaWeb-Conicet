@@ -19,6 +19,8 @@ import ShowCharts from "./components/Dashboard/Charts/ShowCharts";
 import ImportExcel from "./components/Dashboard/excel/ImportExcel";
 import ProtectedRoute from "./components/PrivatedRoute/ProtectedRoute";
 import ExportExcel from "./components/Dashboard/excel/ExportExcel";
+import FormAddRotura from "./components/Dashboard/Report/FormAddRotura";
+import FormResolveRotura from "./components/Dashboard/Report/FormResolveRotura";
 
 export default function App() {
   return (
@@ -39,6 +41,8 @@ export default function App() {
           <Route path="/estadisticas" element={<ProtectedRoute><ShowCharts /></ProtectedRoute>} />
           <Route path="/dashboard/administration/report" element={<ProtectedRoute><ShowReport/></ProtectedRoute>} />
           <Route path="/dashboard/administration/report/edit" element={<ProtectedRoute><FormEditReport/></ProtectedRoute>} />
+          <Route path="/dashboard/administration/report/rotura/add" element={<ProtectedRoute><FormAddRotura/></ProtectedRoute>} />
+          <Route path="/dashboard/administration/report/rotura/resolve" element={<ProtectedRoute><FormResolveRotura/></ProtectedRoute>} />
           <Route path="/dashboard/administration/user" element={<ProtectedRoute><ViewManagementUsers/></ProtectedRoute>} />
           <Route path="/dashboard/administration/user/add" element={<ProtectedRoute><FormAddUser/></ProtectedRoute>} />
           <Route path="/dashboard/Zona/FormAddZona.tsx" element={<ProtectedRoute><FormAddZona /></ProtectedRoute>} />

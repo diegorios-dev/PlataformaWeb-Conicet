@@ -184,7 +184,14 @@ const ViewManagementUsers = () => {
         </div>
 
         {/* Tabla de usuarios - MANTIENE LA ESTRUCTURA ORIGINAL */}
-        {isEmpty ? (
+        {loading ? (
+          <div className="flex items-center justify-center min-h-[400px] bg-white/60 backdrop-blur-sm border-2 border-slate-200 rounded-3xl">
+            <div className="text-center p-10">
+              <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
+              <p className="text-slate-600 font-medium">Cargando usuarios...</p>
+            </div>
+          </div>
+        ) : isEmpty ? (
           <div className="flex flex-col items-center justify-center py-20 bg-white/60 backdrop-blur-sm border-2 border-slate-200 rounded-3xl">
             <div className="bg-slate-100 rounded-full p-6 mb-4 shadow-lg shadow-slate-500/10">
               <Users className="w-10 h-10 text-slate-400" />

@@ -24,6 +24,8 @@ export const ROUTE_CONFIG = {
     estadisticas: { path: "/estadisticas", requireAuth: true },
     reports: { path: "/dashboard/administration/report", requireAuth: true },
     reportEdit: { path: "/dashboard/administration/report/edit", requireAuth: true },
+    reportRoturaAdd: { path: "/dashboard/administration/report/rotura/add", requireAuth: true },
+    reportRoturaResolve: { path: "/dashboard/administration/report/rotura/resolve", requireAuth: true },
     users: { path: "/dashboard/administration/user", requireAuth: true },
     userAdd: { path: "/dashboard/administration/user/add", requireAuth: true },
     zonaAdd: { path: "/dashboard/Zona/FormAddZona.tsx", requireAuth: true },

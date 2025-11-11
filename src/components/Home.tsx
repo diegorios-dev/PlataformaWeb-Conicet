@@ -102,7 +102,7 @@ const Home = () => {
       )}
 
       {/* Sidebar modernizado estilo Google Cloud */}
-      <aside className="w-80 bg-white/95 backdrop-blur-xl border-r border-slate-200/60 shadow-2xl flex flex-col">
+      <aside className="w-80 bg-white/95 backdrop-blur-xl border-r border-slate-200/60  flex flex-col">
         
         {/* Header del sidebar con logo */}
         <div className="px-6 py-6 border-b border-slate-200/60">
@@ -199,7 +199,7 @@ const Home = () => {
             </div>
           </div>
         ) : (
-          <div className="w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-slate-200/60 bg-white">
+          <div className="w-full h-full rounded-2xl overflow-hidden border border-slate-200/60 bg-white">
             <MapHTML position={pointsMap} loading={loading} />
           </div>
         )}
