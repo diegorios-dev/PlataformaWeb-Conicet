@@ -1,7 +1,24 @@
 @import "tailwindcss";
 
-*{
-    font-family: 'Montserrat', sans-serif;
+/* Importar fuente Inter para diseño moderno */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimización de renderizado de texto */
+body {
+  text-rendering: optimizeLegibility;
+}
+
+/* Grid de fondo sutil (tipo Google Cloud) */
+.bg-grid-slate-100 {
+  background-image: linear-gradient(to right, rgb(241 245 249 / 0.4) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgb(241 245 249 / 0.4) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 /* Animación para tooltips y notificaciones - iOS Style */
@@ -36,26 +53,49 @@
   animation: scale-in 0.2s ease-out;
 }
 
-/* Scrollbar personalizado para Year Picker */
+/* Scrollbar personalizado moderno */
 .scrollbar-thin {
   scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
   height: 6px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
   background: #f1f5f9;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 3px;
+  border-radius: 4px;
+  transition: background 0.2s;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Scrollbar global para toda la app */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 5px;
+  border: 2px solid #f8fafc;
+}
+
+::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 

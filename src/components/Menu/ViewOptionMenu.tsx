@@ -1,33 +1,37 @@
-import { Droplet, Ruler } from "lucide-react";
+import { Droplet, Snowflake, Waves } from "lucide-react";
 import { memo } from "react";
 
 const icons = {
-  Lluvia: <Droplet className="w-6 h-6" />,
-  Nieve: <Ruler className="w-6 h-6" />,
-  Regla: <Ruler className="w-6 h-6" />,
+  Lluvia: <Droplet className="w-5 h-5" />,
+  Nieve: <Snowflake className="w-5 h-5" />,
+  Caudal: <Waves className="w-5 h-5" />,
 };
 
-// ⚡ Memorizar componente
+// ⚡ Memorizar componente - Diseño modernizado
 const ViewOptionMenu = memo(({ instruments, selectedInstrument, onSelectInstrument }) => {
   return (
-    <div className="flex flex-col gap-2 md:gap-2.5">
+    <div className="space-y-2">
       {instruments.map((item, index) => (
         <button
           key={index}
           onClick={() => onSelectInstrument(item.event)}
-          className={`group relative flex items-center gap-2.5 md:gap-3 w-full px-4 md:px-5 py-2.5 md:py-3 rounded-xl text-sm md:text-base font-semibold transition-all duration-200 overflow-hidden
+          className={`group relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 overflow-hidden
             ${
               selectedInstrument === item.event
-                ? "bg-gradient-to-br from-yellow-500 to-amber-600 text-white shadow-lg shadow-yellow-500/30 scale-[1.02]"
-                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-yellow-300 hover:shadow-md active:scale-[0.98]"
+                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md scale-[1.02]"
+                : "bg-white/80 text-slate-700 hover:bg-white border border-slate-200 hover:border-amber-300 hover:shadow-sm active:scale-[0.98]"
             }`}
         >
+          {/* Efecto de brillo en selección */}
           {selectedInstrument === item.event && (
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-amber-500 animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
           )}
-          <span className="relative z-10 flex items-center gap-2.5 md:gap-3">
-            {icons[item.event]}
-            {item.instrumento}
+          
+          <span className="relative z-10 flex items-center gap-3">
+            <span className={`${selectedInstrument === item.event ? 'text-white' : 'text-amber-600'}`}>
+              {icons[item.event] || icons.Lluvia}
+            </span>
+            <span>{item.instrumento}</span>
           </span>
         </button>
       ))}

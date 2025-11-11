@@ -2,28 +2,28 @@ import { BarChart3, MapPin, ChevronRight, TrendingUp } from "lucide-react";
 import { memo } from "react";
 
 const icons = {
-  "Ver Histograma": <BarChart3 className="w-6 h-6" />,
-  "Ver Mapa de Calor": <MapPin className="w-6 h-6" />,
-  "Ver Estadísticas": <TrendingUp className="w-6 h-6" />,
+  "Ver Histograma": <BarChart3 className="w-5 h-5" />,
+  "Ver Mapa de Calor": <MapPin className="w-5 h-5" />,
+  "Ver Estadísticas": <TrendingUp className="w-5 h-5" />,
 };
 
-// ⚡ Memorizar componente
+// ⚡ Memorizar componente - Diseño modernizado
 const ViewComplementMenu = memo(({ complements }) => {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="space-y-2">
       {complements.map((item, index) => {
         return (
           <button
             key={index}
             onClick={item.onClick}
-            className="group relative flex items-center gap-4 w-full px-6 py-4 rounded-2xl text-lg font-semibold text-gray-700 bg-white hover:bg-gradient-to-br hover:from-blue-500 hover:to-blue-600 hover:text-white border-2 border-gray-200 hover:border-transparent transition-all duration-200 overflow-hidden hover:scale-[1.02] active:scale-[0.98] hover:shadow-lg hover:shadow-blue-500/30"
+            className="group relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 bg-white/80 hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-700 hover:text-white border border-slate-200 hover:border-transparent transition-all duration-200 overflow-hidden hover:shadow-md active:scale-[0.98]"
           >
             {/* Efecto de brillo en hover */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
             
             {/* Icono */}
-            <div className="relative z-10 transition-transform duration-200 group-hover:scale-110">
-              {icons[item.option]}
+            <div className="relative z-10 text-blue-600 group-hover:text-white transition-colors duration-200">
+              {icons[item.option] || <BarChart3 className="w-5 h-5" />}
             </div>
             
             {/* Texto */}
@@ -31,7 +31,7 @@ const ViewComplementMenu = memo(({ complements }) => {
             
             {/* Flecha indicadora */}
             <div className="relative z-10 transition-transform duration-200 group-hover:translate-x-1">
-              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-white" />
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-white" />
             </div>
           </button>
         );

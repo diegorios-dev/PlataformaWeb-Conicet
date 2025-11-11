@@ -10,39 +10,43 @@ const Dashboard = () => {
   const { goReports, goConfigUsers, goBack, goAddZona, goImportExcel ,goEstadisticas , goExportExcel } = useNavegation();
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 flex flex-col">
-      {/* Icon navigation sidebar */}
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/40 to-indigo-50/30 flex flex-col relative overflow-hidden">
       
-      {/* Back Button flotante */}
-      <div className="absolute top-3 left-3 z-50">
-        <div className="backdrop-blur-xl transition-all duration-300">
+      {/* Decoración de fondo sutil */}
+      <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] pointer-events-none"></div>
+      
+      {/* Back Button flotante modernizado */}
+      <div className="absolute top-6 left-6 z-50">
           <BackButton />
-        </div>
       </div>
 
       {/* Contenido principal */}
-  <div className="flex flex-1 items-center justify-center p-3 md:p-5 md:ml-16">
-        <div className="w-full max-w-3xl">
+      <div className="flex flex-1 items-center justify-center p-6 md:p-8">
+        <div className="w-full max-w-5xl">
           
-          {/* Header con glassmorphism */}
-          <div className="backdrop-blur-2xl bg-white/50 border border-white/60 rounded-xl shadow-2xl p-3 md:p-4 mb-3">
-            <div className="flex items-center justify-center gap-2 mb-0.5">
-              <div className="p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-indigo-500/20 backdrop-blur-xl border border-white/40">
-                <Shield className="w-5 h-5 md:w-6 md:h-6 text-blue-700" />
+          {/* Header modernizado */}
+          <div className="backdrop-blur-xl bg-white/80 border border-white/70 rounded-3xl shadow-2xl p-8 md:p-10 mb-8">
+            <div className="flex items-center justify-center gap-4 mb-3">
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/30">
+                <Shield className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-lg md:text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
-                Panel de Administración
-              </h2>
+              <div className="text-center">
+                <h2 className="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">
+                  Panel de Administración
+                </h2>
+              </div>
             </div>
-            <p className="text-center text-slate-600 text-sm font-medium">
-              
+            <p className="text-center text-slate-500 text-sm md:text-base font-medium tracking-wide">
+              Gestiona el sistema de monitoreo de forma centralizada
             </p>
           </div>
 
-          {/* Botones con glassmorphism */}
+          {/* Grid de tarjetas modernizado */}
           {currentView === "menu" && (
-            <div className="backdrop-blur-2xl bg-white/40 border border-white/60 rounded-xl shadow-2xl p-3 md:p-4">
-              <div className="flex flex-col gap-2.5">
+            <div className="backdrop-blur-xl bg-white/70 border border-white/80 rounded-3xl shadow-2xl p-6 md:p-8">
+              
+              {/* Grid responsive de 2 columnas */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                 
                 <DashboardButton
                   onClick={goReports}
@@ -72,41 +76,42 @@ const Dashboard = () => {
                   onClick={goImportExcel}
                   icon={Upload}
                   title="Importar Excel"
-                  description="Sube un archivo Excel para importar datos"
-                  colorScheme="indigo"
+                  description="Sube archivos para importar datos"
+                  colorScheme="emerald"
                 />
 
                 <DashboardButton
                   onClick={goEstadisticas}
                   icon={TrendingUp}
                   title="Ver Estadísticas"
-                  description="Visualiza las estadísticas de los datos"
-                  colorScheme="blue"
+                  description="Visualiza métricas y análisis"
+                  colorScheme="cyan"
                 />
 
-                
                 <DashboardButton
                   onClick={goExportExcel}
                   icon={FileSpreadsheet}
                   title="Exportar Excel"
-                  description="Descarga un archivo Excel con los datos"
+                  description="Descarga datos en formato Excel"
                   colorScheme="green"
                 />
 
               </div>
 
-              {/* Botón de salir */}
-              <div className="mt-5 pt-4 border-t border-slate-200/50">
+              {/* Botón de salir modernizado */}
+              <div className="mt-8 pt-6 border-t border-slate-200/60">
                 <button
                   onClick={goBack}
-                  className="group relative overflow-hidden w-full backdrop-blur-xl bg-gradient-to-r from-slate-500/10 to-slate-600/10 hover:from-red-500/15 hover:to-red-600/15 border border-slate-300/40 hover:border-red-400/60 rounded-xl p-3 md:p-4 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/10"
+                  className="group relative overflow-hidden w-full backdrop-blur-xl bg-gradient-to-r from-slate-100/90 to-slate-200/90 hover:from-red-50 hover:to-red-100 border border-slate-300/60 hover:border-red-300 rounded-2xl p-4 md:p-5 transition-all duration-300 hover:shadow-xl hover:shadow-red-500/20 hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  {/* Efecto de brillo */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                  {/* Efecto de brillo mejorado */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                   
-                  <div className="relative flex items-center justify-center gap-2">
-                    <LogOut className="w-4 h-4 md:w-5 md:h-5 text-slate-700 group-hover:text-red-800 transition-colors" />
-                    <span className="text-sm md:text-base font-bold text-slate-800 group-hover:text-red-800 transition-colors">
+                  <div className="relative flex items-center justify-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-slate-200/60 group-hover:bg-red-100/90 transition-all duration-300 group-hover:scale-110">
+                      <LogOut className="w-5 h-5 md:w-6 md:h-6 text-slate-600 group-hover:text-red-600 transition-colors" />
+                    </div>
+                    <span className="text-base md:text-lg font-bold text-slate-700 group-hover:text-red-600 transition-colors">
                       Cerrar Panel de Administración
                     </span>
                   </div>

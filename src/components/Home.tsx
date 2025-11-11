@@ -59,69 +59,82 @@ const Home = () => {
   // 🧠 Memorizar los puntos para no cambiar referencia en cada render
   const pointsMap = useMemo(() => sitios, [sitios]);
 
-  // Estilos coherentes (paleta azul CONICET + gris claro, radio consistente y variantes)
+  // Estilos modernos tipo Google Cloud/Data Studio
   const btnBase =
-    "group relative w-full flex items-center gap-3 px-5 py-3 rounded-xl text-[15px] font-semibold transition-all duration-200 overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300";
+    "group relative w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2";
+  
   const btnPrimary =
-    `${btnBase} bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-600/20 hover:shadow-blue-700/30 hover:scale-[1.01] active:scale-[0.99]`;
+    `${btnBase} bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 focus:ring-blue-500 shadow-sm hover:shadow-md active:scale-[0.98]`;
+  
   const btnWarn =
-    `${btnBase} bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-lg shadow-amber-600/20 hover:shadow-amber-600/30 hover:scale-[1.01] active:scale-[0.99]`;
+    `${btnBase} bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 focus:ring-amber-500 shadow-sm hover:shadow-md active:scale-[0.98]`;
+  
   const btnGhost =
-    `${btnBase} bg-white/70 text-slate-700 border border-slate-200 hover:bg-white/90`;
+    `${btnBase} bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 focus:ring-slate-300`;
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 to-slate-100 relative">
-      {/* Mensaje de bienvenida - iOS Style */}
-      {/* Mensaje de bienvenida - Coherente con estética de la web */}
+    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 relative overflow-hidden">
+      
+      {/* Decoración de fondo sutil */}
+      <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] pointer-events-none"></div>
+      
+      {/* Mensaje de bienvenida modernizado */}
       {showWelcome && (
-        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-          <div className="backdrop-blur-2xl bg-white/80 border border-white/70 px-10 py-6 rounded-2xl shadow-2xl shadow-blue-500/20 flex items-center gap-5 min-w-[480px]">
-            {/* Icono con efecto de pulso */}
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
+          <div className="backdrop-blur-xl bg-white/95 border border-blue-200/50 px-8 py-5 rounded-2xl shadow-2xl shadow-blue-500/10 flex items-center gap-4 min-w-[420px]">
             <div className="relative">
               <div className="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-20"></div>
-              <div className="relative p-3.5 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg shadow-blue-600/40">
-                <CheckCircle className="w-7 h-7 text-white" strokeWidth={2.5} />
+              <div className="relative p-3 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg">
+                <CheckCircle className="w-6 h-6 text-white" strokeWidth={2.5} />
               </div>
             </div>
-            
-            {/* Texto con gradiente */}
             <div className="flex-1">
-              <p className="text-sm font-bold text-slate-600 mb-1 tracking-wide uppercase">
-                Sesión iniciada correctamente
+              <p className="text-xs font-semibold text-slate-500 mb-0.5 tracking-wide uppercase">
+                Sesión iniciada
               </p>
-              <p className="text-xl font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">
+              <p className="text-lg font-bold text-slate-800">
                 {getUsername()}
               </p>
             </div>
-
-            {/* Indicador de éxito */}
-            <div className="h-14 w-1 bg-gradient-to-b from-blue-400 to-blue-700 rounded-full shadow-sm"></div>
+            <div className="h-12 w-1 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full"></div>
           </div>
         </div>
       )}
 
-      {/* Sidebar con glassmorphism */}
-      <aside className="w-96 bg-white/60 backdrop-blur-md border-r border-white/60 shadow-xl supports-[backdrop-filter]:bg-white/50 flex flex-col justify-between text-[16px]">
-        <div className="p-8">
-          <div className="flex justify-center">
-            <img src={img} alt="Logo Conicet" className="max-w-[170px] mb-6 drop-shadow-sm" />
+      {/* Sidebar modernizado estilo Google Cloud */}
+      <aside className="w-80 bg-white/95 backdrop-blur-xl border-r border-slate-200/60 shadow-2xl flex flex-col">
+        
+        {/* Header del sidebar con logo */}
+        <div className="px-6 py-6 border-b border-slate-200/60">
+          <div className="flex items-center justify-center mb-2">
+            <img src={img} alt="Logo CONICET" className="h-14 w-auto object-contain drop-shadow-sm" />
           </div>
+          <h1 className="text-center text-sm font-semibold text-slate-600 tracking-tight">
+            Sistema de Monitoreo
+          </h1>
+        </div>
 
-          <div className="mb-12">
-            <h3 className="text-sm font-bold text-slate-600 mb-4 tracking-wider uppercase">
-              Análisis
-            </h3>
-
-            {isLogin && (
+        {/* Contenido scrolleable */}
+        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-8">
+          
+          {/* Sección Admin (si está logueado) */}
+          {isLogin && (
+            <div className="space-y-3">
               <button
                 onClick={goAdminUi}
-                className={`${btnPrimary} mb-4 justify-start`}
+                className={`${btnPrimary} justify-start shadow-md`}
               >
                 <Wrench className="w-5 h-5" />
-                <span>Panel Admin</span>
+                <span>Panel de Administración</span>
               </button>
-            )}
+            </div>
+          )}
 
+          {/* Sección Análisis */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-bold text-slate-500 mb-3 tracking-wider uppercase px-1">
+              Tipo de Evento
+            </h3>
             <ViewOptionMenu
               instruments={OPTION_INSTRUMENTS}
               selectedInstrument={selectOptionMenu}
@@ -129,19 +142,24 @@ const Home = () => {
             />
           </div>
 
-          <div>
-            <h3 className="text-sm font-bold text-slate-600 mb-4 tracking-wider uppercase">
-              Visualización
+          {/* Divider sutil */}
+          <div className="border-t border-slate-200/60"></div>
+
+          {/* Sección Visualización */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-bold text-slate-500 mb-3 tracking-wider uppercase px-1">
+              Herramientas
             </h3>
             <ViewComplementMenu complements={OPTION_COMPLEMENTS} />
           </div>
         </div>
 
-        <div className="p-8 border-t border-white/60">
+        {/* Footer del sidebar - Botón de sesión */}
+        <div className="px-6 py-5 border-t border-slate-200/60 bg-slate-50/50">
           {isLogin ? (
             <button
               onClick={handleLogoutClick}
-              className={`${btnWarn} justify-center`}
+              className={`${btnWarn} justify-center shadow-md`}
             >
               <LogOut className="w-5 h-5" />
               <span>Cerrar Sesión</span>
@@ -149,34 +167,41 @@ const Home = () => {
           ) : (
             <button
               onClick={goLogin}
-              className={`${btnPrimary} justify-center`}
+              className={`${btnPrimary} justify-center shadow-md`}
             >
               <LogIn className="w-5 h-5" />
-              <span>Login</span>
+              <span>Iniciar Sesión</span>
             </button>
           )}
         </div>
       </aside>
 
-      <main className="flex-1 bg-transparent flex items-center justify-center">
+      {/* Contenedor principal del mapa */}
+      <main className="flex-1 flex items-center justify-center relative">
         {error ? (
-          <div className="max-w-md w-full mx-auto p-8">
-            <div className="bg-red-50/90 border border-red-200 rounded-xl p-6 shadow-lg backdrop-blur-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <AlertCircle className="w-8 h-8 text-red-600" />
-                <h3 className="text-lg font-bold text-red-900">Error al cargar datos</h3>
+          <div className="max-w-lg w-full">
+            <div className="bg-white border border-red-200 rounded-2xl p-8 shadow-xl">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="p-3 bg-red-100 rounded-xl">
+                  <AlertCircle className="w-7 h-7 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-red-900 mb-2">Error al cargar datos</h3>
+                  <p className="text-red-700 text-sm leading-relaxed">{error}</p>
+                </div>
               </div>
-              <p className="text-red-700 mb-4">{error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="w-full px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300"
+                className="w-full px-5 py-3 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold transition-all duration-200 shadow-lg shadow-red-500/30 hover:shadow-red-500/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
                 Recargar página
               </button>
             </div>
           </div>
         ) : (
-          <MapHTML position={pointsMap} loading={loading} />
+          <div className="w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-slate-200/60 bg-white">
+            <MapHTML position={pointsMap} loading={loading} />
+          </div>
         )}
       </main>
 
