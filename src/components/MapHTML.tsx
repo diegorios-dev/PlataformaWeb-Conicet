@@ -1,5 +1,5 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { getReportsForSite, getAvailableYears, getStatusSite } from "../services/sitiosService";
+import { getReportsForSites, getAvailableYears, getStatusSite } from "../services/sitiosService";
 import { MapPin, Droplet, CalendarDays, AlertTriangle } from "lucide-react";
 import L from "leaflet";
 import iconReporteRegular from "../assets/iconReporteRegular.png";

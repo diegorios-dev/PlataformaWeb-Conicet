@@ -10,6 +10,7 @@ interface LoadingSpinnerProps {
 }
 
 export const LoadingSpinner = ({ message = "Cargando...", size = "md" }: LoadingSpinnerProps) => {
+
   const sizeClasses = {
     sm: "w-8 h-8",
     md: "w-12 h-12",
@@ -17,7 +18,7 @@ export const LoadingSpinner = ({ message = "Cargando...", size = "md" }: Loading
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[300px] w-full">
+    <div className="flex items-center justify-center min-h-screen w-full">
       <div className="text-center p-10">
         <Loader2 className={`${sizeClasses[size]} text-blue-500 animate-spin mx-auto mb-4`} />
         <p className="text-slate-600 font-medium">{message}</p>
@@ -37,7 +38,7 @@ interface LoadingMapProps {
 
 export const LoadingMap = ({ siteCount = 0, message = "Cargando sitios..." }: LoadingMapProps) => {
   return (
-    <div className="flex items-center justify-center h-full bg-gradient-to-br from-blue-50 to-indigo-50">
+    <div className="flex items-center justify-center min-h-screen w-full bg-gradient-to-br from-blue-50 to-indigo-50">
       <div className="text-center p-10">
         {/* Animación de mapa cargando */}
         <div className="relative w-20 h-20 mx-auto mb-6">
@@ -95,7 +96,7 @@ export const EmptyState = ({
   description = "No se encontraron resultados" 
 }: EmptyStateProps) => {
   return (
-    <div className="flex flex-col items-center justify-center py-20 bg-white/60 backdrop-blur-sm border-2 border-slate-200 rounded-3xl">
+    <div className="flex flex-col items-center justify-center min-h-[400px] py-20 bg-white/60 backdrop-blur-sm border-2 border-slate-200 rounded-3xl">
       <div className="bg-slate-100 rounded-full p-6 mb-4 shadow-lg shadow-slate-500/10">
         {Icon ? (
           <Icon className="w-10 h-10 text-slate-400" />
