@@ -8,7 +8,9 @@ import {
   Save,
   X,
   Locate,
-  MapPin
+  MapPin,
+  CheckCircle2,
+  AlertTriangle
 } from "lucide-react";
 
 const inputClass =
@@ -29,6 +31,11 @@ const FormEditUser = ({
 }) => {
   const [sitios, setSitios] = useState([]);
   const [zonaSeleccionada, setZonaSeleccionada] = useState(null);
+
+  // Estados para modal
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"success" | "error">("success");
+  const [modalMessage, setModalMessage] = useState("");
 
   // Cargar sitios al montar el componente
   useEffect(() => {
@@ -68,6 +75,21 @@ const FormEditUser = ({
     }
   };
 
+  const showModal = (type: "success" | "error", message: string) => {
+    setModalType(type);
+    setModalMessage(message);
+    setModalOpen(true);
+    setTimeout(() => {
+      setModalOpen(false);
+      if (type === "success") {
+        setShowEditModal(false);
+        if (onSave) {
+          onSave(); // Recargar la lista de usuarios
+        }
+      }
+    }, 3000);
+  };
+
   const handleSave = async () => {
     try {
       // Asegurarnos de que tenemos los IDs correctos
@@ -78,14 +100,10 @@ const FormEditUser = ({
       };
       
       await saveUser(userToSave);
-      setShowEditModal(false);
-      if (onSave) {
-        onSave(); // Recargar la lista de usuarios
-      }
-      alert("Usuario actualizado correctamente");
+      showModal("success", "Usuario actualizado correctamente");
     } catch (error) {
       console.error("Error al guardar:", error);
-      alert("Error al actualizar usuario");
+      showModal("error", "Error al actualizar usuario");
     }
   };
 
@@ -259,6 +277,42 @@ const FormEditUser = ({
           </button>
         </div>
       </div>
+
+      {/* Modal de confirmación */}
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+          <div className="relative bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full transform transition-all duration-300 animate-in fade-in zoom-in">
+            <div className="flex flex-col items-center text-center">
+              <div
+                className={`p-4 rounded-2xl mb-4 ${
+                  modalType === "success" ? "bg-green-100" : "bg-red-100"
+                }`}
+              >
+                {modalType === "success" ? (
+                  <CheckCircle2 className="w-12 h-12 text-green-600" />
+                ) : (
+                  <AlertTriangle className="w-12 h-12 text-red-600" />
+                )}
+              </div>
+
+              <h3
+                className={`text-2xl font-bold mb-2 ${
+                  modalType === "success" ? "text-green-900" : "text-red-900"
+                }`}
+              >
+                {modalType === "success" ? "¡Éxito!" : "Error"}
+              </h3>
+              <p
+                className={`text-base ${
+                  modalType === "success" ? "text-green-700" : "text-red-700"
+                }`}
+              >
+                {modalMessage}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
