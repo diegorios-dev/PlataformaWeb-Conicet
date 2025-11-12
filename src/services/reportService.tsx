@@ -50,18 +50,12 @@ export const createReporteRotura = async (data: FormData) => {
 };
 
 /**
- * Resuelve un reporte de rotura marcándolo como reparado
+ * Resuelve/elimina un reporte de rotura
  * @param id ID del reporte de rotura
- * @param data FormData con la información de resolución
  */
-export const resolveReporteRotura = async (id: number, data: FormData) => {
+export const resolveReporteRotura = async (id: number) => {
   try {
-    const response = await axios.delete(`${API_URL_SERVICE}/reportes/rotura/${id}/resolve`, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      data: data, // En DELETE, el body se envía como 'data'
-    });
+    const response = await axios.delete(`${API_URL_SERVICE}/reportes/rotura/${id}/resolve`);
     
     // Invalidar cache de estadísticas cuando se resuelve un reporte
     invalidateEstadisticasCache();

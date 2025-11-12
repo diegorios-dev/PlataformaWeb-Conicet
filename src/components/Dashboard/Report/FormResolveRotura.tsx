@@ -14,8 +14,8 @@ const FormResolveRotura = () => {
   const { report } = useUserContext();
   const navigate = useNavigate();
 
-  // Si no hay reporte en el contexto, redirigir a la lista de reportes
-  if (!report || !report.id) {
+  // Si no hay reporte en el contexto o no tiene breakage_instrument, redirigir
+  if (!report || !report.id || !report.breakage_instrument?.id) {
     navigate("/dashboard/administration/report");
     return null;
   }
@@ -34,7 +34,7 @@ const FormResolveRotura = () => {
     setTimeout(() => {
       setModalOpen(false);
       if (type === "success") {
-        window.history.back();
+        navigate("/dashboard/administration/report");
       }
     }, 3000);
   };
@@ -45,10 +45,10 @@ const FormResolveRotura = () => {
     setLoading(true);
 
     try {
-      const data = new FormData();
-      // Solo enviar que está resuelto, sin campos adicionales
-      await resolveReporteRotura(report.id, data);
+      // Usar el ID del breakage_instrument (hijo) en lugar del report.id (padre)
+      await resolveReporteRotura(report.breakage_instrument.id);
       showModal("success", "Reporte de rotura eliminado exitosamente");
+
     } catch (error: any) {
       console.error("Error al resolver reporte de rotura:", error);
       showModal(
@@ -146,7 +146,7 @@ const FormResolveRotura = () => {
             <div className="flex gap-4 pt-6 border-t-2 border-slate-200">
               <button
                 type="button"
-                onClick={() => window.history.back()}
+                onClick={() => navigate("/dashboard/administration/report")}
                 className="flex-1 px-6 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-bold transition-all duration-200 hover:scale-105"
               >
                 Cancelar
