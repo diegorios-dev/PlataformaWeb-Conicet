@@ -6,7 +6,7 @@ import iconReporteRegular from "../assets/iconReporteRegular.png";
 import iconReporteInstrumentoRoto from "../assets/iconReporteIntrumentroRoto.png";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LoadingMap, LoadingSpinner } from "./ui/LoadingState";
-
+import { Lightbulb } from "lucide-react";
 
 interface Coord {
   coordenadas: [number, number];
@@ -258,7 +258,8 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
             No se encontraron sitios con datos para el instrumento seleccionado.
           </p>
           <div className="text-sm text-gray-500 bg-blue-50 rounded-lg p-4">
-            💡 <strong>Sugerencia:</strong> Intenta seleccionar otro instrumento desde el menú lateral
+            <Lightbulb className="inline w-4 h-4 mr-1 text-yellow-400" />
+            <strong>Sugerencia:</strong> Intenta seleccionar otro instrumento desde el menú lateral
           </div>
         </div>
       </div>

@@ -1,13 +1,13 @@
 import { useState } from "react";
 import useNavegation from "../../hooks/useNavegation";
 import BackButton from "../BackButton";
-import { FileText, Users, MapPin, LogOut, Shield , TrendingUp, Upload} from "lucide-react";
+import { FileText, Users, MapPin, LogOut, Shield , TrendingUp, Upload, MapPinned} from "lucide-react";
 import { FileSpreadsheet } from "lucide-react";
 import DashboardButton from "./DashboardButton";
 
 const Dashboard = () => {
   const [currentView, setCurrentView] = useState<"menu" | "instrumentos">("menu");
-  const { goReports, goConfigUsers, goBack, goAddZona, goImportExcel ,goEstadisticas , goExportExcel } = useNavegation();
+  const { goReports, goConfigUsers, goBack, goAddZona, goImportExcel ,goEstadisticas , goExportExcel, goAddSite } = useNavegation();
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/40 to-indigo-50/30 flex flex-col relative overflow-hidden">
@@ -70,6 +70,14 @@ const Dashboard = () => {
                   title="Agregar Zona"
                   description="Configura nuevas ubicaciones"
                   colorScheme="violet"
+                />
+
+                <DashboardButton
+                  onClick={goAddSite}
+                  icon={MapPinned}
+                  title="Agregar Sitio"
+                  description="Registra nuevos sitios de medición"
+                  colorScheme="blue"
                 />
 
                 <DashboardButton

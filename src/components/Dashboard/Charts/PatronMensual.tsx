@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import { BarChart3, Droplet, Snowflake, Waves } from "lucide-react";
 
 type MesData = {
   mes: number;
@@ -46,27 +47,39 @@ const PatronMensual = ({ data }: PatronMensualProps) => {
         
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-slate-600 text-sm font-medium">📊 Total eventos:</span>
+            <span className="text-slate-600 text-sm font-medium flex items-center gap-1">
+              <BarChart3 className="w-4 h-4" />
+              Total eventos:
+            </span>
             <span className="font-bold text-orange-700 text-sm">{data.cantidad_eventos}</span>
           </div>
           
           {data.eventos_lluvia > 0 && (
             <div className="flex items-center justify-between gap-4">
-              <span className="text-slate-600 text-xs">💧 Lluvia:</span>
+              <span className="text-slate-600 text-xs flex items-center gap-1">
+                <Droplet className="w-3 h-3 text-blue-600" />
+                Lluvia:
+              </span>
               <span className="font-semibold text-blue-600 text-xs">{data.eventos_lluvia}</span>
             </div>
           )}
           
           {data.eventos_nieve > 0 && (
             <div className="flex items-center justify-between gap-4">
-              <span className="text-slate-600 text-xs">❄️ Nieve:</span>
+              <span className="text-slate-600 text-xs flex items-center gap-1">
+                <Snowflake className="w-3 h-3 text-cyan-600" />
+                Nieve:
+              </span>
               <span className="font-semibold text-cyan-600 text-xs">{data.eventos_nieve}</span>
             </div>
           )}
           
           {data.eventos_caudal > 0 && (
             <div className="flex items-center justify-between gap-4">
-              <span className="text-slate-600 text-xs">🌊 Caudal:</span>
+              <span className="text-slate-600 text-xs flex items-center gap-1">
+                <Waves className="w-3 h-3 text-teal-600" />
+                Caudal:
+              </span>
               <span className="font-semibold text-teal-600 text-xs">{data.eventos_caudal}</span>
             </div>
           )}

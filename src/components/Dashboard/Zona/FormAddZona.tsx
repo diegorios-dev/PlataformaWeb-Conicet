@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import { postNewZona, getAllZonas } from "../../../services/zonaService";
 import BackButton from "../../BackButton";
-import { Plus, MapPin, CheckCircle2, AlertCircle, Loader2, MapPinned, X } from "lucide-react";
+import Toast from "../../ui/Toast";
+import { Plus, MapPin, Loader2, MapPinned, AlertCircle } from "lucide-react";
 import IconNavMenu from "../../Menu/IconNavMenu";
 
 type Zona = {
   id: number;
   locality: string;
 };
-
-type ModalType = "success" | "error" | null;
 
 const FormAddZona = () => {
   const [zonas, setZonas] = useState<Zona[]>([]);
@@ -19,9 +18,9 @@ const FormAddZona = () => {
   });
   const [loading, setLoading] = useState(false);
   const [loadingZonas, setLoadingZonas] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<ModalType>(null);
-  const [modalMessage, setModalMessage] = useState("");
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
     fetchZonas();
@@ -33,20 +32,17 @@ const FormAddZona = () => {
       setZonas(zonasData);
     } catch (err) {
       console.error("Error fetching zonas:", err);
-      showModal("error", "Error al cargar las zonas");
+      showToast("error", "Error al cargar las zonas");
     } finally {
       setLoadingZonas(false);
     }
   };
 
-  const showModal = (type: ModalType, message: string) => {
-    setModalType(type);
-    setModalMessage(message);
-    setModalOpen(true);
-    setTimeout(() => setModalOpen(false), 3000);
+  const showToast = (type: "success" | "error", message: string) => {
+    setToastType(type);
+    setToastMessage(message);
+    setToastOpen(true);
   };
-
-  const closeModal = () => setModalOpen(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -60,19 +56,19 @@ const FormAddZona = () => {
     e.preventDefault();
 
     if (!formData.locality.trim()) {
-      showModal("error", "Por favor ingresa una localidad");
+      showToast("error", "Por favor ingresa una localidad");
       return;
     }
 
     setLoading(true);
     try {
       await postNewZona(formData);
-      showModal("success", "¡Zona agregada exitosamente!");
+      showToast("success", "¡Zona agregada exitosamente!");
       setFormData({ locality: "", site: { latitude: "", longitude: "" } });
       await fetchZonas();
     } catch (error) {
       console.error("Error creating zona:", error);
-      showModal("error", "Error al crear la zona. Por favor intenta nuevamente.");
+      showToast("error", "Error al crear la zona. Por favor intenta nuevamente.");
     } finally {
       setLoading(false);
     }
@@ -228,65 +224,12 @@ const FormAddZona = () => {
         </div>
       </div>
 
-      {/* Modal estilo ShowReport */}
-      {modalOpen && (
-        <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={closeModal}
-        >
-          <div
-            className="relative bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 text-slate-600 p-2 rounded-xl transition-all duration-200 hover:scale-110"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="flex flex-col items-center text-center">
-              <div
-                className={`p-4 rounded-2xl mb-4 ${
-                  modalType === "success" ? "bg-green-100" : "bg-red-100"
-                }`}
-              >
-                {modalType === "success" ? (
-                  <CheckCircle2 className="w-12 h-12 text-green-600" />
-                ) : (
-                  <AlertCircle className="w-12 h-12 text-red-600" />
-                )}
-              </div>
-
-              <h3
-                className={`text-2xl font-bold mb-2 ${
-                  modalType === "success" ? "text-green-900" : "text-red-900"
-                }`}
-              >
-                {modalType === "success" ? "Éxito" : "Error"}
-              </h3>
-              <p
-                className={`text-base mb-6 ${
-                  modalType === "success" ? "text-green-700" : "text-red-700"
-                }`}
-              >
-                {modalMessage}
-              </p>
-
-              <button
-                onClick={closeModal}
-                className={`px-8 py-3 rounded-xl font-bold text-white transition-all duration-200 hover:scale-105 shadow-lg ${
-                  modalType === "success"
-                    ? "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-green-600/30"
-                    : "bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 shadow-red-600/30"
-                }`}
-              >
-                Entendido
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Toast
+        isOpen={toastOpen}
+        type={toastType}
+        message={toastMessage}
+        onClose={() => setToastOpen(false)}
+      />
     </div>
   );
 };

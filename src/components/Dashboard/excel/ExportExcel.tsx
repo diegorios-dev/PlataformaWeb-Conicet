@@ -9,6 +9,7 @@ import {
   User as UserIcon,
   Filter,
   Loader2,
+  Lightbulb
 } from "lucide-react";
 import BackButton from "../../BackButton";
 import { API_URL } from "../../../config/api";
@@ -261,7 +262,8 @@ export default function ExportExcel() {
                 </div>
               </div>
               <p className="text-sm text-slate-500 mt-3">
-                💡 Por ejemplo: elegir solo "Octubre" descarga todos los reportes de octubre de cualquier año.
+                <Lightbulb className="inline w-4 h-4 mr-1 text-yellow-400" />
+                Por ejemplo: elegir solo "Octubre" descarga todos los reportes de octubre de cualquier año.
               </p>
             </div>
 

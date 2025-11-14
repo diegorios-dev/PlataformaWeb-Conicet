@@ -8,6 +8,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { BarChart3, TrendingUp, ArrowUp, Star, Trophy, Droplet } from "lucide-react";
 
 type AnioData = {
   anio: number;
@@ -121,14 +122,23 @@ const ComparativaAnual = ({ data, totales, configuracion }: ComparativaAnualProp
                 <div className="flex items-center justify-between gap-4">
                   <span className="font-bold text-slate-700 flex items-center gap-2">
                     <div style={{ width: 12, height: 12, backgroundColor: entry.color, borderRadius: '50%' }}></div>
-                    {anio} {esAnioActual && '⭐'}
+                    {anio} {esAnioActual && <Star className="w-3 h-3 text-yellow-600 fill-yellow-600" />}
                   </span>
                   <span className="font-bold text-slate-900">{total.toFixed(1)} {unidad}</span>
                 </div>
                 <div className="text-xs text-slate-600 pl-5 space-y-0.5">
-                  <div>📊 Registros: {registros}</div>
-                  <div>📈 Promedio: {promedio?.toFixed(2)} {unidad}</div>
-                  <div>🔝 Máximo: {maximo?.toFixed(1)} {unidad}</div>
+                  <div className="flex items-center gap-1">
+                    <BarChart3 className="w-3 h-3" />
+                    Registros: {registros}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <TrendingUp className="w-3 h-3" />
+                    Promedio: {promedio?.toFixed(2)} {unidad}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <ArrowUp className="w-3 h-3" />
+                    Máximo: {maximo?.toFixed(1)} {unidad}
+                  </div>
                 </div>
               </div>
             );
@@ -169,9 +179,9 @@ const ComparativaAnual = ({ data, totales, configuracion }: ComparativaAnualProp
               >
                 <p className="font-bold text-sm text-slate-800 flex items-center gap-1">
                   {total.anio} 
-                  {esActual && ' ⭐'}
-                  {esMaximo && ' 🏆'}
-                  {esMinimo && ' 💧'}
+                  {esActual && <Star className="w-3 h-3 text-yellow-600 fill-yellow-600" />}
+                  {esMaximo && <Trophy className="w-3 h-3 text-green-600" />}
+                  {esMinimo && <Droplet className="w-3 h-3 text-blue-600" />}
                 </p>
                 <p className="text-lg font-bold" style={{ color: colorPalette[index % colorPalette.length] }}>
                   {total.total_precipitacion.toFixed(1)} {unidad}

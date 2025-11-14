@@ -9,6 +9,7 @@ import {
   ReferenceLine,
   Legend,
 } from "recharts";
+import { BarChart3, Droplet, Snowflake, Waves, Trophy, Star } from "lucide-react";
 
 type RangoData = {
   rango: string;
@@ -56,35 +57,47 @@ const AnalisisFrecuencia = ({ data, estadisticas }: AnalisisFrecuenciaProps) => 
       <div className="backdrop-blur-xl bg-white/95 border-2 border-blue-200 rounded-2xl shadow-2xl p-4 min-w-[220px]">
         <div className="flex items-center gap-2 mb-3 pb-3 border-b border-blue-100">
           <div className="w-3 h-3 rounded-full bg-gradient-to-br from-blue-400 to-blue-600"></div>
-          <h3 className="font-bold text-slate-800 text-base">
+          <h3 className="font-bold text-slate-800 text-base flex items-center gap-1">
             {data.rango} {unidad}
-            {esRangoMasFrecuente && " 🏆"}
+            {esRangoMasFrecuente && <Trophy className="w-4 h-4 text-yellow-600" />}
           </h3>
         </div>
         
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-slate-600 text-sm font-medium">📊 Total:</span>
+            <span className="text-slate-600 text-sm font-medium flex items-center gap-1">
+              <BarChart3 className="w-4 h-4" />
+              Total:
+            </span>
             <span className="font-bold text-slate-800 text-sm">{totalFrecuencia}</span>
           </div>
           
           {data.frecuencia_lluvia > 0 && (
             <div className="flex items-center justify-between gap-4">
-              <span className="text-blue-600 text-xs font-medium">💧 Lluvia:</span>
+              <span className="text-blue-600 text-xs font-medium flex items-center gap-1">
+                <Droplet className="w-3 h-3" />
+                Lluvia:
+              </span>
               <span className="font-bold text-blue-700 text-xs">{data.frecuencia_lluvia}</span>
             </div>
           )}
           
           {data.frecuencia_nieve > 0 && (
             <div className="flex items-center justify-between gap-4">
-              <span className="text-cyan-600 text-xs font-medium">❄️ Nieve:</span>
+              <span className="text-cyan-600 text-xs font-medium flex items-center gap-1">
+                <Snowflake className="w-3 h-3" />
+                Nieve:
+              </span>
               <span className="font-bold text-cyan-700 text-xs">{data.frecuencia_nieve}</span>
             </div>
           )}
           
           {data.frecuencia_caudal > 0 && (
             <div className="flex items-center justify-between gap-4">
-              <span className="text-green-600 text-xs font-medium">🌊 Caudal:</span>
+              <span className="text-green-600 text-xs font-medium flex items-center gap-1">
+                <Waves className="w-3 h-3" />
+                Caudal:
+              </span>
               <span className="font-bold text-green-700 text-xs">{data.frecuencia_caudal}</span>
             </div>
           )}
@@ -96,8 +109,9 @@ const AnalisisFrecuencia = ({ data, estadisticas }: AnalisisFrecuenciaProps) => 
         </div>
         
         {esRangoMasFrecuente && (
-          <div className="mt-2 pt-2 border-t border-orange-200 text-xs text-orange-600 font-semibold text-center">
-            ⭐ Rango más frecuente
+          <div className="mt-2 pt-2 border-t border-orange-200 text-xs text-orange-600 font-semibold text-center flex items-center justify-center gap-1">
+            <Star className="w-3 h-3 fill-orange-600" />
+            Rango más frecuente
           </div>
         )}
       </div>

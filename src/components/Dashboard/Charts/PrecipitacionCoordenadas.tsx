@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { Droplet, BarChart3 } from "lucide-react";
 
 type SitioData = {
   site_id: number;
@@ -67,12 +68,18 @@ const PrecipitacionCoordenadas = ({ data }: Props) => {
         
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-slate-600 text-sm font-medium">💧 Precipitación:</span>
+            <span className="text-slate-600 text-sm font-medium flex items-center gap-1">
+              <Droplet className="w-4 h-4 text-cyan-600" />
+              Precipitación:
+            </span>
             <span className="font-bold text-cyan-700 text-sm">{data.precipitacion} mm</span>
           </div>
           
           <div className="flex items-center justify-between gap-4">
-            <span className="text-slate-600 text-sm font-medium">📊 Reportes:</span>
+            <span className="text-slate-600 text-sm font-medium flex items-center gap-1">
+              <BarChart3 className="w-4 h-4 text-slate-600" />
+              Reportes:
+            </span>
             <span className="font-bold text-slate-700 text-sm">{data.reportes}</span>
           </div>
           

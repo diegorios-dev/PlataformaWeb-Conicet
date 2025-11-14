@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { postNewUser } from "../../../services/userService";
 import { getAllSitios } from "../../../services/sitiosService";
-import { getAllZonas } from "../../../services/zonaService";
 import useNavegation from "../../../hooks/useNavegation";
 import BackButton from "../../BackButton";
+import Toast from "../../ui/Toast";
 import {
   User,
   Plus,
@@ -25,15 +25,16 @@ const FormAddUser = () => {
   });
   
   const [sitios, setSitios] = useState([]);
-  const [zonas, setZonas] = useState([]);
   const [zonaSeleccionada, setZonaSeleccionada] = useState(null);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [toastMessage, setToastMessage] = useState("");
   
   const { goBack, goAddSite } = useNavegation();
 
-  // Cargar sitios y zonas al montar el componente
+  // Cargar sitios al montar el componente
   useEffect(() => {
     fetchSitios();
-    fetchZonas();
   }, []);
 
   const fetchSitios = async () => {
@@ -42,15 +43,6 @@ const FormAddUser = () => {
       setSitios(data);
     } catch (error) {
       console.error("Error al cargar sitios:", error);
-    }
-  };
-
-  const fetchZonas = async () => {
-    try {
-      const data = await getAllZonas();
-      setZonas(data);
-    } catch (error) {
-      console.error("Error al cargar zonas:", error);
     }
   };
 
@@ -91,11 +83,17 @@ const FormAddUser = () => {
       };
       
       await postNewUser(payload);
-      alert("Usuario creado exitosamente");
-      goBack();
+      setToastType("success");
+      setToastMessage("Usuario creado exitosamente");
+      setToastOpen(true);
+      setTimeout(() => {
+        goBack();
+      }, 2000);
     } catch (error) {
       console.error("Error al crear usuario:", error);
-      alert("Error al crear usuario. Revisa la consola para más detalles.");
+      setToastType("error");
+      setToastMessage("Error al crear usuario. Por favor intenta nuevamente.");
+      setToastOpen(true);
     }
   };
 
@@ -255,6 +253,13 @@ const FormAddUser = () => {
           </div>
         </div>
       </div>
+
+      <Toast
+        isOpen={toastOpen}
+        type={toastType}
+        message={toastMessage}
+        onClose={() => setToastOpen(false)}
+      />
     </div>
   );
 };

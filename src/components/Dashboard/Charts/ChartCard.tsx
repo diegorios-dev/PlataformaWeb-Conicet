@@ -1,5 +1,5 @@
 import { useState, memo } from "react";
-import { HelpCircle, Calendar, ChevronDown, Check } from "lucide-react";
+import { HelpCircle, Calendar, ChevronDown, Check, Database, CalendarDays, CalendarClock, CalendarRange, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon } from "lucide-react";
 
 interface ChartCardProps {
   title: string;
@@ -28,13 +28,22 @@ const ChartCard = memo(({
   const [showTooltip, setShowTooltip] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const periodIcons: Record<string, React.ReactNode> = {
+    "todos": <Database className="w-3.5 h-3.5" />,
+    "trimestre": <Calendar className="w-3.5 h-3.5" />,
+    "6meses": <CalendarDays className="w-3.5 h-3.5" />,
+    "anio": <CalendarClock className="w-3.5 h-3.5" />,
+    "5anios": <TrendingUpIcon className="w-3.5 h-3.5" />,
+    "10anios": <CalendarRange className="w-3.5 h-3.5" />,
+  };
+
   const periods = [
-    { value: "todos", label: "Todos los datos", icon: "📊" },
-    { value: "trimestre", label: "Últimos 3 meses", icon: "📅" },
-    { value: "6meses", label: "Últimos 6 meses", icon: "📆" },
-    { value: "anio", label: "Último año", icon: "🗓️" },
-    { value: "5anios", label: "Últimos 5 años", icon: "📈" },
-    { value: "10anios", label: "Últimos 10 años", icon: "📉" },
+    { value: "todos", label: "Todos los datos" },
+    { value: "trimestre", label: "Últimos 3 meses" },
+    { value: "6meses", label: "Últimos 6 meses" },
+    { value: "anio", label: "Último año" },
+    { value: "5anios", label: "Últimos 5 años" },
+    { value: "10anios", label: "Últimos 10 años" },
   ];
 
   const selectedOption = periods.find(p => p.value === selectedPeriod);
@@ -82,9 +91,11 @@ const ChartCard = memo(({
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 shadow-sm hover:shadow-md transition-all duration-200"
             >
-              <Calendar className="w-3.5 h-3.5 text-blue-600" />
+              <div className="text-blue-600">
+                {selectedOption && periodIcons[selectedOption.value]}
+              </div>
               <span className="text-xs font-semibold text-slate-700">
-                {selectedOption?.icon} {selectedOption?.label}
+                {selectedOption?.label}
               </span>
               <ChevronDown className={`w-3.5 h-3.5 text-blue-600 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -106,7 +117,9 @@ const ChartCard = memo(({
                           : 'hover:bg-blue-50 text-slate-700'
                       }`}
                     >
-                      <span className="text-base">{period.icon}</span>
+                      <div className={period.value === selectedPeriod ? 'text-white' : 'text-blue-600'}>
+                        {periodIcons[period.value]}
+                      </div>
                       <span className="flex-1 text-xs font-medium">{period.label}</span>
                       {period.value === selectedPeriod && (
                         <Check className="w-3.5 h-3.5" />

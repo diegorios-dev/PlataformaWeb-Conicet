@@ -8,6 +8,8 @@ import {
   Waves,
   AlertCircle,
   RefreshCw,
+  Globe,
+  Clock,
 } from "lucide-react";
 import BackButton from "../../BackButton";
 import ChartCard from "./ChartCard";
@@ -303,16 +305,19 @@ const ShowCharts = () => {
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               </div>
               <div>
-                <p className="text-slate-800 font-semibold text-sm">
-                  🌐 Conectado al Backend Laravel
+                <p className="text-slate-800 font-semibold text-sm flex items-center gap-2">
+                  <Globe className="w-4 h-4" />
+                  Conectado al Backend Laravel
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-slate-600 text-sm">
-                📊 Datos en tiempo real
+              <p className="text-slate-600 text-sm flex items-center justify-end gap-2">
+                <BarChart3 className="w-4 h-4" />
+                Datos en tiempo real
               </p>
-              <p className="text-slate-500 text-xs">
+              <p className="text-slate-500 text-xs flex items-center justify-end gap-1">
+                <Clock className="w-3 h-3" />
                 Última actualización: {new Date().toLocaleString('es-ES')}
               </p>
             </div>

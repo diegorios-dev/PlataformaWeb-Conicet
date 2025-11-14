@@ -339,7 +339,7 @@ const ShowReport = () => {
             {filtered.map((reporte) => (
               <div
                 key={reporte.id}
-                className="group bg-white/90 backdrop-blur-sm border-2 border-slate-200 rounded-3xl overflow-hidden hover:shadow-2xl hover:border-blue-300 hover:scale-[1.02] transition-all duration-300 flex flex-col"
+                className="group bg-white/90 backdrop-blur-sm border-2 border-slate-200 rounded-3xl overflow-hidden hover:shadow-2xl hover:border-blue-300 hover:scale-[1.01] transition-all duration-300 flex flex-col"
               >
                 {/* Header de la tarjeta */}
                 <div className="bg-gradient-to-r from-slate-50 via-blue-50/50 to-slate-50 p-5 border-b-2 border-slate-200 flex items-center justify-between flex-shrink-0">
@@ -407,7 +407,7 @@ const ShowReport = () => {
                           src={buildImageUrl(reporte.image)}
                           alt="Reporte"
                           onClick={() => openImageModal(buildImageUrl(reporte.image))}
-                          className="w-full h-full object-cover rounded-2xl border-2 border-slate-200 shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer"
+                          className="w-full h-full object-cover rounded-2xl border-2 border-slate-200 shadow-lg hover:scale-101 transition-transform duration-300 cursor-pointer"
                         />
                       ) : (
                         <div className="w-full h-full bg-slate-100 border-2 border-slate-200 rounded-2xl flex items-center justify-center">
@@ -549,7 +549,7 @@ const ShowReport = () => {
 
                   {/* Botón editar */}
                   <button
-                    className={`w-full font-bold py-4 px-4 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 group/btn text-base ${
+                    className={`w-full font-bold py-4 px-4 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-101 group/btn text-base ${
                       reporte.type === "rotura"
                         ? "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-green-600/30"
                         : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-blue-600/30"
@@ -575,7 +575,7 @@ const ShowReport = () => {
           <div className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center">
             <button
               onClick={closeImageModal}
-              className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-full transition-all duration-200 hover:scale-110 z-10"
+              className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-full transition-all duration-200 hover:scale-101 z-10"
             >
               <X size={24} />
             </button>

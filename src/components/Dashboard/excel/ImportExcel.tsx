@@ -11,6 +11,7 @@ import {
   Loader2,
   X,
   Trash2,
+  Import
 } from 'lucide-react';
 import { API_URL } from '../../../config/api';
 
@@ -238,7 +239,7 @@ export default function ImportarExcel() {
                   : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-blue-600/30 hover:shadow-xl'
               }`}
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : '🚀'}
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Import size={18} />}
               {loading ? 'Importando...' : 'Importar Datos'}
             </button>
           </div>
