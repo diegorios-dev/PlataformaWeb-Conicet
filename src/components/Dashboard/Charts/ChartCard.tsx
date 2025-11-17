@@ -1,5 +1,6 @@
 import { useState, memo } from "react";
 import { HelpCircle, Calendar, ChevronDown, Check, Database, CalendarDays, CalendarClock, CalendarRange, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon } from "lucide-react";
+import img from "../../../assets/logo-CONICET_opt.png";
 
 interface ChartCardProps {
   title: string;
@@ -142,9 +143,9 @@ const ChartCard = memo(({
         {/* Marca de agua - Grande y centrada sobre el gráfico */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10">
           <img 
-            src="/logo-watermark.svg" 
+            src={img} 
             alt="Watermark"
-            className="w-150 h-150 opacity-50"
+            className="w-27 h-20 opacity-70"
             style={{ 
               filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))',
             }}
