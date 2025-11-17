@@ -10,6 +10,7 @@ import {
   RefreshCw,
   Globe,
   Clock,
+  FileDown,
 } from "lucide-react";
 import BackButton from "../../BackButton";
 import ChartCard from "./ChartCard";
@@ -28,8 +29,12 @@ import { API_URL } from "../../../config/api";
 
 // Importar servicios de la API
 import useChartsData from "./useChartsData";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { useState } from "react";
 
 const ShowCharts = () => {
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
   const {
     loading, error,
     precipitacionPorZona, reportesPorInstrumento, topSitios, distribucionTipo, evolucionMensual,
@@ -50,6 +55,329 @@ const ShowCharts = () => {
     refreshAll,
   } = useChartsData();
 
+  const exportToPDF = async () => {
+    try {
+      setIsExportingPDF(true);
+      
+      // Crear un nuevo PDF en formato A4 horizontal para mejor aprovechamiento
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      // Función para dibujar el fondo decorativo de cada página
+      const drawPageBackground = () => {
+        const pageWidth = 297;
+        const pageHeight = 210;
+        
+        // Fondo gradiente suave (simulado con rectángulos de diferentes opacidades)
+        pdf.setFillColor(248, 250, 252); // slate-50
+        pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+        
+        // Círculos decorativos en las esquinas
+        pdf.setFillColor(219, 234, 254); // blue-100 con opacidad
+        pdf.circle(10, 10, 30, 'F');
+        pdf.setFillColor(224, 231, 255); // indigo-100
+        pdf.circle(pageWidth - 10, 10, 25, 'F');
+        pdf.setFillColor(232, 245, 233); // green-50
+        pdf.circle(10, pageHeight - 10, 25, 'F');
+        pdf.setFillColor(254, 243, 199); // amber-100
+        pdf.circle(pageWidth - 10, pageHeight - 10, 30, 'F');
+        
+        // Líneas decorativas sutiles
+        pdf.setDrawColor(191, 219, 254); // blue-200
+        pdf.setLineWidth(0.5);
+        pdf.line(0, 30, 60, 30);
+        pdf.line(pageWidth - 60, pageHeight - 30, pageWidth, pageHeight - 30);
+        
+        // Borde decorativo
+        pdf.setDrawColor(148, 163, 184); // slate-400
+        pdf.setLineWidth(0.8);
+        pdf.roundedRect(3, 3, pageWidth - 6, pageHeight - 6, 2, 2, 'S');
+      };
+
+      // Obtener todos los elementos de los gráficos - seleccionar solo los contenedores principales de gráficos
+      const chartsContainer = document.querySelector('.max-w-7xl.mx-auto.space-y-6');
+      if (!chartsContainer) {
+        throw new Error('No se encontró el contenedor de gráficos');
+      }
+
+      // Obtener solo los ChartCard directos (evitar duplicados)
+      // Los gráficos están en divs con grid o como hijos directos del contenedor
+      const allElements = Array.from(chartsContainer.children) as HTMLElement[];
+      const chartCards: HTMLElement[] = [];
+      
+      allElements.forEach(element => {
+        if (element.classList.contains('grid')) {
+          // Es un grid, obtener sus hijos
+          const gridChildren = Array.from(element.children) as HTMLElement[];
+          chartCards.push(...gridChildren);
+        } else {
+          // Es un gráfico individual
+          chartCards.push(element);
+        }
+      });
+      
+      // Configuración para 4 gráficos por página (2x2)
+      const pageWidth = 297; // A4 landscape width in mm
+      const pageHeight = 210; // A4 landscape height in mm
+      const margin = 8;
+      const chartWidth = (pageWidth - (3 * margin)) / 2; // 2 gráficos por fila
+      const chartHeight = (pageHeight - (3 * margin)) / 2; // 2 filas por página
+      
+      // Dibujar fondo de la primera página
+      drawPageBackground();
+      
+      // Función helper para agregar información del período
+      const getPeriodText = (periodo: string) => {
+        const periods: Record<string, string> = {
+          'day': 'Último día',
+          'week': 'Última semana',
+          'month': 'Último mes',
+          'year': 'Último año',
+          'all': 'Todos',
+          'anio': 'Año actual',
+          'año': 'Año actual',
+          'todos': 'Todos'
+        };
+        return periods[periodo] || periodo;
+      };
+
+      // Mapeo de configuraciones para cada gráfico
+      const chartConfigs = [
+        { index: 0, config: getPeriodText(periodoPrecipitacion) },
+        { index: 1, config: 'Todo el período' },
+        { index: 2, config: getPeriodText(periodoTopZonas) },
+        { index: 3, config: getPeriodText(periodoDistribucion) },
+        { index: 4, config: getPeriodText(periodoEvolucion) }, // Evolución Mensual
+        { index: 5, config: `${getPeriodText(periodoCoordenadas)} - ${tipoEventoCoordenadas || 'Todos'}` },
+        { index: 6, config: `${getPeriodText(periodoPatronMensual)} - ${tipoEventoPatronMensual || 'Todos'}` },
+        { index: 7, config: `${getPeriodText(periodoAnalisisFrecuencia)} - Rango: ${rangoAnalisisFrecuencia}` }, // Comparativa Zonas
+        { index: 8, config: `Años: ${selectedYearsComparativa.join(', ') || 'Ninguno'}` }, // Comparativa Año a Año
+      ];
+
+      let chartIndex = 0;
+      let currentPage = 0;
+
+      // Función helper para agregar un gráfico normal (2x2 grid)
+      const addNormalChart = async (card: HTMLElement, index: number) => {
+        const chartElement = card.querySelector('.recharts-wrapper') as HTMLElement;
+        if (!chartElement) return false;
+
+        // Calcular posición en la grilla 2x2
+        const row = Math.floor(chartIndex % 4 / 2);
+        const col = chartIndex % 2;
+
+        // Agregar nueva página si es necesario
+        if (chartIndex > 0 && chartIndex % 4 === 0) {
+          pdf.addPage();
+          drawPageBackground();
+          currentPage++;
+        }
+
+        const xPosition = margin + col * (chartWidth + margin);
+        const yPosition = margin + row * (chartHeight + margin);
+
+        await addChartToPosition(card, chartElement, xPosition, yPosition, chartWidth, chartHeight, index);
+        chartIndex++;
+        return true;
+      };
+
+      // Función para agregar un gráfico en una posición específica
+      const addChartToPosition = async (
+        card: HTMLElement,
+        chartElement: HTMLElement,
+        xPosition: number,
+        yPosition: number,
+        width: number,
+        height: number,
+        configIndex: number
+      ) => {
+        const titleElement = card.querySelector('h3');
+        const subtitleElement = card.querySelector('p');
+        const maxChartImgHeight = height - 14;
+
+        // Dibujar fondo blanco del contenedor con sombra
+        pdf.setFillColor(255, 255, 255);
+        pdf.roundedRect(xPosition, yPosition, width, height, 2, 2, 'F');
+        
+        // Dibujar borde con gradiente simulado
+        pdf.setDrawColor(191, 219, 254);
+        pdf.setLineWidth(0.4);
+        pdf.roundedRect(xPosition - 0.3, yPosition - 0.3, width + 0.6, height + 0.6, 2, 2, 'S');
+        
+        pdf.setDrawColor(147, 197, 253);
+        pdf.setLineWidth(0.5);
+        pdf.roundedRect(xPosition, yPosition, width, height, 2, 2, 'S');
+
+        // Barra superior decorativa
+        pdf.setFillColor(239, 246, 255);
+        pdf.roundedRect(xPosition, yPosition, width, 11, 2, 2, 'F');
+        
+        pdf.setDrawColor(191, 219, 254);
+        pdf.setLineWidth(0.3);
+        pdf.line(xPosition + 2, yPosition + 10.5, xPosition + width - 2, yPosition + 10.5);
+
+        // Título
+        if (titleElement) {
+          pdf.setFontSize(9);
+          pdf.setTextColor(30, 64, 175);
+          pdf.setFont('helvetica', 'bold');
+          const title = titleElement.textContent || '';
+          pdf.text(title, xPosition + 2, yPosition + 5, { maxWidth: width - 50 });
+        }
+
+        // Subtítulo
+        if (subtitleElement) {
+          pdf.setFontSize(6.5);
+          pdf.setTextColor(100, 116, 139);
+          pdf.setFont('helvetica', 'normal');
+          const subtitle = subtitleElement.textContent || '';
+          pdf.text(subtitle, xPosition + 2, yPosition + 8.5, { maxWidth: width - 50 });
+        }
+
+        // Configuración
+        const configInfo = chartConfigs.find(c => c.index === configIndex);
+        if (configInfo) {
+          const configText = `Período: ${configInfo.config}`;
+          pdf.setFontSize(6);
+          pdf.setFont('helvetica', 'bold');
+          const textWidth = pdf.getTextWidth(configText);
+          
+          pdf.setFillColor(220, 252, 231);
+          pdf.roundedRect(xPosition + width - textWidth - 5, yPosition + 2, textWidth + 3, 4.5, 1, 1, 'F');
+          
+          pdf.setTextColor(22, 101, 52);
+          pdf.text(configText, xPosition + width - textWidth - 3.5, yPosition + 5);
+        }
+
+        // Capturar el gráfico completo (incluyendo labels y valores)
+        const canvas = await html2canvas(chartElement, {
+          scale: 2,
+          backgroundColor: '#ffffff',
+          logging: false,
+          useCORS: true,
+          allowTaint: true
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = width - 4;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const finalHeight = Math.min(imgHeight, maxChartImgHeight);
+        
+        pdf.setFillColor(226, 232, 240);
+        pdf.roundedRect(xPosition + 2.5, yPosition + 11.5, imgWidth, finalHeight, 1, 1, 'F');
+        
+        pdf.addImage(imgData, 'PNG', xPosition + 2, yPosition + 11, imgWidth, finalHeight);
+      };
+
+      // Procesar gráficos con lógica especial
+      let processedCharts = 0;
+      
+      for (let i = 0; i < chartCards.length; i++) {
+        const card = chartCards[i] as HTMLElement;
+        const chartElement = card.querySelector('.recharts-wrapper') as HTMLElement;
+        if (!chartElement) continue;
+
+        // Gráfico 4 (Evolución Mensual) - PÁGINA 2 - Ocupa 100% horizontal, 50% vertical (arriba)
+        if (processedCharts === 4) {
+          pdf.addPage();
+          drawPageBackground();
+          
+          const fullWidth = pageWidth - (2 * margin);
+          const halfHeight = (pageHeight - (3 * margin)) / 2;
+          await addChartToPosition(card, chartElement, margin, margin, fullWidth, halfHeight, processedCharts);
+          processedCharts++;
+          continue;
+        }
+
+        // Gráficos 5 y 6 (Precipitación vs Coordenadas + Patrón Mensual Radar) - PÁGINA 2 - Abajo 50%/50%
+        if (processedCharts === 5) {
+          const card2 = chartCards[i + 1] as HTMLElement;
+          const chartElement2 = card2?.querySelector('.recharts-wrapper') as HTMLElement;
+          
+          if (chartElement2) {
+            const halfWidth = (pageWidth - (3 * margin)) / 2;
+            const halfHeight = (pageHeight - (3 * margin)) / 2;
+            const yPosBottom = margin + halfHeight + margin;
+            
+            // Precipitación vs Coordenadas (abajo izquierda)
+            await addChartToPosition(card, chartElement, margin, yPosBottom, halfWidth, halfHeight, processedCharts);
+            processedCharts++;
+            
+            // Patrón Mensual Radar (abajo derecha)
+            await addChartToPosition(card2, chartElement2, margin + halfWidth + margin, yPosBottom, halfWidth, halfHeight, processedCharts);
+            processedCharts++;
+            i++; // Saltar el siguiente porque ya lo procesamos
+            continue;
+          }
+        }
+
+        // Gráficos 7 y 8 (Comparativa Zonas y Comparativa Año a Año) - PÁGINA 3 - Verticalmente 50%/50%
+        if (processedCharts === 7) {
+          const card2 = chartCards[i + 1] as HTMLElement;
+          const chartElement2 = card2?.querySelector('.recharts-wrapper') as HTMLElement;
+          
+          if (chartElement2) {
+            pdf.addPage();
+            drawPageBackground();
+            
+            const fullWidth = pageWidth - (2 * margin);
+            const halfHeight = (pageHeight - (3 * margin)) / 2;
+            
+            // Comparativa Zonas (arriba)
+            await addChartToPosition(card, chartElement, margin, margin, fullWidth, halfHeight, processedCharts);
+            processedCharts++;
+            
+            // Comparativa Año a Año (abajo)
+            await addChartToPosition(card2, chartElement2, margin, margin + halfHeight + margin, fullWidth, halfHeight, processedCharts);
+            processedCharts++;
+            i++; // Saltar el siguiente porque ya lo procesamos
+            continue;
+          }
+        }
+
+        // Gráficos normales (2x2 grid) - PÁGINA 1
+        await addNormalChart(card, processedCharts);
+        processedCharts++;
+      }
+
+      // Agregar pie de página en todas las páginas
+      const totalPages = pdf.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        
+        // Barra inferior decorativa
+        pdf.setFillColor(239, 246, 255); // blue-50
+        pdf.rect(0, pageHeight - 8, pageWidth, 8, 'F');
+        
+        pdf.setDrawColor(191, 219, 254); // blue-200
+        pdf.setLineWidth(0.3);
+        pdf.line(0, pageHeight - 8, pageWidth, pageHeight - 8);
+        
+        // Información del pie de página
+        pdf.setFontSize(7);
+        pdf.setTextColor(71, 85, 105); // slate-600
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(`Estadísticas de Precipitación - Generado: ${new Date().toLocaleString('es-ES')}`, margin, pageHeight - 4);
+        
+        // Número de página
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(30, 64, 175); // blue-700
+        pdf.text(`Página ${i} de ${totalPages}`, pageWidth - margin - 20, pageHeight - 4);
+      }
+
+      // Guardar el PDF
+      pdf.save(`estadisticas-precipitacion-${new Date().toISOString().split('T')[0]}.pdf`);
+      
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      alert('Ocurrió un error al generar el PDF. Por favor, intenta nuevamente.');
+    } finally {
+      setIsExportingPDF(false);
+    }
+  };
  
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 p-6">
@@ -75,15 +403,26 @@ const ShowCharts = () => {
               </div>
             </div>
             
-            {/* Botón de refresh */}
-            <button
-              onClick={refreshAll}
-              disabled={loading}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-            >
-              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-              {loading ? 'Actualizando...' : 'Actualizar'}
-            </button>
+            {/* Botones de acción */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={exportToPDF}
+                disabled={isExportingPDF || loading}
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              >
+                <FileDown className={`w-5 h-5 ${isExportingPDF ? 'animate-bounce' : ''}`} />
+                {isExportingPDF ? 'Generando PDF...' : 'Exportar PDF'}
+              </button>
+              
+              <button
+                onClick={refreshAll}
+                disabled={loading}
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              >
+                <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                {loading ? 'Actualizando...' : 'Actualizar'}
+              </button>
+            </div>
           </div>
         </div>
       </div>

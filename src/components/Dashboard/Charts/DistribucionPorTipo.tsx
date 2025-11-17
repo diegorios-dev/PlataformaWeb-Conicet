@@ -29,8 +29,10 @@ const DistribucionPorTipo = ({ data }: DistribucionPorTipoProps) => {
           data={data}
           cx="50%"
           cy="50%"
-          labelLine={false}
-          label={({ tipo_evento, porcentaje }) => `${tipo_evento}: ${porcentaje}%`}
+          labelLine={true}
+          label={({ tipo_evento, porcentaje, cantidad_reportes }) => 
+            `${tipo_evento}: ${cantidad_reportes} (${porcentaje}%)`
+          }
           outerRadius={100}
           dataKey="cantidad_reportes"
         >

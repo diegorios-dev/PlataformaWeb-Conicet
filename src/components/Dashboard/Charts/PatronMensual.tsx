@@ -108,6 +108,7 @@ const PatronMensual = ({ data }: PatronMensualProps) => {
           fill="#f97316"
           fillOpacity={0.6}
           strokeWidth={2}
+          label={{ fill: '#f97316', fontSize: 11, fontWeight: 'bold' }}
         />
         <Tooltip content={<CustomTooltip />} />
         <Legend 
