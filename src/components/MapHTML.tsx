@@ -57,7 +57,6 @@ const getCustomIcon = (tipo: string, isHealthy: boolean = true) => {
   };
 
   // Si hay instrumentos averiados, usar sombra roja
-  const shadowColor = !isHealthy ? 'rgba(239, 68, 68, 0.15)' : (config[tipo as keyof typeof config] || config['Lluvia']).shadow;
   const iconSrc = !isHealthy ? iconReporteInstrumentoRoto : iconReporteRegular;
 
   return L.divIcon({
@@ -69,8 +68,6 @@ const getCustomIcon = (tipo: string, isHealthy: boolean = true) => {
         display: flex;
         align-items: center;
         justify-content: center;
-        filter: drop-shadow(0 2px 4px ${shadowColor});
-        -webkit-filter: drop-shadow(0 2px 4px ${shadowColor});
         animation: float-marker 3s ease-in-out infinite, pulse-shadow 3s ease-in-out infinite;
         transform: translateZ(0);
         will-change: transform, filter;
@@ -320,26 +317,42 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
         />
 
         {position.map((coords, index) => {
+
           const siteData = siteReports.get(coords.idSitio);
           const totalAmount = siteData?.totalAmount || 0;
           const lastReportAmount = siteData?.lastReportAmount || 0;
           const lastReportDate = siteData?.lastReportDate;
           const yearLabel = selectedYear ? selectedYear.toString() : "Todos los años";
 
-          const formattedDate = lastReportDate 
-            ? new Date(lastReportDate).toLocaleDateString('es-AR', { 
+          const formattedDate = lastReportDate ? new Date(lastReportDate).toLocaleDateString('es-AR', { 
                 year: 'numeric', 
                 month: 'long', 
                 day: 'numeric' 
               })
             : yearLabel;
           
-          const reportYear = lastReportDate 
-            ? new Date(lastReportDate).getFullYear()
-            : (selectedYear || 'N/A');
+          const reportYear = lastReportDate ? new Date(lastReportDate).getFullYear() : (selectedYear || 'N/A');
 
+
+          // Si no hay datos, mostrar marcador especial y popup informativo
           if (!siteData || (totalAmount === 0 && lastReportAmount === 0)) {
-            return null;
+            return (
+              <Marker 
+                key={index} 
+                position={coords.coordenadas}
+                icon={getCustomIcon('nodata', true)} // icono especial para sin datos
+              >
+                <Popup>
+                  <div className="font-sans p-3 min-w-[220px] bg-white rounded-xl text-center">
+                    <div className="flex items-center justify-center mb-3">
+                      <MapPin className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-700 mb-2">{coords.nombreSitio || 'Sitio'}</h3>
+                    <p className="text-gray-500">Sin datos para este período</p>
+                  </div>
+                </Popup>
+              </Marker>
+            );
           }
 
           // Obtener el estado del sitio para determinar el icono

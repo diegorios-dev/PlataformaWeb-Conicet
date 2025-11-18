@@ -7,7 +7,8 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { LoadingSpinner, EmptyState } from "../ui/LoadingState";
 
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
+
 
 export default function BaseHistograma({
   title,
@@ -16,14 +17,18 @@ export default function BaseHistograma({
   color = "#3b82f6",
   filenamePrefix = "histograma",
 }) {
+
+  const [pdfQuality, setPdfQuality] = useState(2);
+  const [generandoPDF, setGenerandoPDF] = useState(false);
   const [periodo, setPeriodo] = useState("mes");
-  const [year, setYear] = useState(2025);
-  const [month, setMonth] = useState(10);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth() + 1); // getMonth() es 0-indexado
   const chartRef = useRef(null);
 
   const fetchData = useCallback(() => {
     if (periodo === "dia") return service(periodo, year, month);
     if (periodo === "mes") return service(periodo, year, null);
+    if (periodo === "año") return service(periodo, year, null);
     return service(periodo, null, null);
   }, [periodo, year, month, service]);
 
@@ -45,14 +50,18 @@ export default function BaseHistograma({
   ];
 
   const generatePDF = async () => {
+    setGenerandoPDF(true);
     try {
       if (!chartRef.current || !data) {
         alert("No hay datos para generar el PDF");
+        setGenerandoPDF(false);
         return;
       }
 
+      // Espera breve para asegurar que el gráfico esté renderizado
+      await new Promise(resolve => setTimeout(resolve, 300));
       const canvas = await html2canvas(chartRef.current as any, {
-        scale: 2,
+        scale: pdfQuality,
         backgroundColor: "#ffffff",
         useCORS: true,
         logging: false,
@@ -60,6 +69,13 @@ export default function BaseHistograma({
 
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+
+      // Metadatos PDF
+      pdf.setProperties({
+        title,
+        author: "precipitacionWeb",
+        keywords: "histograma, precipitacion, reporte, exportacion, pdf"
+      });
 
       pdf.setFontSize(18);
       pdf.text(title, 148, 15, { align: "center" });
@@ -77,11 +93,31 @@ export default function BaseHistograma({
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       pdf.addImage(imgData, "PNG", 18, 35, imgWidth, imgHeight);
 
+      // Tabla de datos numéricos
+      if (Array.isArray(data) && data.length > 0) {
+        const columns = Object.keys(data[0]).map(key => ({ header: key, dataKey: key }));
+        const rows = data.map(row => ({ ...row }));
+        autoTable(pdf, {
+          startY: 40 + imgHeight,
+          head: [columns.map(col => col.header)],
+          body: rows.map(row => columns.map(col => row[col.dataKey])),
+          theme: 'grid',
+          styles: { fontSize: 10 },
+        });
+      }
+
+      // Marca de agua con fecha/hora de generación
+      const fechaHora = new Date().toLocaleString();
+      pdf.setFontSize(8);
+      pdf.text(`Generado el ${fechaHora} por precipitacionWeb`, 18, pdf.internal.pageSize.getHeight() - 8);
+
       const fileName = `${filenamePrefix}-${periodo}-${year}${periodo === "dia" ? `-${month}` : ""}.pdf`;
       pdf.save(fileName);
     } catch (err) {
       console.error('Error al generar PDF:', err);
       alert('No se pudo generar el PDF. Intenta nuevamente.');
+    } finally {
+      setGenerandoPDF(false);
     }
   };
 
@@ -105,14 +141,37 @@ export default function BaseHistograma({
         <div className="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-3xl shadow-xl p-6 md:p-8 mb-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
             <span className="text-base font-semibold text-slate-800">Configuración</span>
-            <button
-              onClick={generatePDF}
-              disabled={!data || loading}
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all flex items-center gap-2 disabled:opacity-60"
-            >
-              <FileText size={18} />
-              Generar PDF
-            </button>
+            <div className="flex items-center gap-3">
+              <label className="text-xs font-medium text-slate-600">Calidad exportación:</label>
+              <select
+                value={pdfQuality}
+                onChange={e => setPdfQuality(Number(e.target.value))}
+                className="px-2 py-1 rounded border border-slate-300 text-xs bg-slate-50 font-medium"
+                disabled={generandoPDF}
+              >
+                <option value={1}>Baja</option>
+                <option value={2}>Media</option>
+                <option value={3}>Alta</option>
+              </select>
+              <button
+                onClick={generatePDF}
+                disabled={!data || loading || generandoPDF}
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all flex items-center gap-2 disabled:opacity-60"
+              >
+                <FileText size={18} />
+                {generandoPDF ? (
+                  <>
+                    <span className="animate-pulse">Generando...</span>
+                    <svg className="w-4 h-4 text-white animate-spin ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                    </svg>
+                  </>
+                ) : (
+                  "Generar PDF"
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Filtros */}
