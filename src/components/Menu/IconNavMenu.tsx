@@ -11,6 +11,7 @@ import {
   ChevronRight,
   LogOut,
   BarChart3,
+  MapPinned,
 } from "lucide-react";
 import useNavegation from "../../hooks/useNavegation";
 
@@ -41,6 +42,7 @@ const IconNavMenu: React.FC = () => {
     goAdminUi,
     goHome,
     goBack,
+    goAddSite,
   } = useNavegation();
 
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -86,6 +88,14 @@ const IconNavMenu: React.FC = () => {
       matches: (p) => p.includes("/dashboard/Zona"),
       color: "text-violet-600",
     },
+     {
+      key: "site_add",
+      label: "Agregar Sitio",
+      icon:  MapPinned,
+      action: goAddSite,
+      matches: (p) => p.includes("/dashboard/site/add"),
+      color: "text-blue-600",
+    },
     {
       key: "import",
       label: "Importar Excel",
@@ -109,7 +119,8 @@ const IconNavMenu: React.FC = () => {
       action: goExportExcel,
       matches: (p) => p.includes("/dashboard/export/excel"),
       color: "text-green-600",
-    },
+    }
+   
   ];
 
   // Active detection fallback (when path doesn't match configured routes)
