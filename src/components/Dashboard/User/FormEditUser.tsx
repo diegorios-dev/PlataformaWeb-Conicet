@@ -211,271 +211,261 @@ const FormEditUser = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-      {/* Fondo */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur"
-        onClick={() => setShowEditModal(false)}
-      />
-
-      {/* CONTENEDOR */}
-      <div className="relative bg-white rounded-2xl w-full max-w-5xl max-h-[92vh] overflow-hidden shadow-xl">
-        {/* HEADER */}
-        <div className="bg-blue-500 px-8 py-6 flex justify-between items-center text-white">
-          <h2 className="text-2xl font-bold">Editar Usuario</h2>
-
+    <div className="fixed inset-0 flex items-center justify-center bg-slate-900/25 backdrop-blur-md z-50">
+      <div className="bg-white rounded-xl border border-blue-100 shadow-2xl max-w-4xl w-full p-0 overflow-hidden animate-fade-in-scale">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-400 px-6 py-4 flex items-center gap-3">
+          <div className="bg-white/30 rounded-full p-2">
+            <User className="text-blue-600" size={24} />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-white font-sans">Editar Usuario</h2>
+            <p className="text-blue-100 text-xs font-sans">Actualiza la información del usuario</p>
+          </div>
           <button
-            className="bg-white/20 hover:bg-white/30 p-2 rounded-xl"
+            className="ml-auto bg-white/10 hover:bg-white/20 p-2 rounded-xl transition-all duration-200"
             onClick={() => setShowEditModal(false)}
           >
-            <X size={20} />
+            <X size={18} className="text-white" />
           </button>
         </div>
 
-        {/* BODY */}
-        <div className="overflow-y-auto px-8 py-6 max-h-[calc(92vh-160px)]">
-          {/* --- INFO PERSONAL --- */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-2 flex items-center gap-2 text-blue-700 text-lg">
-              <User className="text-blue-500" />
-              Información Personal
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="font-semibold text-xs mb-1 block text-gray-600">
-                  Nombre completo
-                </label>
-                <input
-                  className={inputClass}
-                  value={selectedUser.name}
-                  onChange={(e) =>
-                    setSelectedUser({ ...selectedUser, name: e.target.value })
-                  }
-                />
+        {/* Body grid */}
+        <div className="px-6 py-6 font-sans grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Columna 1: Info personal y ubicación */}
+          <div className="space-y-6">
+            <section className="bg-white rounded-lg shadow-sm p-4 border border-blue-50">
+              <div className="flex items-center gap-2 mb-3">
+                <User className="text-blue-500" size={16} />
+                <h3 className="font-semibold text-blue-700 text-base">Información Personal</h3>
               </div>
-
-              <div>
-                <label className="font-semibold text-xs mb-1 block text-gray-600">
-                  Contraseña
-                </label>
-                <input
-                  type="password"
-                  className={inputClass}
-                  placeholder="Dejar vacío para no cambiar"
-                  value={selectedUser.password || ""}
-                  onChange={(e) =>
-                    setSelectedUser({
-                      ...selectedUser,
-                      password: e.target.value
-                    })
-                  }
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="font-semibold text-xs mb-1 block text-gray-600">
-                  Rol
-                </label>
-                <select
-                  className={selectClass}
-                  value={selectedUser.rol}
-                  onChange={(e) =>
-                    setSelectedUser({ ...selectedUser, rol: e.target.value })
-                  }
-                >
-                  <option value="">Seleccionar rol</option>
-                  <option value="admin">Administrador</option>
-                  <option value="user">Usuario</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <hr className="my-6" />
-
-          {/* --- UBICACION --- */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-2 flex items-center gap-2 text-green-700 text-lg">
-              <MapPin className="text-green-500" />
-              Ubicación y Sitio
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Sitio */}
-              <div>
-                <label className="font-semibold text-xs mb-1 block text-gray-600">
-                  Sitio
-                </label>
-                <select
-                  className={selectClass}
-                  value={selectedUser.site_id || ""}
-                  onChange={(e) => {
-                    const id = parseInt(e.target.value);
-                    const sitio = sitios.find((s) => s.id === id);
-                    if (!sitio) return;
-
-                    setSelectedUser({
-                      ...selectedUser,
-                      site_id: id,
-                      site: sitio
-                    });
-                  }}
-                >
-                  <option value="">Seleccionar sitio</option>
-                  {sitios.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.zona?.locality} — {s.latitude}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Zona */}
-              <div>
-                <label className="font-semibold text-xs mb-1 block text-gray-600">
-                  Zona
-                </label>
-                <select
-                  className={selectClass}
-                  value={zonaSeleccionada?.id || ""}
-                  onChange={(e) => {
-                    const id = parseInt(e.target.value);
-                    const zona = zonas.find((z) => z.id === id) || null;
-                    setZonaSeleccionada(zona);
-                    setSelectedUser({
-                      ...selectedUser,
-                      zona_id: id,
-                      zona
-                    });
-                  }}
-                >
-                  <option value="">Seleccionar zona</option>
-                  {zonas.map((z) => (
-                    <option key={z.id} value={z.id}>
-                      {z.locality}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <hr className="my-6" />
-
-          {/* --- INSTRUMENTOS --- */}
-          <div>
-            <h3 className="font-bold mb-3 flex items-center gap-2 text-purple-700 text-lg">
-              <Wrench className="text-purple-500" />
-              Instrumentos
-            </h3>
-
-            {loadingInstruments ? (
-              <p className="text-gray-600 text-center">Cargando...</p>
-            ) : (
-              <>
-                {userInstruments.length === 0 ? (
-                  <p className="text-gray-600">No tiene instrumentos asignados.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {userInstruments.map((inst) => (
-                      <div
-                        key={inst.id}
-                        className="bg-white border rounded-lg px-3 py-2 flex items-center justify-between"
-                      >
-                        <div>
-                          <p className="font-bold text-sm">{inst.name}</p>
-                          <p className="text-xs text-gray-500">
-                            {inst.brand} {inst.model}
-                          </p>
-                        </div>
-
-                        <button
-                          className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"
-                          onClick={() => handleRemoveInstrument(inst.id)}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Agregar instrumento */}
-                <div className="mt-4 bg-blue-50 border border-blue-200 p-3 rounded-lg flex gap-2">
+              <div className="grid grid-cols-1 gap-3">
+                <div>
+                  <label className="font-semibold text-xs mb-1 block text-gray-600">
+                    Nombre completo
+                  </label>
+                  <input
+                    className="w-full px-3 py-2 bg-white border border-blue-100 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 font-sans text-sm"
+                    value={selectedUser.name}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, name: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="font-semibold text-xs mb-1 block text-gray-600">
+                    Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    className="w-full px-3 py-2 bg-white border border-blue-100 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 font-sans text-sm"
+                    placeholder="Dejar vacío para no cambiar"
+                    value={selectedUser.password || ""}
+                    onChange={(e) =>
+                      setSelectedUser({
+                        ...selectedUser,
+                        password: e.target.value
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="font-semibold text-xs mb-1 block text-gray-600">
+                    Rol
+                  </label>
                   <select
-                    className={selectClass}
-                    value={selectedInstrumentId}
-                    onChange={(e) => setSelectedInstrumentId(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-blue-100 rounded-lg text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 font-sans text-sm cursor-pointer"
+                    value={selectedUser.rol}
+                    onChange={(e) =>
+                      setSelectedUser({ ...selectedUser, rol: e.target.value })
+                    }
                   >
-                    <option value="">Seleccionar instrumento</option>
-                    {allInstruments.map((i) => (
-                      <option key={i.id} value={i.id}>
-                        {i.name} — {i.brand}
+                    <option value="">Seleccionar rol</option>
+                    <option value="admin">Administrador</option>
+                    <option value="user">Usuario</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+            <section className="bg-white rounded-lg shadow-sm p-4 border border-green-50">
+              <div className="flex items-center gap-2 mb-3">
+                <MapPin className="text-green-500" size={16} />
+                <h3 className="font-semibold text-green-700 text-base">Ubicación y Sitio</h3>
+              </div>
+              <div className="grid grid-cols-1 gap-3">
+                <div>
+                  <label className="font-semibold text-xs mb-1 block text-gray-600">
+                    Sitio
+                  </label>
+                  <select
+                    className="w-full px-3 py-2 bg-white border border-green-100 rounded-lg text-gray-900 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 transition-all duration-200 font-sans text-sm cursor-pointer"
+                    value={selectedUser.site_id || ""}
+                    onChange={(e) => {
+                      const id = parseInt(e.target.value);
+                      const sitio = sitios.find((s) => s.id === id);
+                      if (!sitio) return;
+                      setSelectedUser({ ...selectedUser, site_id: id, site: sitio });
+                    }}
+                  >
+                    <option value="">Seleccionar sitio</option>
+                    {sitios.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.zona?.locality} — {s.latitude}
                       </option>
                     ))}
                   </select>
-
-                  <button
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-1"
-                    onClick={handleAddInstrument}
-                  >
-                    <Plus size={16} />
-                    Agregar
-                  </button>
                 </div>
-              </>
-            )}
+                <div>
+                  <label className="font-semibold text-xs mb-1 block text-gray-600">
+                    Zona
+                  </label>
+                  <select
+                    className="w-full px-3 py-2 bg-white border border-green-100 rounded-lg text-gray-900 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 transition-all duration-200 font-sans text-sm cursor-pointer"
+                    value={zonaSeleccionada?.id || ""}
+                    onChange={(e) => {
+                      const id = parseInt(e.target.value);
+                      const zona = zonas.find((z) => z.id === id) || undefined;
+                      setZonaSeleccionada(zona || null);
+                      setSelectedUser({ ...selectedUser, zona_id: id, zona });
+                    }}
+                  >
+                    <option value="">Seleccionar zona</option>
+                    {zonas.map((z) => (
+                      <option key={z.id} value={z.id}>
+                        {z.locality}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="bg-gray-50 border border-gray-200 rounded-md p-2 flex flex-col items-start">
+                  <span className="text-xs text-gray-500 mb-1">Latitud</span>
+                  <span className="font-bold text-gray-900 text-xs">
+                    {selectedUser.site?.latitude || 'N/A'}
+                  </span>
+                </div>
+                <div className="bg-gray-50 border border-gray-200 rounded-md p-2 flex flex-col items-start">
+                  <span className="text-xs text-gray-500 mb-1">Longitud</span>
+                  <span className="font-bold text-gray-900 text-xs">
+                    {selectedUser.site?.longitude || 'N/A'}
+                  </span>
+                </div>
+              </div>
+            </section>
           </div>
-        </div>
 
-        {/* FOOTER */}
-        <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3">
-          <button
-            className="px-6 py-3 bg-white border rounded-xl hover:bg-gray-100"
-            onClick={() => setShowEditModal(false)}
-          >
-            <X size={18} /> Cancelar
-          </button>
-
-          <button
-            className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 flex items-center gap-2"
-            onClick={handleSave}
-          >
-            <Save size={18} />
-            Guardar Cambios
-          </button>
-        </div>
-      </div>
-
-      {/* MODAL */}
-      {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-[100]">
-          <div className="bg-white rounded-2xl p-6 text-center max-w-sm">
-            <div
-              className={`w-16 h-16 mx-auto mb-4 rounded-xl flex items-center justify-center ${
-                modalType === "success" ? "bg-green-100" : "bg-red-100"
-              }`}
-            >
-              {modalType === "success" ? (
-                <CheckCircle2 className="w-10 h-10 text-green-600" />
+          {/* Columna 2: Instrumentos y acciones */}
+          <div className="space-y-6 flex flex-col h-full">
+            <section className="bg-white rounded-lg shadow-sm p-4 border border-purple-50 flex-1">
+              <div className="flex items-center gap-2 mb-3">
+                <Wrench className="text-purple-500" size={16} />
+                <h3 className="font-semibold text-purple-700 text-base">Instrumentos</h3>
+              </div>
+              {loadingInstruments ? (
+                <p className="text-gray-600 text-center text-sm">Cargando...</p>
               ) : (
-                <AlertTriangle className="w-10 h-10 text-red-600" />
+                <>
+                  {userInstruments.length === 0 ? (
+                    <p className="text-gray-600 text-sm">No tiene instrumentos asignados.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {userInstruments.map((inst) => (
+                        <div
+                          key={inst.id}
+                          className="bg-white border border-blue-50 rounded-lg px-4 py-3 flex items-center justify-between shadow-sm hover:shadow-md transition-all duration-200"
+                        >
+                          <div>
+                            <p className="font-bold text-xs text-gray-900">{inst.name}</p>
+                            <p className="text-xs text-gray-500">
+                              {inst.brand} {inst.model}
+                            </p>
+                          </div>
+                          <button
+                            className="p-2 bg-gray-100 text-red-500 rounded-md hover:bg-red-100 transition-all duration-200"
+                            onClick={() => handleRemoveInstrument(inst.id)}
+                            title="Quitar instrumento"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="mt-3 bg-blue-50 border border-blue-200 p-2 rounded-md flex gap-2">
+                    <select
+                      className="w-full px-3 py-2 bg-white border border-blue-100 rounded-md text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 font-sans text-sm cursor-pointer"
+                      value={selectedInstrumentId}
+                      onChange={(e) => setSelectedInstrumentId(e.target.value)}
+                    >
+                      <option value="">Seleccionar instrumento</option>
+                      {allInstruments
+                        .filter(i => !userInstruments.some(u => u.id === i.id))
+                        .map((i) => (
+                          <option key={i.id} value={i.id}>
+                            {i.name} — {i.brand}
+                          </option>
+                        ))}
+                    </select>
+                    <button
+                      className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-1 disabled:bg-gray-300 disabled:text-gray-500 transition-all duration-200 text-sm"
+                      onClick={handleAddInstrument}
+                      disabled={!selectedInstrumentId || userInstruments.some(u => u.id === parseInt(selectedInstrumentId))}
+                    >
+                      <Plus size={14} />
+                      Agregar
+                    </button>
+                  </div>
+                </>
               )}
+            </section>
+
+            {/* Footer solo en columna 2 */}
+            <div className="bg-white border-t border-blue-100 px-0 py-4 flex justify-end gap-3">
+              <button
+                className="px-5 py-2 bg-white border border-blue-100 rounded-lg text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-all duration-200 text-sm"
+                onClick={() => setShowEditModal(false)}
+              >
+                <X size={16} /> Cancelar
+              </button>
+              <button
+                className="px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold shadow hover:bg-blue-700 flex items-center gap-2 transition-all duration-200 text-sm"
+                onClick={handleSave}
+              >
+                <Save size={16} /> Guardar Cambios
+              </button>
             </div>
-
-            <p className="text-lg font-semibold">{modalMessage}</p>
           </div>
         </div>
-      )}
 
-      {/* SPINNER GUARDANDO */}
-      {isSaving && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-2xl">
-            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-            <span className="text-lg font-semibold text-blue-700">Guardando cambios...</span>
+        {/* Spinner overlay al guardar */}
+        {isSaving && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/40">
+            <div className="bg-white rounded-xl p-6 flex flex-col items-center shadow-2xl">
+              <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-3" />
+              <span className="text-base font-semibold text-blue-700">Guardando cambios...</span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Modal de éxito/error */}
+        {modalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-[100]">
+            <div className="bg-white rounded-xl p-4 text-center max-w-xs shadow-xl">
+              <div
+                className={`w-12 h-12 mx-auto mb-3 rounded-lg flex items-center justify-center ${modalType === "success" ? "bg-green-100" : "bg-red-100"}`}
+              >
+                {modalType === "success" ? (
+                  <CheckCircle2 className="w-8 h-8 text-green-600" />
+                ) : (
+                  <AlertTriangle className="w-8 h-8 text-red-600" />
+                )}
+              </div>
+              <p className="text-base font-semibold">{modalMessage}</p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
