@@ -82,7 +82,7 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
   const [loadingReports, setLoadingReports] = useState(true);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
-  const [baseMap, setBaseMap] = useState<'original' | 'vegetacion' | 'topografia'>('original');
+  const [baseMap, setBaseMap] = useState<'original' | 'vegetacion' | 'topografia'>('vegetacion');
 
   useEffect(() => {
     const fetchAvailableYears = async () => {
