@@ -101,7 +101,7 @@ const MapHTML = ({ position, loading: externalLoading }: MapHTMLProps) => {
         setAvailableYears(years);
         
         if (years.length > 0) {
-          setSelectedYear(years[0]);Editar Usuario
+          setSelectedYear(years[0]);
         }
       } catch (error) {
         console.error("Error fetching available years:", error);
