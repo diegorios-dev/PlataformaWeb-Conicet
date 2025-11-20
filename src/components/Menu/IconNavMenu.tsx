@@ -43,6 +43,7 @@ const IconNavMenu: React.FC = () => {
     goHome,
     goBack,
     goAddSite,
+    goAdminSites
   } = useNavegation();
 
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -90,10 +91,10 @@ const IconNavMenu: React.FC = () => {
     },
      {
       key: "site_add",
-      label: "Agregar Sitio",
+      label: "Administrar Sitios",
       icon:  MapPinned,
-      action: goAddSite,
-      matches: (p) => p.includes("/dashboard/site/add"),
+      action: goAdminSites,
+      matches: (p) => p.includes("/dashboard/site"),
       color: "text-blue-600",
     },
     {

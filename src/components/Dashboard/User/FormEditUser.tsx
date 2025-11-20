@@ -1,4 +1,39 @@
 import { useState, useEffect } from "react";
+
+// Types
+interface Zona {
+  id: number;
+  locality: string;
+}
+
+interface Site {
+  id: number;
+  latitude: string;
+  longitude: string;
+  zona_id: number;
+  zona?: Zona;
+}
+
+interface Instrument {
+  id: number;
+  name: string;
+  brand?: string;
+  model?: string;
+  tipo_evento?: string;
+  unidad_medida?: { name: string; symbol: string };
+}
+
+interface UserType {
+  id: number;
+  name: string;
+  password?: string;
+  rol: string;
+  site_id?: number;
+  zona_id?: number;
+  site?: Site;
+  zona?: Zona;
+}
+
 import { getAllSitios } from "../../../services/sitiosService";
 import {
   getAllInstruments,
@@ -6,6 +41,7 @@ import {
   assignInstrumentToUser,
   removeInstrumentFromUser
 } from "../../../services/instrumentService";
+
 import {
   User,
   KeyRound,
@@ -22,14 +58,15 @@ import {
   Trash2
 } from "lucide-react";
 
+// Estilos unificados
 const inputClass =
-  "border border-gray-200 bg-white rounded-full px-5 py-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-600 text-gray-800 placeholder-gray-400 transition shadow-sm";
+  "w-full px-4 py-3 bg-white border border-gray-200 rounded-full text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200";
 
 const selectClass =
-  "border border-gray-200 bg-white rounded-full px-5 py-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-600 text-gray-800 transition shadow-sm cursor-pointer";
+  "w-full px-4 py-3 bg-white border border-gray-200 rounded-full text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 cursor-pointer";
 
 const buttonClass =
-  "flex items-center gap-2 px-6 py-3 rounded-full font-medium transition shadow hover:shadow-lg";
+  "flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg";
 
 const FormEditUser = ({
   selectedUser,
@@ -37,260 +74,214 @@ const FormEditUser = ({
   setShowEditModal,
   saveUser,
   onSave
+}: {
+  selectedUser: UserType;
+  setSelectedUser: (u: UserType) => void;
+  setShowEditModal: (v: boolean) => void;
+  saveUser: (u: UserType) => Promise<any>;
+  onSave?: () => void;
 }) => {
-  const [sitios, setSitios] = useState([]);
-  const [zonaSeleccionada, setZonaSeleccionada] = useState(null);
+  // Estados
+  const [sitios, setSitios] = useState<Site[]>([]);
+  const [zonas, setZonas] = useState<Zona[]>([]);
+  const [zonaSeleccionada, setZonaSeleccionada] = useState<Zona | null>(null);
 
-  // Estados para instrumentos
-  const [allInstruments, setAllInstruments] = useState([]);
-  const [userInstruments, setUserInstruments] = useState([]);
-  const [selectedInstrumentId, setSelectedInstrumentId] = useState("");
+  const [allInstruments, setAllInstruments] = useState<Instrument[]>([]);
+  const [userInstruments, setUserInstruments] = useState<Instrument[]>([]);
+  const [pendingAddInstruments, setPendingAddInstruments] = useState<number[]>([]);
+  const [pendingRemoveInstruments, setPendingRemoveInstruments] = useState<number[]>([]);
+  const [selectedInstrumentId, setSelectedInstrumentId] = useState<string>("");
+
   const [loadingInstruments, setLoadingInstruments] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Estados para modal
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"success" | "error">("success");
-  const [modalMessage, setModalMessage] = useState("");
+  const [modalMessage, setModalMessage] = useState<string>("");
 
-  // Cargar sitios al montar el componente
+  // Cargar sitios y zonas
   useEffect(() => {
     const fetchSitios = async () => {
       try {
         const data = await getAllSitios();
         setSitios(data);
-        
-        // Establecer la zona inicial basada en el sitio actual del usuario
+
         if (selectedUser?.site_id) {
-          const sitioActual = data.find(s => s.id === selectedUser.site_id);
-          if (sitioActual) {
-            setZonaSeleccionada(sitioActual.zona);
-          }
+          const sitioActual = data.find((s) => s.id === selectedUser.site_id);
+          if (sitioActual?.zona) setZonaSeleccionada(sitioActual.zona);
         }
-      } catch (error) {
-        console.error("Error al cargar sitios:", error);
+      } catch (e) {
+        console.error("Error al cargar sitios:", e);
       }
     };
+
+    const fetchZonas = async () => {
+      try {
+        const data = await import("../../../services/zonaService");
+        const zonasData = await data.getAllZonas();
+        setZonas(zonasData);
+      } catch (e) {
+        console.error("Error al cargar zonas:", e);
+      }
+    };
+
     fetchSitios();
+    fetchZonas();
   }, [selectedUser?.site_id]);
 
-  // Cargar instrumentos disponibles y del usuario
+  // Cargar instrumentos
   useEffect(() => {
     const fetchInstruments = async () => {
       if (!selectedUser?.id) return;
-      
+
       setLoadingInstruments(true);
       try {
-        // Cargar todos los instrumentos disponibles
-        const allInstrumentsData = await getAllInstruments();
-        setAllInstruments(allInstrumentsData.instruments || allInstrumentsData || []);
+        const all = await getAllInstruments();
+        setAllInstruments(all.instruments || all || []);
 
-        // Cargar instrumentos del usuario
-        const userInstrumentsData = await getUserInstruments(selectedUser.id);
-        setUserInstruments(userInstrumentsData.instruments || []);
-      } catch (error) {
-        console.error("Error al cargar instrumentos:", error);
+        const userInst = await getUserInstruments(selectedUser.id);
+        setUserInstruments(userInst.instruments || []);
+      } catch (e) {
+        console.error("Error al cargar instrumentos:", e);
         showModal("error", "Error al cargar instrumentos");
-      } finally {
-        setLoadingInstruments(false);
       }
+      setLoadingInstruments(false);
     };
 
     fetchInstruments();
   }, [selectedUser?.id]);
 
-  const handleSiteChange = (e) => {
-    const siteId = parseInt(e.target.value);
-    const sitioSeleccionado = sitios.find(s => s.id === siteId);
-    
-    if (sitioSeleccionado) {
-      // Crear copias profundas para evitar mutaciones
-      setSelectedUser({
-        ...selectedUser,
-        site_id: siteId,
-        zona_id: sitioSeleccionado.zona_id,
-        site: { ...sitioSeleccionado },
-        zona: { ...sitioSeleccionado.zona }
-      });
-      setZonaSeleccionada({ ...sitioSeleccionado.zona });
-    }
-  };
-
   const showModal = (type: "success" | "error", message: string) => {
     setModalType(type);
     setModalMessage(message);
     setModalOpen(true);
+
     setTimeout(() => {
       setModalOpen(false);
       if (type === "success") {
         setShowEditModal(false);
-        if (onSave) {
-          onSave(); // Recargar la lista de usuarios
-        }
+        onSave?.();
       }
     }, 3000);
   };
 
   const handleSave = async () => {
+    setIsSaving(true);
     try {
-      // Asegurarnos de que tenemos los IDs correctos
-      const userToSave = {
+      const u = {
         ...selectedUser,
-        site_id: selectedUser.site_id,
-        zona_id: selectedUser.zona_id
+        zona_id: zonaSeleccionada?.id ?? selectedUser.zona_id
       };
-      
-      await saveUser(userToSave);
+
+      await saveUser(u);
+
+      for (const id of pendingAddInstruments) {
+        await assignInstrumentToUser(selectedUser.id, id);
+      }
+
+      for (const id of pendingRemoveInstruments) {
+        await removeInstrumentFromUser(selectedUser.id, id);
+      }
+
+      setPendingAddInstruments([]);
+      setPendingRemoveInstruments([]);
+
       showModal("success", "Usuario actualizado correctamente");
-    } catch (error) {
-      console.error("Error al guardar:", error);
+    } catch (e) {
+      console.error("Error al guardar usuario:", e);
       showModal("error", "Error al actualizar usuario");
     }
+    setIsSaving(false);
   };
 
- const handleAddInstrument = async () => {
-  if (!selectedInstrumentId || !selectedUser?.id) return;
+  const handleAddInstrument = () => {
+    if (!selectedInstrumentId) return;
 
-  try {
-    await assignInstrumentToUser(selectedUser.id, parseInt(selectedInstrumentId));
-    
-    const updatedInstruments = await getUserInstruments(selectedUser.id);
-    setUserInstruments(updatedInstruments.instruments || []);
-    
-    setSelectedInstrumentId('');
-    
-    showModal("success", "Instrumento asignado correctamente");
-    
-  } catch (error: any) {
-    console.error('Error al asignar instrumento:', error);
-    
-    if (error.response?.status === 409) {
-      showModal("error", "El instrumento ya está asignado a este usuario");
-    } else {
-      showModal("error", "No se pudo asignar el instrumento");
-    }
-  }
-};
+    const id = parseInt(selectedInstrumentId);
+    if (!allInstruments.find((i) => i.id === id)) return;
 
-  // Quitar instrumento del usuario
-  const handleRemoveInstrument = async (instrumentId: number) => {
-    if (!selectedUser?.id) return;
-
-    if (!confirm("¿Está seguro de quitar este instrumento del usuario?")) {
-      return;
-    }
-
-    try {
-      await removeInstrumentFromUser(selectedUser.id, instrumentId);
-      
-      // Quitar el instrumento de la lista local
-      setUserInstruments(userInstruments.filter(inst => inst.id !== instrumentId));
-      
-      showModal("success", "Instrumento quitado correctamente");
-    } catch (error) {
-      console.error("Error al quitar instrumento:", error);
-      showModal("error", "Error al quitar instrumento");
-    }
+    setPendingAddInstruments((p) => [...p, id]);
+    setUserInstruments((p) => [...p, allInstruments.find((i) => i.id === id)!]);
+    setSelectedInstrumentId("");
   };
-  const inputClass = "w-full px-4 py-3 bg-white border border-gray-200 rounded-full text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200";
-  const selectClass = "w-full px-4 py-3 bg-white border border-gray-200 rounded-full text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 cursor-pointer";
-  const buttonClass = "flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg";
 
+  const handleRemoveInstrument = (id: number) => {
+    setPendingRemoveInstruments((p) => [...p, id]);
+    setUserInstruments((p) => p.filter((i) => i.id !== id));
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-      {/* Backdrop mejorado con gradiente */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-br from-gray-900/60 via-gray-900/50 to-gray-900/60 backdrop-blur-md"
+      {/* Fondo */}
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur"
         onClick={() => setShowEditModal(false)}
       />
-      
-      {/* Modal Container */}
-      <div className="relative bg-white rounded-2xl shadow-3xl w-full max-w-5xl max-h-[92vh] overflow-hidden ">
-        
-        {/* Header con gradiente */}
-        <div className="bg-blue-500 px-8 py-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                <User className="text-white" size={24} strokeWidth={2.5} />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">
-                  Editar Usuario
-                </h2>
-                <p className="text-blue-100 text-sm mt-0.5">
-                  Actualiza la información del usuario
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowEditModal(false)}
-              className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all duration-200"
-            >
-              <X size={20} />
-            </button>
-          </div>
+
+      {/* CONTENEDOR */}
+      <div className="relative bg-white rounded-2xl w-full max-w-5xl max-h-[92vh] overflow-hidden shadow-xl">
+        {/* HEADER */}
+        <div className="bg-blue-500 px-8 py-6 flex justify-between items-center text-white">
+          <h2 className="text-2xl font-bold">Editar Usuario</h2>
+
+          <button
+            className="bg-white/20 hover:bg-white/30 p-2 rounded-xl"
+            onClick={() => setShowEditModal(false)}
+          >
+            <X size={20} />
+          </button>
         </div>
 
-        {/* Contenido con scroll personalizado */}
-        <div className="overflow-y-auto max-h-[calc(92vh-180px)] px-8 py-6">
-          
-          {/* Sección: Información Personal */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
-                <User className="text-blue-600" size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900">
-                Información Personal
-              </h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Nombre */}
+        {/* BODY */}
+        <div className="overflow-y-auto px-8 py-6 max-h-[calc(92vh-160px)]">
+          {/* --- INFO PERSONAL --- */}
+          <div className="mb-6">
+            <h3 className="font-bold mb-2 flex items-center gap-2 text-blue-700 text-lg">
+              <User className="text-blue-500" />
+              Información Personal
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                  <User className="text-blue-600" size={16} />
-                  Nombre Completo
+                <label className="font-semibold text-xs mb-1 block text-gray-600">
+                  Nombre completo
                 </label>
                 <input
-                  type="text"
                   className={inputClass}
-                  placeholder="Nombre del usuario"
-                  value={selectedUser?.name || ""}
-                  onChange={e => setSelectedUser({ ...selectedUser, name: e.target.value })}
+                  value={selectedUser.name}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, name: e.target.value })
+                  }
                 />
               </div>
 
-              {/* Contraseña */}
               <div>
-                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                  <KeyRound className="text-blue-600" size={16} />
+                <label className="font-semibold text-xs mb-1 block text-gray-600">
                   Contraseña
                 </label>
                 <input
                   type="password"
                   className={inputClass}
-                  placeholder="Nueva contraseña"
-                  value={selectedUser?.password || ""}
-                  onChange={e => setSelectedUser({ ...selectedUser, password: e.target.value })}
-                  minLength={6}
+                  placeholder="Dejar vacío para no cambiar"
+                  value={selectedUser.password || ""}
+                  onChange={(e) =>
+                    setSelectedUser({
+                      ...selectedUser,
+                      password: e.target.value
+                    })
+                  }
                 />
-                <p className="text-xs text-gray-500 mt-1.5 ml-1">
-                  Deja vacío para mantener la contraseña actual
-                </p>
               </div>
 
-              {/* Rol */}
               <div className="md:col-span-2">
-                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                  <Shield className="text-blue-600" size={16} />
-                  Rol de Usuario
+                <label className="font-semibold text-xs mb-1 block text-gray-600">
+                  Rol
                 </label>
                 <select
                   className={selectClass}
-                  value={selectedUser?.rol || ""}
-                  onChange={e => setSelectedUser({ ...selectedUser, rol: e.target.value })}
+                  value={selectedUser.rol}
+                  onChange={(e) =>
+                    setSelectedUser({ ...selectedUser, rol: e.target.value })
+                  }
                 >
                   <option value="">Seleccionar rol</option>
                   <option value="admin">Administrador</option>
@@ -300,234 +291,193 @@ const FormEditUser = ({
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="border-t border-gray-200 my-8" />
+          <hr className="my-6" />
 
-          {/* Sección: Ubicación */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
-                <MapPin className="text-green-600" size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900">
-                Ubicación y Sitio
-              </h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* --- UBICACION --- */}
+          <div className="mb-6">
+            <h3 className="font-bold mb-2 flex items-center gap-2 text-green-700 text-lg">
+              <MapPin className="text-green-500" />
+              Ubicación y Sitio
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Sitio */}
               <div>
-                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                  <Locate className="text-green-600" size={16} />
-                  Sitio de Trabajo
+                <label className="font-semibold text-xs mb-1 block text-gray-600">
+                  Sitio
                 </label>
-                <select className={selectClass} value={selectedUser?.site_id || ""}>
+                <select
+                  className={selectClass}
+                  value={selectedUser.site_id || ""}
+                  onChange={(e) => {
+                    const id = parseInt(e.target.value);
+                    const sitio = sitios.find((s) => s.id === id);
+                    if (!sitio) return;
+
+                    setSelectedUser({
+                      ...selectedUser,
+                      site_id: id,
+                      site: sitio
+                    });
+                  }}
+                >
                   <option value="">Seleccionar sitio</option>
-                  {sitios.map(sitio => (
-                    <option key={sitio.id} value={sitio.id}>
-                      {sitio.zona?.locality} - Lat: {sitio.latitude}
+                  {sitios.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.zona?.locality} — {s.latitude}
                     </option>
                   ))}
                 </select>
-                <p className="text-xs text-gray-500 mt-1.5 ml-1">
-                  La zona se actualiza automáticamente
-                </p>
               </div>
 
               {/* Zona */}
               <div>
-                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                  <MapPin className="text-green-600" size={16} />
-                  Zona Asignada
+                <label className="font-semibold text-xs mb-1 block text-gray-600">
+                  Zona
                 </label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-500 cursor-not-allowed"
-                  value={zonaSeleccionada?.locality || ""}
-                  disabled
-                />
-              </div>
-
-              {/* Coordenadas */}
-              <div className="md:col-span-2">
-                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
-                  <MapPinned className="text-green-600" size={16} />
-                  Coordenadas del Sitio
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl px-4 py-3 border border-gray-200">
-                    <p className="text-xs font-medium text-gray-500 mb-1">Latitud</p>
-                    <p className="text-sm font-bold text-gray-900">{selectedUser?.site?.latitude || 'N/A'}</p>
-                  </div>
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl px-4 py-3 border border-gray-200">
-                    <p className="text-xs font-medium text-gray-500 mb-1">Longitud</p>
-                    <p className="text-sm font-bold text-gray-900">{selectedUser?.site?.longitude || 'N/A'}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-gray-200 my-8" />
-
-          {/* Sección: Instrumentos */}
-          <div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
-                <Wrench className="text-purple-600" size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900">
-                Instrumentos Asignados
-              </h3>
-            </div>
-
-            {/* Lista de instrumentos */}
-            <div className="mb-6">
-              {loadingInstruments ? (
-                <div className="text-center py-8 text-gray-500">
-                  <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                  Cargando instrumentos...
-                </div>
-              ) : userInstruments.length === 0 ? (
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 text-center border border-gray-200">
-                  <Wrench className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-600 font-medium">No tiene instrumentos asignados</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {userInstruments.map((instrument) => (
-                    <div
-                      key={instrument.id}
-                      className="group bg-white border border-gray-200 rounded-2xl px-5 py-4 hover:border-blue-300 hover:shadow-lg transition-all duration-200"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center">
-                              <Wrench className="text-blue-600" size={18} />
-                            </div>
-                            <div>
-                              <p className="font-bold text-gray-900">{instrument.name}</p>
-                              <p className="text-sm text-gray-600">
-                                {instrument.brand} {instrument.model && `· ${instrument.model}`}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex flex-wrap gap-2 ml-13">
-                            {instrument.tipo_evento && (
-                              <span className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
-                                {instrument.tipo_evento}
-                              </span>
-                            )}
-                            {instrument.unidad_medida && (
-                              <span className="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
-                                {instrument.unidad_medida.name} ({instrument.unidad_medida.symbol})
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => handleRemoveInstrument(instrument.id)}
-                          className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-all duration-200 ml-4"
-                          title="Quitar instrumento"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Agregar instrumento */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
-              <label className="text-sm font-bold text-gray-900 mb-3 block">
-                Asignar Nuevo Instrumento
-              </label>
-              <div className="flex gap-3">
                 <select
-                  className={`${selectClass} flex-1`}
-                  value={selectedInstrumentId}
-                  onChange={(e) => setSelectedInstrumentId(e.target.value)}
-                  disabled={allInstruments.length === 0}
+                  className={selectClass}
+                  value={zonaSeleccionada?.id || ""}
+                  onChange={(e) => {
+                    const id = parseInt(e.target.value);
+                    const zona = zonas.find((z) => z.id === id) || null;
+                    setZonaSeleccionada(zona);
+                    setSelectedUser({
+                      ...selectedUser,
+                      zona_id: id,
+                      zona
+                    });
+                  }}
                 >
-                  <option value="">
-                    {allInstruments.length === 0 ? "No hay instrumentos disponibles" : "Seleccionar instrumento"}
-                  </option>
-                  {allInstruments.map((instrument) => (
-                    <option key={instrument.id} value={instrument.id}>
-                      {instrument.name} {instrument.brand && `- ${instrument.brand}`}
+                  <option value="">Seleccionar zona</option>
+                  {zonas.map((z) => (
+                    <option key={z.id} value={z.id}>
+                      {z.locality}
                     </option>
                   ))}
                 </select>
-                <button
-                  onClick={handleAddInstrument}
-                  disabled={!selectedInstrumentId}
-                  className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl disabled:shadow-none"
-                >
-                  <Plus size={18} />
-                  Agregar
-                </button>
               </div>
             </div>
           </div>
+
+          <hr className="my-6" />
+
+          {/* --- INSTRUMENTOS --- */}
+          <div>
+            <h3 className="font-bold mb-3 flex items-center gap-2 text-purple-700 text-lg">
+              <Wrench className="text-purple-500" />
+              Instrumentos
+            </h3>
+
+            {loadingInstruments ? (
+              <p className="text-gray-600 text-center">Cargando...</p>
+            ) : (
+              <>
+                {userInstruments.length === 0 ? (
+                  <p className="text-gray-600">No tiene instrumentos asignados.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {userInstruments.map((inst) => (
+                      <div
+                        key={inst.id}
+                        className="bg-white border rounded-lg px-3 py-2 flex items-center justify-between"
+                      >
+                        <div>
+                          <p className="font-bold text-sm">{inst.name}</p>
+                          <p className="text-xs text-gray-500">
+                            {inst.brand} {inst.model}
+                          </p>
+                        </div>
+
+                        <button
+                          className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"
+                          onClick={() => handleRemoveInstrument(inst.id)}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Agregar instrumento */}
+                <div className="mt-4 bg-blue-50 border border-blue-200 p-3 rounded-lg flex gap-2">
+                  <select
+                    className={selectClass}
+                    value={selectedInstrumentId}
+                    onChange={(e) => setSelectedInstrumentId(e.target.value)}
+                  >
+                    <option value="">Seleccionar instrumento</option>
+                    {allInstruments.map((i) => (
+                      <option key={i.id} value={i.id}>
+                        {i.name} — {i.brand}
+                      </option>
+                    ))}
+                  </select>
+
+                  <button
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-1"
+                    onClick={handleAddInstrument}
+                  >
+                    <Plus size={16} />
+                    Agregar
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
-        {/* Footer fijo */}
-        <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-5 border-t border-gray-200">
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={() => setShowEditModal(false)}
-              className="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl transition-all duration-200 border border-gray-200 shadow-sm hover:shadow"
-            >
-              <X size={18} />
-              Cancelar
-            </button>
-            <button
-              onClick={handleSave}
-              className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              <Save size={18} />
-              Guardar Cambios
-            </button>
-          </div>
+        {/* FOOTER */}
+        <div className="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3">
+          <button
+            className="px-6 py-3 bg-white border rounded-xl hover:bg-gray-100"
+            onClick={() => setShowEditModal(false)}
+          >
+            <X size={18} /> Cancelar
+          </button>
+
+          <button
+            className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 flex items-center gap-2"
+            onClick={handleSave}
+          >
+            <Save size={18} />
+            Guardar Cambios
+          </button>
         </div>
       </div>
 
-      {/* Modal de confirmación mejorado */}
+      {/* MODAL */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[60] flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full transform transition-all duration-300">
-            <div className="flex flex-col items-center text-center">
-              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 ${
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-[100]">
+          <div className="bg-white rounded-2xl p-6 text-center max-w-sm">
+            <div
+              className={`w-16 h-16 mx-auto mb-4 rounded-xl flex items-center justify-center ${
                 modalType === "success" ? "bg-green-100" : "bg-red-100"
-              }`}>
-                {modalType === "success" ? (
-                  <CheckCircle2 className="w-10 h-10 text-green-600" strokeWidth={2.5} />
-                ) : (
-                  <AlertTriangle className="w-10 h-10 text-red-600" strokeWidth={2.5} />
-                )}
-              </div>
-
-              <h3 className={`text-2xl font-bold mb-2 ${
-                modalType === "success" ? "text-green-900" : "text-red-900"
-              }`}>
-                {modalType === "success" ? "¡Perfecto!" : "Error"}
-              </h3>
-              <p className={`text-base ${
-                modalType === "success" ? "text-green-700" : "text-red-700"
-              }`}>
-                {modalMessage}
-              </p>
+              }`}
+            >
+              {modalType === "success" ? (
+                <CheckCircle2 className="w-10 h-10 text-green-600" />
+              ) : (
+                <AlertTriangle className="w-10 h-10 text-red-600" />
+              )}
             </div>
+
+            <p className="text-lg font-semibold">{modalMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* SPINNER GUARDANDO */}
+      {isSaving && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-2xl">
+            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
+            <span className="text-lg font-semibold text-blue-700">Guardando cambios...</span>
           </div>
         </div>
       )}
     </div>
   );
-    
 };
 
 export default FormEditUser;

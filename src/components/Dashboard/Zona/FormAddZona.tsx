@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { postNewZona, getAllZonas } from "../../../services/zonaService";
+import { postNewZona, getAllZonas, updateZona, deleteZona } from "../../../services/zonaService";
 import BackButton from "../../BackButton";
 import Toast from "../../ui/Toast";
-import { Plus, MapPin, Loader2, MapPinned, AlertCircle } from "lucide-react";
+import { Plus, MapPin, Loader2, MapPinned, AlertCircle, Pencil, Trash2, X } from "lucide-react";
 import IconNavMenu from "../../Menu/IconNavMenu";
 
 type Zona = {
@@ -11,6 +11,11 @@ type Zona = {
 };
 
 const FormAddZona = () => {
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [zonaToEdit, setZonaToEdit] = useState<Zona | null>(null);
+  const [zonaToDelete, setZonaToDelete] = useState<Zona | null>(null);
+  const [editLocality, setEditLocality] = useState("");
   const [zonas, setZonas] = useState<Zona[]>([]);
   const [formData, setFormData] = useState({
     locality: "",
@@ -80,6 +85,77 @@ const FormAddZona = () => {
       <div className="w-full max-w-7xl mx-auto">
         <BackButton />
 
+        {/* Modal editar zona */}
+        {editModalOpen && zonaToEdit && (
+          <div className="fixed inset-0 z-[2000] bg-black/30 backdrop-blur-sm flex items-center justify-center">
+            <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative">
+              <button className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100" onClick={() => setEditModalOpen(false)}>
+                <X size={20} />
+              </button>
+              <h2 className="text-xl font-bold mb-4 text-blue-700">Editar Zona</h2>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  try {
+                    await updateZona(zonaToEdit.id, { locality: editLocality });
+                    setEditModalOpen(false);
+                    showToast("success", "Zona modificada correctamente");
+                    await fetchZonas();
+                  } catch (err) {
+                    showToast("error", "Error al modificar la zona");
+                  }
+                }}
+                className="space-y-6"
+              >
+                <div>
+                  <label className="text-sm font-bold text-slate-700 mb-2 block">Nombre de la zona</label>
+                  <input
+                    type="text"
+                    value={editLocality}
+                    onChange={e => setEditLocality(e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+                <div className="flex gap-3 justify-end">
+                  <button type="button" className="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 font-bold" onClick={() => setEditModalOpen(false)}>Cancelar</button>
+                  <button type="submit" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700">Guardar cambios</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal eliminar zona */}
+        {deleteModalOpen && zonaToDelete && (
+          <div className="fixed inset-0 z-[2000] bg-black/30 backdrop-blur-sm flex items-center justify-center">
+            <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative">
+              <button className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100" onClick={() => setDeleteModalOpen(false)}>
+                <X size={20} />
+              </button>
+              <h2 className="text-xl font-bold mb-4 text-red-700">Eliminar Zona</h2>
+              <p className="mb-6 text-slate-700">¿Estás seguro que deseas eliminar la zona <span className="font-bold">{zonaToDelete.locality}</span>? Esta acción no se puede deshacer.</p>
+              <div className="flex gap-3 justify-end">
+                <button type="button" className="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 font-bold" onClick={() => setDeleteModalOpen(false)}>Cancelar</button>
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700"
+                  onClick={async () => {
+                    try {
+                      await deleteZona(zonaToDelete.id);
+                      setDeleteModalOpen(false);
+                      showToast("success", "Zona eliminada correctamente");
+                      await fetchZonas();
+                    } catch (err) {
+                      showToast("error", "Error al eliminar la zona");
+                    }
+                  }}
+                >Eliminar</button>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Header estilo ShowReport */}
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-4">
@@ -146,6 +222,12 @@ const FormAddZona = () => {
           </form>
         </div>
 
+        {/* Gestión de Zonas */}
+        <div className="mt-10">
+          {/* Aquí se muestra el manager de zonas */}
+          {/* ...existing code... */}
+        </div>
+
         {/* Lista de zonas estilo ShowReport */}
         <div className="bg-white/90 backdrop-blur-md border-2 border-slate-200 rounded-3xl shadow-xl overflow-hidden">
           <div className="bg-gradient-to-r from-slate-50 to-blue-50 p-6 border-b-2 border-slate-200">
@@ -197,9 +279,32 @@ const FormAddZona = () => {
                         <span className="text-xs text-slate-500">ID: {zona.id}</span>
                       </div>
                     </div>
-                    <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-medium">
-                      #{index + 1}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="p-2 rounded-lg hover:bg-blue-100 transition-colors"
+                        title="Editar zona"
+                        onClick={() => {
+                          setZonaToEdit(zona);
+                          setEditLocality(zona.locality);
+                          setEditModalOpen(true);
+                        }}
+                      >
+                        <Pencil size={18} className="text-blue-500" />
+                      </button>
+                      <button
+                        className="p-2 rounded-lg hover:bg-red-100 transition-colors"
+                        title="Eliminar zona"
+                        onClick={() => {
+                          setZonaToDelete(zona);
+                          setDeleteModalOpen(true);
+                        }}
+                      >
+                        <Trash2 size={18} className="text-red-500" />
+                      </button>
+                      <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-medium">
+                        #{index + 1}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>

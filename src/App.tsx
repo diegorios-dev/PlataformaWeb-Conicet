@@ -21,6 +21,7 @@ import ProtectedRoute from "./components/PrivatedRoute/ProtectedRoute";
 import ExportExcel from "./components/Dashboard/excel/ExportExcel";
 import FormAddRotura from "./components/Dashboard/Report/FormAddRotura";
 import FormResolveRotura from "./components/Dashboard/Report/FormResolveRotura";
+import AdminSitios from "./components/Dashboard/site/AdminSitios";
 
 export default function App() {
   return (
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="/dashboard/site/add" element={<ProtectedRoute><FormAddSite /></ProtectedRoute>} />
           <Route path="/dashboard/import/excel" element={<ProtectedRoute><ImportExcel /></ProtectedRoute>} />
           <Route path="/dashboard/export/excel" element={<ProtectedRoute><ExportExcel /></ProtectedRoute>} />
+          <Route path="/dashboard/site" element={<ProtectedRoute><AdminSitios /></ProtectedRoute>} />
 
         </Routes>
       </UserProvider>

@@ -7,12 +7,12 @@ const API_URL_SERVICE = API_URL;
 const DEFAULT_TTL = 5 * 60 * 1000; // 5 minutos
 
 
-export const postNewZona = async (newZona) => {
+export const postNewZona = async (newZona: { locality: string }) => {
   try {
 
     let zonaExists = null;
     try {
-      zonaExists = await getZonaByLocality(newZona);
+      zonaExists = await getZonaByLocality(newZona.locality);
     } catch (error) {
       console.log("No se encontró la zona, se procederá a crearla.");
     }
@@ -46,11 +46,11 @@ export const getAllZonas = async () => {
   }
 };
 
-export const getZonaByLocality = async (zona) => {
+export const getZonaByLocality = async (zona: string) => {
   try {
-    const consulta = API_URL + "/zona/locality/" + encodeURIComponent(zona.locality);
+    const consulta = API_URL + "/zona/locality/" + encodeURIComponent(zona);
     console.log(" 2 Consulta a realizar: ", consulta);
-    const { data } = await axios.get(`${API_URL_SERVICE}/zona/locality/${encodeURIComponent(zona.locality)}`);
+    const { data } = await axios.get(`${API_URL_SERVICE}/zona/locality/${encodeURIComponent(zona)}`);
     return data;
   } catch (error) {
     console.log("Error al obtener la zona por localidad:", error);
@@ -91,4 +91,26 @@ export const getTopZonasPorRegistro = async (periodo = "anio", limit = 8) => {
     },
     DEFAULT_TTL
   );
+};
+
+export const updateZona = async (id: string, data: { locality: string }) => {
+  try {
+    const response = await axios.put(`${API_URL_SERVICE}/zonas/${id}`, data);
+    invalidateEstadisticasCache();
+    return response.data;
+  } catch (error) {
+    console.error("Error al editar la zona:", error);
+    throw error;
+  }
+};
+
+export const deleteZona = async (id: string) => {
+  try {
+    const response = await axios.delete(`${API_URL_SERVICE}/zonas/${id}`);
+    invalidateEstadisticasCache();
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar la zona:", error);
+    throw error;
+  }
 };

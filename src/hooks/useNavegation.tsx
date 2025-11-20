@@ -36,6 +36,7 @@ const useNavegation = () => {
 
    const goResolveRotura = useCallback(() => navigate("/dashboard/administration/report/rotura/resolve"), [navigate]);
 
+   const goAdminSites = useCallback(() => navigate("/dashboard/site"), [navigate]);
 
   const goEditReport = (report: any) => {
     handleSelectReport(report)
@@ -82,7 +83,19 @@ const useNavegation = () => {
 
     return (
         {
-            goHome , goAdminUi , goLogin , goReports , goConfigUsers , goEditReport , goAddUser , goBack, goAddZona , goAHistograma, goHeatMap, goAddSite, goEstadisticas , goExportExcel , goImportExcel, goAddRotura, goResolveRotura
+            goAdminSites,
+            goHome , 
+            goAdminUi , 
+            goLogin , 
+            goReports , 
+            goConfigUsers , 
+            goEditReport , 
+            goAddUser , 
+            goBack, 
+            goAddZona , 
+            goAHistograma, 
+            goHeatMap, 
+            goAddSite, goEstadisticas , goExportExcel , goImportExcel, goAddRotura, goResolveRotura
         }
     )
 }

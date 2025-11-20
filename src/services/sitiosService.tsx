@@ -116,3 +116,24 @@ export const postNewSite = async (newSite: Record<string, any>) => {
   }
 };
 
+export const updateSite = async (id: number, data: Record<string, any>) => {
+  try {
+    const { response } = await axios.put(`${API_URL_SERVICE}/site/${id}`, data);
+    invalidateEstadisticasCache();
+    return response;
+  } catch (error) {
+    console.error("Error al editar sitio:", error);
+    throw error;
+  }
+};
+
+export const deleteSite = async (id: number) => {
+  try {
+    const { response } = await axios.delete(`${API_URL_SERVICE}/site/${id}`);
+    invalidateEstadisticasCache();
+    return response;
+  } catch (error) {
+    console.error("Error al eliminar sitio:", error);
+    throw error;
+  }
+};

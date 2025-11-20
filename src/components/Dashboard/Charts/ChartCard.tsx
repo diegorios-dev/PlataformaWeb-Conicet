@@ -1,6 +1,6 @@
 import { useState, memo } from "react";
 import { HelpCircle, Calendar, ChevronDown, Check, Database, CalendarDays, CalendarClock, CalendarRange, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon } from "lucide-react";
-import img from "../../../assets/logo-CONICET_opt.png";
+import img from "../../../../public/assets/logo-CONICET_opt.png";
 
 interface ChartCardProps {
   title: string;

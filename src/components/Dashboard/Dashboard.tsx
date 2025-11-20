@@ -7,7 +7,7 @@ import DashboardButton from "./DashboardButton";
 
 const Dashboard = () => {
   const [currentView, setCurrentView] = useState<"menu" | "instrumentos">("menu");
-  const { goReports, goConfigUsers, goBack, goAddZona, goImportExcel ,goEstadisticas , goExportExcel, goAddSite } = useNavegation();
+  const { goReports, goConfigUsers, goBack, goAddZona, goImportExcel ,goEstadisticas , goExportExcel, goAdminSites } = useNavegation();
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/40 to-indigo-50/30 flex flex-col relative overflow-hidden">
@@ -67,15 +67,15 @@ const Dashboard = () => {
                 <DashboardButton
                   onClick={goAddZona}
                   icon={MapPin}
-                  title="Agregar Zona"
+                  title="Administrar Zonas"
                   description="Configura nuevas ubicaciones"
                   colorScheme="violet"
                 />
 
                 <DashboardButton
-                  onClick={goAddSite}
+                  onClick={goAdminSites}
                   icon={MapPinned}
-                  title="Agregar Sitio"
+                  title="Administrar Sitios"
                   description="Registra nuevos sitios de medición"
                   colorScheme="blue"
                 />

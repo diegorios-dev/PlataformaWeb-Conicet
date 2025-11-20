@@ -7,7 +7,7 @@ import ViewOptionMenu from "./Menu/ViewOptionMenu";
 import ViewComplementMenu from "./Menu/ViewComplementMenu";
 import { OPTION_INSTRUMENTS } from "../constants/optionInstruments";
 import { LogIn, LogOut, Wrench, CheckCircle, AlertCircle } from "lucide-react";
-import img from "../assets/logo-CONICET_opt.png";
+import img from "../../public/assets/logo-CONICET_opt.png";
 
 const Home = () => {
   const { goAHistograma} = useNavegation();
@@ -68,9 +68,6 @@ const Home = () => {
   
   const btnWarn =
     `${btnBase} bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 focus:ring-amber-500 shadow-sm hover:shadow-md active:scale-[0.98]`;
-  
-  const btnGhost =
-    `${btnBase} bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 focus:ring-slate-300`;
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 relative overflow-hidden">
