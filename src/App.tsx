@@ -1,27 +1,27 @@
 import "leaflet/dist/leaflet.css";
-import Home from "./components/Home";
+import Home from "./features/home/components/Home";
 import { Routes, Route} from "react-router-dom";
-import Login from "./components/Login/Login";
+import Login from "./features/Login/components/Login";
 import { UserProvider } from "./context/UserContext";
-import Dashboard from "./components/Dashboard/Dashboard";
-import ShowReport from "./components/Dashboard/Report/ShowReport";
-import ViewManagementUsers from "./components/Dashboard/User/ViewManagementUsers";
-import FormEditReport from "./components/Dashboard/Report/FormEditReport";
-import FormAddUser from "./components/Dashboard/User/FormAddUser";
-import FormAddZona from "./components/Dashboard/Zona/FormAddZona";
-import ShowHistograma from "./components/histograma/ShowHistograma";
-import HistogramaLluvia from "./components/histograma/HistogramaLluvia";
-import HistogramaNieve from "./components/histograma/HistogramaNieve";
-import HistogramaCaudalimetro from "./components/histograma/HistogramaCaudalimetro";
-import HeatMapView from "./components/MapHeatView";
-import FormAddSite from "./components/Dashboard/site/FormAddSite";
-import ShowCharts from "./components/Dashboard/Charts/ShowCharts";
-import ImportExcel from "./components/Dashboard/excel/ImportExcel";
-import ProtectedRoute from "./components/PrivatedRoute/ProtectedRoute";
-import ExportExcel from "./components/Dashboard/excel/ExportExcel";
-import FormAddRotura from "./components/Dashboard/Report/FormAddRotura";
-import FormResolveRotura from "./components/Dashboard/Report/FormResolveRotura";
-import AdminSitios from "./components/Dashboard/site/AdminSitios";
+import Dashboard from "./features/dashboard/components/Dashboard";
+import ShowReport from "./features/report/components/show/ShowReport";
+import ViewManagementUsers from "./features/user/components/ViewManagementUsers";
+import FormEditReport from "./features/report/components/edit/FormEditReport";
+import FormAddUser from "./features/user/components/FormAddUser";
+import FormAddZona from "./features/zona/components/FormAddZona";
+import ShowHistograma from "./features/histograma/components/ShowHistograma";
+import HistogramaLluvia from "./features/histograma/components/HistogramaLluvia";
+import HistogramaNieve from "./features/histograma/components/HistogramaNieve";
+import HistogramaCaudalimetro from "./features/histograma/components/HistogramaCaudalimetro";
+import HeatMapView from "./features/map/components/MapHeatView";
+import FormAddSite from "./features/site/components/add/FormAddSite";
+import { ShowCharts } from "./features/Charts";
+import ImportExcel from "./features/excel/components/ImportExcel";
+import ProtectedRoute from "./features/PrivatedRoute/ProtectedRoute";
+import ExportExcel from "./features/excel/components/ExportExcel";
+import FormAddRotura from "./features/report/components/add/FormAddRotura";
+import FormResolveRotura from "./features/report/components/resolveRotura/FormResolveRotura";
+import AdminSitios from "./features/site/components/administration/AdminSitios";
 
 export default function App() {
   return (

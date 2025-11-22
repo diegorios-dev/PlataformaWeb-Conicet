@@ -1,103 +1,103 @@
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
-import { useCallback } from "react";
 
-const useNavegation = () => {  
-  const {handleSelectReport} = useUserContext();
-  
+const useNavigation = () => {
   const navigate = useNavigate();
+  const { handleSelectReport } = useUserContext();
 
-  // ⚡ Memorizar todas las funciones de navegación
-  const goHome = useCallback(() => navigate("/"), [navigate]);
+  // ➤ Helper simple
+  const go = (path: string) => navigate(path);
 
-  const goAdminUi = useCallback(() => navigate("/dashboard"), [navigate]);
+  return {
+    go: {
+      home: () => go("/"),
+      login: () => go("/login"),
 
-  const goLogin = useCallback(() => navigate("/login"), [navigate]);
+      dashboard: () => go("/dashboard"),
 
-  const goReports = useCallback(() => navigate("/dashboard/administration/report"), [navigate]);
+      sites: {
+        list: () => go("/dashboard/site"),
+        add: () => go("/dashboard/site/add"),
+      },
 
-  const goConfigUsers = useCallback(() => navigate("/dashboard/administration/user"), [navigate]);
+      zonas: {
+        list: () => go("/dashboard/Zona/FormAddZona.tsx"),
+      },
 
-  const goAddZona = useCallback(() => navigate("/dashboard/Zona/FormAddZona.tsx"), [navigate]);
+      reports: {
 
-  const goHeatMap = useCallback(() => navigate("/components/MapHeatView.tsx"), [navigate]);
+        list: () => go("/dashboard/administration/report"),
+        addRotura: () => go("/dashboard/administration/report/rotura/add"),
+        resolveRotura: () => go("/dashboard/administration/report/rotura/resolve"),
+        edit: (report: any) => {
+          handleSelectReport(report);
+          go("/dashboard/administration/report/edit");
+        }
+        
+      },
 
-  const goAHistograma = useCallback(() => navigate("/histograma"), [navigate]);
+      users: {
+        list: () => go("/dashboard/administration/user"),
+        add: () => go("/dashboard/administration/user/add"),
+      },
 
-   const goAddSite = useCallback(() => navigate("/dashboard/site/add"), [navigate]);
+      excel: {
+        export: () => go("/dashboard/export/excel"),
+        import: () => go("/dashboard/import/excel"),
+      },
 
-   const goExportExcel = useCallback(() => navigate("/dashboard/export/excel"), [navigate]);
+      histograma: {
+        list: () => go("/histograma"),
+        lluvia: () => go("/histograma/lluvia"),
+        nieve: () => go("/histograma/nieve"),
+        caudalimetro: () => go("/histograma/caudalimetro"),
+      },
 
-   const goImportExcel = useCallback(() => navigate("/dashboard/import/excel"), [navigate]);
+      stats: () => go("/estadisticas"),
 
-   const goEstadisticas = () => navigate("/estadisticas")
+      heatmap: () => go("/components/MapHeatView.tsx"),
 
-   const goAddRotura = useCallback(() => navigate("/dashboard/administration/report/rotura/add"), [navigate]);
 
-   const goResolveRotura = useCallback(() => navigate("/dashboard/administration/report/rotura/resolve"), [navigate]);
+      back: () => {
+        const current = window.location.pathname;
 
-   const goAdminSites = useCallback(() => navigate("/dashboard/site"), [navigate]);
+        if (current.includes("/dashboard/administration/report/edit"))
+          return go("/dashboard/administration/report");
 
-  const goEditReport = (report: any) => {
-    handleSelectReport(report)
-    navigate("/dashboard/administration/report/edit")
-  } 
+        if (current.includes("/dashboard/administration/user/add"))
+          return go("/dashboard/administration/user");
 
-  const goAddUser = () => {
-    navigate("/dashboard/administration/user/add")
-  }
-  
-  const goBack = () => {
-    const currentPath = window.location.pathname;
-    
-    // Usar las funciones go existentes de forma estática
-    if (currentPath.includes("/dashboard/administration/report/edit")) {
-      goReports();
-    } else if (currentPath.includes("/dashboard/administration/user/add")) {
-      goConfigUsers();
-    } else if (currentPath.includes("/dashboard/administration/user") || 
-               currentPath.includes("/dashboard/administration/report")) {
-      goAdminUi();
-    } else if (currentPath.includes("/estadisticas")) {
-      goAdminUi(); // Estadísticas ahora vuelve al dashboard
-    } else if (currentPath.includes("/dashboard/site/add")) {
-      goAdminUi();
-    } else if (currentPath.includes("/dashboard/Zona")) {
-      goAdminUi();
-    } else if (currentPath.includes("/dashboard/import/excel")) {
-      goAdminUi();
-    } else if (currentPath.includes("/dashboard/export/excel")) {
-      goAdminUi();
-    } else if (currentPath.includes("/dashboard")) {
-      goHome();
-    } else if (currentPath.includes("/histograma") || 
-               currentPath.includes("/MapHeatView")) {
-      goHome();
-    } else if (currentPath.includes("/login")) {
-      goHome();
-    } else {
-      goHome();
+        if (current.includes("/dashboard/administration"))
+          return go("/dashboard");
+
+        if (current.includes("/estadisticas"))
+          return go("/dashboard");
+
+        if (current.includes("/dashboard/site/add"))
+          return go("/dashboard");
+
+        if (current.includes("/dashboard/Zona"))
+          return go("/dashboard");
+
+        if (current.includes("/dashboard/import/excel"))
+          return go("/dashboard");
+
+        if (current.includes("/dashboard/export/excel"))
+          return go("/dashboard");
+
+        if (current.includes("/dashboard"))
+          return go("/");
+
+        if (current.includes("/histograma") || current.includes("/MapHeatView"))
+          return go("/");
+
+        if (current.includes("/login"))
+          return go("/");
+
+        return go("/");
+      }
     }
   };
+};
 
-
-    return (
-        {
-            goAdminSites,
-            goHome , 
-            goAdminUi , 
-            goLogin , 
-            goReports , 
-            goConfigUsers , 
-            goEditReport , 
-            goAddUser , 
-            goBack, 
-            goAddZona , 
-            goAHistograma, 
-            goHeatMap, 
-            goAddSite, goEstadisticas , goExportExcel , goImportExcel, goAddRotura, goResolveRotura
-        }
-    )
-}
-
-export default useNavegation
+export default useNavigation;

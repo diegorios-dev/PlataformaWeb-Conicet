@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_URL } from "../config/api";
 import { invalidateEstadisticasCache } from "./estadisticasService";
-import { getCachedData } from "../utils/simpleCache";
+import { getCachedData } from "../shared/utils/simpleCache";
 
 const API_URL_SERVICE = API_URL;
 const DEFAULT_TTL = 5 * 60 * 1000; // 5 minutos
