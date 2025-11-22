@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { login } from '../services/userService';
+import { storageService } from '@shared/services';
 
 type User = {
   rol: string;
@@ -15,15 +16,14 @@ function useUser() {
 
   // Cargar usuario desde localStorage al iniciar
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = storageService.getUser();
     if (storedUser) {
       try {
-        const userData = JSON.parse(storedUser);
-        setUser(userData);
-        validateLogin(userData);
+        setUser(storedUser);
+        validateLogin(storedUser);
       } catch (error) {
         console.error("Error al cargar usuario desde localStorage:", error);
-        localStorage.removeItem('user');
+        storageService.removeUser();
       }
     }
   }, []);
@@ -51,7 +51,7 @@ function useUser() {
       validateLogin(fetchedUser);
       
       if (fetchedUser) {
-        localStorage.setItem('user', JSON.stringify(fetchedUser));
+        storageService.setUser(fetchedUser);
       }
     } catch (err: any) {
       console.error("Error al validar usuario:", err);
@@ -87,7 +87,7 @@ function useUser() {
     setPassword("");
     setError(null);
    
-    localStorage.removeItem('user');
+    storageService.removeUser();
   };
 
   const getUsername = () => {

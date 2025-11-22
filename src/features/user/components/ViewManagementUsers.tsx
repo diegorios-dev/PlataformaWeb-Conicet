@@ -10,7 +10,7 @@ import SearchUser from "./searchUser";
 import useNavegation from "@hooks/useNavegation";
 import BackButton from "@shared/ui/buttons/BackButton";
 import IconNavMenu from "@features/menu/components/IconNavMenu";
-
+import { DashboardLayout } from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import {
   UserPlus,
   Pencil,
@@ -26,6 +26,7 @@ import {
   CheckCircle2,
   AlertTriangle,
 } from "lucide-react";
+import Dashboard from "@/features/dashboard/components/Dashboard";
 
 type ModalType = "success" | "error" | "confirm" | null;
 
@@ -134,11 +135,10 @@ const ViewManagementUsers = () => {
   const isEmpty = !users || users.length === 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+    <DashboardLayout contentClassName="">
+    
       <IconNavMenu />
-      <div className="w-full max-w-7xl mx-auto">
-        <BackButton />
-        
+      <div className="w-full max-w-7xl mx-auto">  
         {/* Header mejorado - copiado de ShowReport */}
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-4">
@@ -445,7 +445,7 @@ const ViewManagementUsers = () => {
           onSave={fetchUsers}
         />
       )}
-    </div>
+    </DashboardLayout>
   );
 };
 

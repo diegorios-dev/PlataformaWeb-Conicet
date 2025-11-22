@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-import BackButton from '@shared/ui/buttons/BackButton';
+
 import type { ImportResponse, ImportResult } from '../types/interfaces';
 import IconNavMenu from '@features/menu/components/IconNavMenu';
 
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 
 import { API_URL } from '@config/api';
+import { DashboardLayout } from '@/shared/ui/layouts/DashboardLayout';
 
 
 
@@ -121,7 +122,7 @@ export default function ImportarExcel() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+    <DashboardLayout contentClassName="">
       <IconNavMenu />
       <div className="w-full max-w-7xl mx-auto">
 
@@ -343,6 +344,6 @@ export default function ImportarExcel() {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

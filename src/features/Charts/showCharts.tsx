@@ -12,7 +12,7 @@ import {
   Clock,
   FileDown,
 } from "lucide-react";
-import BackButton from "@shared/ui/buttons/BackButton";
+import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 import ChartCard from "./ChartCard";
 import PrecipitacionPorZona from "./PrecipitacionPorZona";
 import ReportesPorInstrumento from "./ReportesPorInstrumento";
@@ -24,7 +24,6 @@ import PatronMensual from "./PatronMensual";
 import AnalisisFrecuencia from "./AnalisisFrecuencia";
 import ComparativaAnual from "./ComparativaAnual";
 import YearPicker from "./YearPicker";
-import IconNavMenu from "@features/menu/components/IconNavMenu";
 import { API_URL } from "@config/api";
 
 // Importar servicios de la API
@@ -380,9 +379,7 @@ const ShowCharts = () => {
   };
  
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 p-6">
-
-      <IconNavMenu />
+    <DashboardLayout contentClassName="">
 
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
@@ -391,11 +388,11 @@ const ShowCharts = () => {
           <div className="flex items-center justify-between">
 
             <div className="flex items-center gap-4">
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 backdrop-blur-xl border border-white/40">
-                <BarChart3 className="w-10 h-10 text-blue-700" />
+              <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/30">
+                <BarChart3 className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+                <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight ">
                   Estadísticas y Análisis
                 </h1>
                 <p className="text-slate-600 mt-1">
@@ -690,7 +687,7 @@ const ShowCharts = () => {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

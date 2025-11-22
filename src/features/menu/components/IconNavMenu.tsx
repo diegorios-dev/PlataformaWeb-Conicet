@@ -92,20 +92,20 @@ const IconNavMenu: React.FC = () => {
       color: "text-indigo-600",
     },
     {
-      key: "estadisticas",
-      label: "Estadísticas",
-      icon: TrendingUp,
-      action: go.stats,
-      matches: (p) => p.includes("/estadisticas"),
-      color: "text-blue-600",
-    },
-    {
       key: "export",
       label: "Exportar Excel",
       icon: FileSpreadsheet,
       action: go.excel.export,
       matches: (p) => p.includes("/dashboard/export/excel"),
       color: "text-green-600",
+    },
+    {
+      key: "estadisticas",
+      label: "Estadísticas",
+      icon: TrendingUp,
+      action: go.stats,
+      matches: (p) => p.includes("/estadisticas"),
+      color: "text-blue-600",
     }
   ];
 

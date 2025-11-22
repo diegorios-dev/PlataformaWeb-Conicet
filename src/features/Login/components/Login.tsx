@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useUserContext } from "@context/UserContext";
 import useNavegation from "@hooks/useNavegation";
+import { storageService } from '@shared/services';
 import { Lock, LogIn, ArrowLeft, AlertCircle } from "lucide-react";
 
 // Ruta absoluta para assets en /public/
@@ -13,7 +14,7 @@ const Login = () => {
 
   useEffect(() => {
     if (isLogin) {
-      sessionStorage.setItem('newLogin', 'true');
+      storageService.setNewLogin();
       go.home();
     }
   }, [isLogin, go.home]);

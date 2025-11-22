@@ -4,7 +4,7 @@ import { useSiteFilters } from "../../hooks/useSiteFilters";
 import  useSiteForm  from "../../hooks/useSiteForm";
 import { useSiteDelete } from "../../hooks/useSiteDelete";
 import Toast from "@shared/ui/Loading/Toast";
-import IconNavMenu from "@features/menu/components/IconNavMenu";
+import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 import { SiteHeader } from "./SiteHeader";
 import { SiteSearchBar } from "./SiteSearchBar";
 import { SiteTable } from "./SiteTable";
@@ -60,9 +60,8 @@ const AdminSitios = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+    <DashboardLayout contentClassName="">
       <div className="w-full max-w-7xl mx-auto">
-        <IconNavMenu />
 
         <SiteHeader count={filteredSites.length} />
 
@@ -113,7 +112,7 @@ const AdminSitios = () => {
         message={toastMessage}
         onClose={() => setToastOpen(false)}
       />
-    </div>
+    </DashboardLayout>
   );
 };
 

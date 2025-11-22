@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useNavegation from "@hooks/useNavegation";
+import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 
 import { FileText, Users, MapPin, LogOut, Shield , TrendingUp, Upload, MapPinned} from "lucide-react";
 import { FileSpreadsheet } from "lucide-react";
@@ -13,7 +14,7 @@ const Dashboard = () => {
   const { go } = useNavegation();
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/40 to-indigo-50/30 flex flex-col relative overflow-hidden">
+    <DashboardLayout showBackButton={false} className="flex flex-col relative overflow-hidden">
       
       {/* Decoración de fondo sutil */}
       <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] pointer-events-none"></div>
@@ -131,7 +132,7 @@ const Dashboard = () => {
 
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

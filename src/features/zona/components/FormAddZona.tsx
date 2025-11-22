@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { postNewZona ,getAllZonas, updateZona, deleteZona} from "@services/zonaService";
-import BackButton from "@shared/ui/buttons/BackButton";
 import Toast from "@shared/ui/Loading/Toast";
 import { Plus, MapPin, Loader2, MapPinned, AlertCircle, Pencil, Trash2, X } from "lucide-react";
-import IconNavMenu from "@features/menu/components/IconNavMenu";
+import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 
 type Zona = {
   id: number;
@@ -80,8 +79,7 @@ const FormAddZona = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
-      <IconNavMenu />
+    <DashboardLayout contentClassName="">
       <div className="w-full max-w-7xl mx-auto">
 
         {/* Modal editar zona */}
@@ -334,7 +332,7 @@ const FormAddZona = () => {
         message={toastMessage}
         onClose={() => setToastOpen(false)}
       />
-    </div>
+    </DashboardLayout>
   );
 };
 

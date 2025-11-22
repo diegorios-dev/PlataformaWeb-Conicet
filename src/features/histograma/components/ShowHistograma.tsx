@@ -1,4 +1,4 @@
-import BackButton from "@shared/ui/buttons/BackButton";
+import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 import { BarChart, CloudRain, CloudSnow, Waves } from "lucide-react";
 import useNavigation from "@hooks/useNavegation";
 
@@ -7,9 +7,8 @@ export default function ShowHistograma() {
   const {go} = useNavigation();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+    <DashboardLayout contentClassName="p-4 md:p-6 lg:p-8">
       <div className="w-full max-w-5xl mx-auto">
-        <BackButton />
 
         {/* Header alineado con ShowReport */}
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -63,6 +62,6 @@ export default function ShowHistograma() {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

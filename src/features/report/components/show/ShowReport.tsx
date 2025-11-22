@@ -7,6 +7,7 @@ import { useAudioPlayer } from "../../hooks/useAudioPlayer";
 import { useImageModal } from "../../hooks/useImageModal";
 import { filterByType, filterByPrecipitation, filterByZona, filterBySearch } from "../../utils/reportFilters";
 
+import {DashboardLayout} from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import IconNavMenu from "@features/menu/components/IconNavMenu";
 import { ReportHeader } from "./ReportHeader";
 import { SearchBar } from "./SearchBar";
@@ -46,7 +47,7 @@ const ShowReport = () => {
   }, [reports, search, filterType, filterPrecipitation, filterZona]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+   <DashboardLayout contentClassName="">
       <div className="w-full max-w-7xl mx-auto">
         <IconNavMenu />
         
@@ -80,7 +81,7 @@ const ShowReport = () => {
       </div>
 
       <ImageModal open={open} image={image} onClose={closeModal} />
-    </div>
+    </DashboardLayout>
   );
 };
 

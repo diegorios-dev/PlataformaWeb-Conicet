@@ -17,6 +17,7 @@ import BackButton from "@shared/ui/buttons/BackButton";
 import { API_URL } from "@config/api";
 import IconNavMenu from "@features/menu/components/IconNavMenu";
 import type { Zona, Usuario } from "../types/interfaces";
+import { DashboardLayout } from "@/shared/ui/layouts/DashboardLayout";
 
 
 export default function ExportExcel() {
@@ -140,7 +141,7 @@ export default function ExportExcel() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-50/30 p-4 md:p-6 lg:p-8">
+    <DashboardLayout contentClassName="">
       <IconNavMenu />
       <div className="w-full max-w-7xl mx-auto">
 
@@ -357,6 +358,6 @@ export default function ExportExcel() {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

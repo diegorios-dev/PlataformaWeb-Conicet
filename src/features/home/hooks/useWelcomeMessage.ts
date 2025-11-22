@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
+import { storageService } from '@shared/services';
 
 export function useWelcomeMessage(isLogin: boolean) {
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
-    const isNewLogin = sessionStorage.getItem('newLogin');
-    if (isLogin && isNewLogin === 'true') {
+    const isNewLogin = storageService.getNewLogin();
+    if (isLogin && isNewLogin) {
       setShowWelcome(true);
-      sessionStorage.removeItem('newLogin');
+      storageService.removeNewLogin();
       const timer = setTimeout(() => setShowWelcome(false), 3000);
       return () => clearTimeout(timer);
     }
