@@ -2,7 +2,8 @@ import "leaflet/dist/leaflet.css";
 import Home from "./features/home/components/Home";
 import { Routes, Route} from "react-router-dom";
 import Login from "./features/Login/components/Login";
-import { UserProvider } from "./context/UserContext";
+import { AuthProvider } from "@context/AuthContext";
+import { ReportProvider } from "@context/ReportContext";
 import Dashboard from "./features/dashboard/components/Dashboard";
 import ShowReport from "./features/report/components/show/ShowReport";
 import ViewManagementUsers from "./features/user/components/ViewManagementUsers";
@@ -26,8 +27,9 @@ import AdminSitios from "./features/site/components/administration/AdminSitios";
 export default function App() {
   return (
     <div>
-      <UserProvider>
-        <Routes>
+      <AuthProvider>
+        <ReportProvider>
+          <Routes>
           {/* Rutas públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login/>} />
@@ -52,8 +54,9 @@ export default function App() {
           <Route path="/dashboard/export/excel" element={<ProtectedRoute><ExportExcel /></ProtectedRoute>} />
           <Route path="/dashboard/site" element={<ProtectedRoute><AdminSitios /></ProtectedRoute>} />
 
-        </Routes>
-      </UserProvider>
+          </Routes>
+        </ReportProvider>
+      </AuthProvider>
     </div>
   );
 }

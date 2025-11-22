@@ -14,14 +14,14 @@ const Dashboard = () => {
   const { go } = useNavegation();
 
   return (
-    <DashboardLayout showBackButton={false} className="flex flex-col relative overflow-hidden">
+    <DashboardLayout >
       
       {/* Decoración de fondo sutil */}
       <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] pointer-events-none"></div>
     
 
       {/* Contenido principal */}
-      <div className="flex flex-1 items-center justify-center p-6 md:p-8">
+      <div className="flex flex-1 items-center justify-center">
         <div className="w-full max-w-5xl">
           
           {/* Header modernizado */}

@@ -1,9 +1,9 @@
 import { useCallback } from "react";
-import { useUserContext } from "@context/UserContext";
+import { useAuth } from "@context/AuthContext";
 import useNavegation from "@hooks/useNavegation";
 
 export function useLogout() {
-  const { handleLogout } = useUserContext();
+  const { handleLogout } = useAuth();
   const { go } = useNavegation();
 
   return useCallback(() => {

@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useUserContext } from "@context/UserContext";
+import { useAuth } from "@context/AuthContext";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,7 +10,7 @@ interface ProtectedRouteProps {
  * Si el usuario NO está logueado, lo redirige al login
  */
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isLogin } = useUserContext();
+  const { isLogin } = useAuth();
 
   // Si no está logueado, redirigir al login
   if (!isLogin) {

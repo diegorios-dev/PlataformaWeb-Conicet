@@ -1,4 +1,4 @@
-import { useUserContext } from "@context/UserContext";
+import { useReportSelection } from "@context/ReportContext";
 import { useNavigate } from "react-router-dom";
 import { useResolveRotura } from "../../hooks/useResolveRotura";
 import { CheckCircle2 } from "lucide-react";
@@ -10,7 +10,7 @@ import { FormActions } from "./FormActions";
 import { WarningInfo } from "./WarningInfo";
 
 const FormResolveRotura = () => {
-  const { report } = useUserContext();
+  const { report } = useReportSelection();
   const navigate = useNavigate();
 
   const {

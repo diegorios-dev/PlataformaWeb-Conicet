@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { updateReporte } from "@services/reportService";
-import { useUserContext } from "@context/UserContext";
+import { useReportSelection } from "@context/ReportContext";
 import useNavegation from "@hooks/useNavegation";
 
 import { useSitiosYzonas } from "../../hooks/useSitiosYzonas";
@@ -16,7 +16,7 @@ import ButtonLoading from "./ButtonLoading";
 
 const FormEditReport = () => {
 
-  const { report } = useUserContext();
+  const { report } = useReportSelection();
   const { go } = useNavegation();
 
   const [loading, setLoading] = useState(false);

@@ -10,7 +10,7 @@ import useNavegation from "@hooks/useNavegation";
 import ViewOptionMenu from "@features/menu/components/ViewOptionMenu";
 import ViewComplementMenu from "@features/menu/components/ViewComplementMenu";
 
-import { useUserContext } from "@context/UserContext";
+import { useAuth } from "@context/AuthContext";
 import { OPTION_INSTRUMENTS } from "@shared/utils/optionInstruments";
 import { btnPrimary, btnWarn } from "../constants/sidebarButtons";
 import { getOptionComplements } from "../constants/optionComplements";
@@ -22,7 +22,7 @@ const Home = () => {
   
   const [selectOptionMenu, setSelectOptionMenu] = useState("Lluvia");
   const { sitios, loading, error } = useSitio(selectOptionMenu);
-  const { isLogin, getUsername } = useUserContext();
+  const { isLogin, getUsername } = useAuth();
   const { go } = useNavegation();
 
   const showWelcome = useWelcomeMessage(isLogin);

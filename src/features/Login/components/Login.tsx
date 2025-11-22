@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useUserContext } from "@context/UserContext";
+import { useAuth } from "@context/AuthContext";
 import useNavegation from "@hooks/useNavegation";
 import { storageService } from '@shared/services';
 import { Lock, LogIn, ArrowLeft, AlertCircle } from "lucide-react";
@@ -8,7 +8,7 @@ import { Lock, LogIn, ArrowLeft, AlertCircle } from "lucide-react";
 const img = "/assets/logo-CONICET_opt.png";
 
 const Login = () => {
-  const { password, handleSavePassword, fetchGetUserByPassword, isLogin, error, loading } = useUserContext();
+  const { password, handleSavePassword, fetchGetUserByPassword, isLogin, error, loading } = useAuth();
 
   const { go } = useNavegation();
 

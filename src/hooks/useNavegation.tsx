@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useUserContext } from "../context/UserContext";
+import { useReportSelection } from "@context/ReportContext";
 
 const useNavigation = () => {
   const navigate = useNavigate();
-  const { handleSelectReport } = useUserContext();
+  const { handleSelectReport } = useReportSelection();
 
   // ➤ Helper simple
   const go = (path: string) => navigate(path);
