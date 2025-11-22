@@ -1,6 +1,6 @@
-import BackButton from "../../../shared/ui/buttons/BackButton";
+import BackButton from "@shared/ui/buttons/BackButton";
 import { BarChart, CloudRain, CloudSnow, Waves } from "lucide-react";
-import useNavigation from "../../../hooks/useNavegation";
+import useNavigation from "@hooks/useNavegation";
 
 export default function ShowHistograma() {
 

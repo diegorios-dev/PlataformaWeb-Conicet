@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import L from "leaflet";
 import "leaflet.heat";
 import "leaflet/dist/leaflet.css";
-import BackButton from "../../../shared/ui/buttons/BackButton";
-import { getReportes } from "../../../services/reportService";
-import { getAllEvents, type Event } from "../../../services/eventService";
+import BackButton from "@shared/ui/buttons/BackButton";
+import { getReportes } from "@services/reportService";
+import { getAllEvents, type Event } from "@services/eventService";
 import { BeatLoader } from "react-spinners";
 import { Droplet, Snowflake, Activity, MapPin, TrendingUp, TrendingDown } from "lucide-react";
-import "../../../App.css"
+import "@/App.css"
 
 const HeatMapView = () => {
   const [events, setEvents] = useState<Event[]>([]);

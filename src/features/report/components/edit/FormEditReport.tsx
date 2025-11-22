@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { updateReporte } from "../../../../services/reportService";
-import { useUserContext } from "../../../../context/UserContext";
-import useNavegation from "../../../../hooks/useNavegation";
+import { updateReporte } from "@services/reportService";
+import { useUserContext } from "@context/UserContext";
+import useNavegation from "@hooks/useNavegation";
 
 import { useSitiosYzonas } from "../../hooks/useSitiosYzonas";
 import { useWaterQualityGroups } from "../../hooks/useWaterQualityGroups";

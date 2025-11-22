@@ -3,8 +3,8 @@ import { useSites } from "../../hooks/useSites";
 import { useSiteFilters } from "../../hooks/useSiteFilters";
 import  useSiteForm  from "../../hooks/useSiteForm";
 import { useSiteDelete } from "../../hooks/useSiteDelete";
-import Toast from "../../../../shared/ui/Loading/Toast";
-import IconNavMenu from "../../../menu/components/IconNavMenu";
+import Toast from "@shared/ui/Loading/Toast";
+import IconNavMenu from "@features/menu/components/IconNavMenu";
 import { SiteHeader } from "./SiteHeader";
 import { SiteSearchBar } from "./SiteSearchBar";
 import { SiteTable } from "./SiteTable";
@@ -12,7 +12,7 @@ import { SiteFormModal } from "./SiteFormModal";
 import { SiteDeleteModal } from "./SiteDeleteModal";
 import { SiteEmptyState } from "./SiteEmptyState";
 import { SiteInfoBanner } from "./SiteInfoBanner";
-import useNavigation from "../../../../hooks/useNavegation";
+import useNavigation from "@hooks/useNavegation";
 
 const AdminSitios = () => {
   const [toastOpen, setToastOpen] = useState(false);

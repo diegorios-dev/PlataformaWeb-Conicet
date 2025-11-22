@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getReportsForSites } from "../../../services/sitiosService";
+import { getReportsForSites } from "@services/sitiosService";
 
 export function useSiteReports(position, siteIds, selectedYear) {
     

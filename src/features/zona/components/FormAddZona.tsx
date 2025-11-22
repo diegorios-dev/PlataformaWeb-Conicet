@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { postNewZona ,getAllZonas, updateZona, deleteZona} from "../../../services/zonaService";
-import BackButton from "../../../shared/ui/buttons/BackButton";
-import Toast from "../../../shared/ui/Loading/Toast";
+import { postNewZona ,getAllZonas, updateZona, deleteZona} from "@services/zonaService";
+import BackButton from "@shared/ui/buttons/BackButton";
+import Toast from "@shared/ui/Loading/Toast";
 import { Plus, MapPin, Loader2, MapPinned, AlertCircle, Pencil, Trash2, X } from "lucide-react";
-import IconNavMenu from "../../menu/components/IconNavMenu";
+import IconNavMenu from "@features/menu/components/IconNavMenu";
 
 type Zona = {
   id: number;

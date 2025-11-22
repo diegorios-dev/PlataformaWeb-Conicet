@@ -4,12 +4,12 @@ import {
   saveUser,
   getAllUsers,
   deleteUser,
-} from "../../../services/userService";
+} from "@services/userService";
 import FormEditUser from "./FormEditUser";
 import SearchUser from "./searchUser";
-import useNavegation from "../../../hooks/useNavegation";
-import BackButton from "../../../shared/ui/buttons/BackButton";
-import IconNavMenu from "../../menu/components/IconNavMenu";
+import useNavegation from "@hooks/useNavegation";
+import BackButton from "@shared/ui/buttons/BackButton";
+import IconNavMenu from "@features/menu/components/IconNavMenu";
 
 import {
   UserPlus,

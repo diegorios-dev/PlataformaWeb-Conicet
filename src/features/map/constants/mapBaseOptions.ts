@@ -5,8 +5,10 @@ export const mapBaseOptions = [
 ];
 
 import L from "leaflet";
-import iconHealthy from "../../../public/assets/iconReporteRegular.png";
-import iconBroken from "../../../public/assets/iconReporteIntrumentroRoto.png";
+
+// Rutas absolutas para assets en /public/
+const iconHealthy = "/assets/iconReporteRegular.png";
+const iconBroken = "/assets/iconReporteIntrumentroRoto.png";
 
 export const getCustomIcon = (isHealthy: boolean = true) => {
   const iconSrc = isHealthy ? iconHealthy : iconBroken;

@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { EmptyState } from "../../../../shared/ui/Loading/LoadingState";
+import { EmptyState } from "@shared/ui/Loading/LoadingState";
 import { ReportCard } from "./ReportCard";
 
 interface ReportListProps {

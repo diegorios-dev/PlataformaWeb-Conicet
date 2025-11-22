@@ -9,7 +9,7 @@ import { MarkerSite } from "./MarkerSite";
 import { useAvailableYears } from "../hooks/useAvailableYears";
 import { useSiteStatus } from "../hooks/useSiteStatus";
 import { useSiteReports } from "../hooks/useSiteReports";
-import { LoadingMap, LoadingSpinner } from "../../../shared/ui/Loading/LoadingState";
+import { LoadingMap, LoadingSpinner } from "@shared/ui/Loading/LoadingState";
 import type { MapHTMLProps } from "../types/interfaces";
 
 export default function MapHTML({ position, loading: externalLoading }: MapHTMLProps) {

@@ -13,9 +13,9 @@ import {
   Lightbulb
 } from "lucide-react";
 
-import BackButton from "../../../shared/ui/buttons/BackButton";
-import { API_URL } from "../../../config/api";
-import IconNavMenu from "../../menu/components/IconNavMenu";
+import BackButton from "@shared/ui/buttons/BackButton";
+import { API_URL } from "@config/api";
+import IconNavMenu from "@features/menu/components/IconNavMenu";
 import type { Zona, Usuario } from "../types/interfaces";
 
 

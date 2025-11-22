@@ -34,13 +34,13 @@ interface UserType {
   zona?: Zona;
 }
 
-import { getAllSitios } from "../../../services/sitiosService";
+import { getAllSitios } from "@services/sitiosService";
 import {
   getAllInstruments,
   getUserInstruments,
   assignInstrumentToUser,
   removeInstrumentFromUser
-} from "../../../services/instrumentService";
+} from "@services/instrumentService";
 
 import {
   User,

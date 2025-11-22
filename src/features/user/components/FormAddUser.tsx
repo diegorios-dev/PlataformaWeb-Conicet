@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { postNewUser } from "../../../services/userService";
-import { getAllSitios } from "../../../services/sitiosService";
-import useNavegation from "../../../hooks/useNavegation";
-import BackButton from "../../../shared/ui/buttons/BackButton";
-import Toast from "../../../shared/ui/Loading/Toast";
+import { postNewUser } from "@services/userService";
+import { getAllSitios } from "@services/sitiosService";
+import useNavegation from "@hooks/useNavegation";
+import BackButton from "@shared/ui/buttons/BackButton";
+import Toast from "@shared/ui/Loading/Toast";
 import {
   User,
   Plus,

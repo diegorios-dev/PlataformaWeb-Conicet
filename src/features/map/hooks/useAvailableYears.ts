@@ -1,6 +1,6 @@
 // src/hooks/useAvailableYears.ts
 import { useEffect, useState } from "react";
-import { getAvailableYears } from "../../../services/sitiosService";
+import { getAvailableYears } from "@services/sitiosService";
 
 export function useAvailableYears() {
   

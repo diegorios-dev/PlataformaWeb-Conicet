@@ -13,7 +13,7 @@ import {
   BarChart3,
   MapPinned,
 } from "lucide-react";
-import useNavegation from "../../../hooks/useNavegation";
+import useNavegation from "@hooks/useNavegation";
 
 // Simple mapping type for menu items
 interface NavItemConfig {

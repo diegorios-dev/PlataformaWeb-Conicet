@@ -1,8 +1,10 @@
 import { useEffect } from "react";
-import { useUserContext } from "../../../context/UserContext";
-import useNavegation from "../../../hooks/useNavegation";
+import { useUserContext } from "@context/UserContext";
+import useNavegation from "@hooks/useNavegation";
 import { Lock, LogIn, ArrowLeft, AlertCircle } from "lucide-react";
-import img from "../../../../public/assets/logo-CONICET_opt.png";
+
+// Ruta absoluta para assets en /public/
+const img = "/assets/logo-CONICET_opt.png";
 
 const Login = () => {
   const { password, handleSavePassword, fetchGetUserByPassword, isLogin, error, loading } = useUserContext();

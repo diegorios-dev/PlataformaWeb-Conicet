@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getTotalAcumuladoPorZona, getTopZonasPorRegistro } from '../../services/zonaService';
+import { getTotalAcumuladoPorZona, getTopZonasPorRegistro } from '@services/zonaService';
 import {
   getReportesPorInstrumento,
   getDistribucionPorTipo,
@@ -9,7 +9,7 @@ import {
   getAnalisisFrecuencia,
   getComparativaAnual,
   invalidateEstadisticasCache,
-} from '../../services/estadisticasService';
+} from '@services/estadisticasService';
 
 
 // 80/20: concentrar toda la lógica de carga y estados aquí para aligerar showCharts.tsx

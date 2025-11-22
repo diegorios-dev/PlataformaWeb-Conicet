@@ -1,7 +1,7 @@
 import { useRef, useState, type JSX } from "react";
-import { postNewSite } from "../../../services/sitiosService";
-import { getAllZonas } from "../../../services/zonaService";
-import { getAllEvents, type Event } from "../../../services/eventService";
+import { postNewSite } from "@services/sitiosService";
+import { getAllZonas } from "@services/zonaService";
+import { getAllEvents, type Event } from "@services/eventService";
 import { useEffect } from "react";
 import L from "leaflet";
 import {
@@ -9,7 +9,7 @@ import {
   Snowflake,
   Activity,
 } from "lucide-react";
-import useNavegation from "../../../hooks/useNavegation";
+import useNavegation from "@hooks/useNavegation";
 
 const useSiteAdd = () => {
 

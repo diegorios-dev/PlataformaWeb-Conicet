@@ -1,5 +1,5 @@
 import { Edit3 } from "lucide-react";
-import IconNavMenu from "../../../menu/components/IconNavMenu";
+import IconNavMenu from "@features/menu/components/IconNavMenu";
 
 export const HeaderEdit = () => {
   return (

@@ -1,13 +1,13 @@
 import { useState, useMemo } from "react";
-import useReports from "../../../../hooks/useReports";
-import useNavigation from "../../../../hooks/useNavegation";
-import { buildAudioUrl, buildImageUrl } from "../../../../shared/utils/urlBuilder";
+import useReports from "@hooks/useReports";
+import useNavigation from "@hooks/useNavegation";
+import { buildAudioUrl, buildImageUrl } from "@shared/utils/urlBuilder";
 import { useZonas } from "../../hooks/useZonas";
 import { useAudioPlayer } from "../../hooks/useAudioPlayer";
 import { useImageModal } from "../../hooks/useImageModal";
 import { filterByType, filterByPrecipitation, filterByZona, filterBySearch } from "../../utils/reportFilters";
 
-import IconNavMenu from "../../../menu/components/IconNavMenu";
+import IconNavMenu from "@features/menu/components/IconNavMenu";
 import { ReportHeader } from "./ReportHeader";
 import { SearchBar } from "./SearchBar";
 import { ReportFilters } from "./ReportFiltersProps";

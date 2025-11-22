@@ -1,8 +1,8 @@
-import { useUserContext } from "../../../../context/UserContext";
+import { useUserContext } from "@context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useResolveRotura } from "../../hooks/useResolveRotura";
 import { CheckCircle2 } from "lucide-react";
-import BackButton from "../../../../shared/ui/buttons/BackButton";
+import BackButton from "@shared/ui/buttons/BackButton";
 import { FeedbackModal } from "./FeedbackModal";
 import { ReportDamageInfo } from "./ReportDamageInfo";
 import { ConfirmationMessage } from "./ConfirmationMessage";

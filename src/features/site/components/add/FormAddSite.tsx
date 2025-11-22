@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { postNewSite } from "../../../../services/sitiosService";
-import { getAllZonas } from "../../../../services/zonaService";
-import { getAllEvents, type Event } from "../../../../services/eventService";
-import useNavegation from "../../../../hooks/useNavegation";
-import BackButton from "../../../../shared/ui/buttons/BackButton";
-import Toast from "../../../../shared/ui/Loading/Toast";
+import { postNewSite } from "@services/sitiosService";
+import { getAllZonas } from "@services/zonaService";
+import { getAllEvents, type Event } from "@services/eventService";
+import useNavegation from "@hooks/useNavegation";
+import BackButton from "@shared/ui/buttons/BackButton";
+import Toast from "@shared/ui/Loading/Toast";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {

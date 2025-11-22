@@ -1,4 +1,4 @@
-import useNavegation from "../../../hooks/useNavegation";
+import useNavegation from "@hooks/useNavegation";
 
 export const getOptionComplements = (go: ReturnType<typeof useNavegation>["go"]) => [
   { option: "Ver Histograma", onClick: go.histograma.list },

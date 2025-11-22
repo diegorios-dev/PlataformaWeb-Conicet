@@ -12,7 +12,7 @@ import {
   Clock,
   FileDown,
 } from "lucide-react";
-import BackButton from "../../shared/ui/buttons/BackButton";
+import BackButton from "@shared/ui/buttons/BackButton";
 import ChartCard from "./ChartCard";
 import PrecipitacionPorZona from "./PrecipitacionPorZona";
 import ReportesPorInstrumento from "./ReportesPorInstrumento";
@@ -24,8 +24,8 @@ import PatronMensual from "./PatronMensual";
 import AnalisisFrecuencia from "./AnalisisFrecuencia";
 import ComparativaAnual from "./ComparativaAnual";
 import YearPicker from "./YearPicker";
-import IconNavMenu from "../menu/components/IconNavMenu";
-import { API_URL } from "../../config/api";
+import IconNavMenu from "@features/menu/components/IconNavMenu";
+import { API_URL } from "@config/api";
 
 // Importar servicios de la API
 import useChartsData from "./useChartsData";

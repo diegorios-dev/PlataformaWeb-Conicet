@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-import BackButton from '../../../shared/ui/buttons/BackButton';
+import BackButton from '@shared/ui/buttons/BackButton';
 import type { ImportResponse, ImportResult } from '../types/interfaces';
-import IconNavMenu from '../../menu/components/IconNavMenu';
+import IconNavMenu from '@features/menu/components/IconNavMenu';
 
 import {
   FileSpreadsheet,
@@ -17,7 +17,7 @@ import {
   Import
 } from 'lucide-react';
 
-import { API_URL } from '../../../config/api';
+import { API_URL } from '@config/api';
 
 
 

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useMemo, useCallback } from "react";
 import type { ReactNode } from "react";
-import useUser from "../hooks/useUser";
+import useUser from "@hooks/useUser";
 
 type UserContextType = {
   user: any;

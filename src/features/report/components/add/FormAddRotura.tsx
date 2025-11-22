@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { createReporteRotura } from "../../../../services/reportService";
-import { getAllSitios } from "../../../../services/sitiosService";
-import { getAllZonas } from "../../../../services/zonaService";
+import { createReporteRotura } from "@services/reportService";
+import { getAllSitios } from "@services/sitiosService";
+import { getAllZonas } from "@services/zonaService";
 import {AlertTriangle,X,MapPin,Calendar,CheckCircle2,Loader2,Wrench,MessageSquare,Camera,Mic,Save} from "lucide-react";
-import BackButton from "../../../../shared/ui/buttons/BackButton";
+import BackButton from "@shared/ui/buttons/BackButton";
 
 const FormAddRotura = () => {
   

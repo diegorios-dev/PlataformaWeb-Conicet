@@ -1,15 +1,17 @@
 import {useState } from "react";
 import { LogIn, LogOut, Wrench, CheckCircle, AlertCircle } from "lucide-react";
-import img from "../../../../public/assets/logo-CONICET_opt.png";
 
-import useSitio from "../../../hooks/useSitio";
-import MapHTML from "../../map/components/MapHTML";
-import useNavegation from "../../../hooks/useNavegation";
-import ViewOptionMenu from "../../menu/components/ViewOptionMenu";
-import ViewComplementMenu from "../../menu/components/ViewComplementMenu";
+// Ruta absoluta para assets en /public/
+const img = "/assets/logo-CONICET_opt.png";
 
-import { useUserContext } from "../../../context/UserContext";
-import { OPTION_INSTRUMENTS } from "../../../shared/utils/optionInstruments";
+import useSitio from "@hooks/useSitio";
+import MapHTML from "@features/map/components/MapHTML";
+import useNavegation from "@hooks/useNavegation";
+import ViewOptionMenu from "@features/menu/components/ViewOptionMenu";
+import ViewComplementMenu from "@features/menu/components/ViewComplementMenu";
+
+import { useUserContext } from "@context/UserContext";
+import { OPTION_INSTRUMENTS } from "@shared/utils/optionInstruments";
 import { btnPrimary, btnWarn } from "../constants/sidebarButtons";
 import { getOptionComplements } from "../constants/optionComplements";
 import { useWelcomeMessage } from "../hooks/useWelcomeMessage";

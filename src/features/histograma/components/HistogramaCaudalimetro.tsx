@@ -1,5 +1,5 @@
 import BaseHistograma from "./BaseHistograma";
-import { getHistogramaCaudalimetro } from '../../../services/reportService';
+import { getHistogramaCaudalimetro } from '@services/reportService';
 
 export default function HistogramaCaudalimetro() {
   return (
