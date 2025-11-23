@@ -5,7 +5,7 @@ import { useUserFormState } from "../../hooks";
 import {
   assignInstrumentToUser,
   removeInstrumentFromUser
-} from "@services/instrumentService";
+} from "@features/user/services";
 import { UserBasicInfoForm } from "./UserBasicInfoForm";
 import { UserSiteSelector } from "./UserSiteSelector";
 import { UserInstrumentsManager } from "./UserInstrumentsManager";

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { postNewUser } from "@services/userService";
-import { getAllSitios } from "@services/sitiosService";
+import { postNewUser } from "@features/user/services";
+import { getAllSitios } from "@features/site/services";
 import useNavegation from "@hooks/useNavegation";
 import BackButton from "@shared/ui/buttons/BackButton";
 import Toast from "@shared/ui/Loading/Toast";

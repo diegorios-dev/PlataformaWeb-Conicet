@@ -3,8 +3,8 @@ import L from "leaflet";
 import "leaflet.heat";
 import "leaflet/dist/leaflet.css";
 import BackButton from "@shared/ui/buttons/BackButton";
-import { getReportes } from "@services/reportService";
-import { getAllEvents, type Event } from "@services/eventService";
+import { getReportes } from "@features/report/services";
+import { getAllEvents, type Event } from "@features/event/services";
 import { BeatLoader } from "react-spinners";
 import { Droplet, Snowflake, Activity, MapPin, TrendingUp, TrendingDown } from "lucide-react";
 import "@/App.css"

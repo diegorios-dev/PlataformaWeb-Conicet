@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { updateReporte } from "@services/reportService";
+import { updateReporte } from "@features/report/services";
 import { useReportSelection } from "@context/ReportContext";
 import useNavegation from "@hooks/useNavegation";
 

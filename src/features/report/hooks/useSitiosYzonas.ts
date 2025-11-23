@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getAllZonas } from "@services/zonaService";
-import { getAllSitios } from "@services/sitiosService";
+import { getAllZonas } from "@features/zona/services";
+import { getAllSitios } from "@features/site/services";
 
 export function useSitiosYzonas(reportSiteId?: number) {
   

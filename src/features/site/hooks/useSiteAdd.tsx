@@ -1,7 +1,7 @@
 import { useRef, useState, type JSX } from "react";
-import { postNewSite } from "@services/sitiosService";
-import { getAllZonas } from "@services/zonaService";
-import { getAllEvents, type Event } from "@services/eventService";
+import { postNewSite } from "@features/site/services";
+import { getAllZonas } from "@features/zona/services";
+import { getAllEvents, type Event } from "@features/event/services";
 import { useEffect } from "react";
 import L from "leaflet";
 import {

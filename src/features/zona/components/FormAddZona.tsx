@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { postNewZona ,getAllZonas, updateZona, deleteZona} from "@services/zonaService";
+import { postNewZona ,getAllZonas, updateZona, deleteZona} from "@features/zona/services";
 import Toast from "@shared/ui/Loading/Toast";
 import { Plus, MapPin, Loader2, MapPinned, AlertCircle, Pencil, Trash2, X } from "lucide-react";
 import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';

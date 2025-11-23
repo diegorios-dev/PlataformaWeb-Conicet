@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { postNewSite } from "@services/sitiosService";
-import { getAllZonas } from "@services/zonaService";
-import { getAllEvents, type Event } from "@services/eventService";
+import { postNewSite } from "@features/site/services";
+import { getAllZonas } from "@features/zona/services";
+import { getAllEvents, type Event } from "@features/event/services";
 import useNavegation from "@hooks/useNavegation";
 import BackButton from "@shared/ui/buttons/BackButton";
 import Toast from "@shared/ui/Loading/Toast";

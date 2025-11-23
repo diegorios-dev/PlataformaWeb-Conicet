@@ -1,5 +1,5 @@
 import BaseHistograma from "./BaseHistograma";
-import { getHistograma } from '@services/reportService';
+import { getHistograma } from '@features/report/services';
 
 export default function HistogramaLluvia() {
   return (

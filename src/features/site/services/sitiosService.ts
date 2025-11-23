@@ -1,6 +1,6 @@
 import axios from "axios";
-import { API_URL } from "../config/api";
-import { invalidateEstadisticasCache } from "./estadisticasService";
+import { API_URL } from "@config/api";
+import { invalidateEstadisticasCache } from "@features/Charts/services";
 
 const API_URL_SERVICE = API_URL;
 

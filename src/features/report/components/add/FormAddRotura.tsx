@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { createReporteRotura } from "@services/reportService";
-import { getAllSitios } from "@services/sitiosService";
-import { getAllZonas } from "@services/zonaService";
+import { createReporteRotura } from "@features/report/services";
+import { getAllSitios } from "@features/site/services";
+import { getAllZonas } from "@features/zona/services";
 import {AlertTriangle,X,MapPin,Calendar,CheckCircle2,Loader2,Wrench,MessageSquare,Camera,Mic,Save} from "lucide-react";
 import BackButton from "@shared/ui/buttons/BackButton";
 

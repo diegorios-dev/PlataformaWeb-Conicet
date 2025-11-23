@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { login } from '../services/userService';
+import { login } from '@features/user/services';
 import { storageService } from '@shared/services';
 
 type User = {

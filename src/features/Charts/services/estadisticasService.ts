@@ -1,6 +1,6 @@
 import axios from "axios";
-import { API_URL } from "../config/api";
-import { getCachedData, cache } from "../shared/utils/simpleCache";
+import { API_URL } from "@config/api";
+import { getCachedData, cache } from "@shared/utils/simpleCache";
 
 const API_URL_SERVICE = API_URL;
 

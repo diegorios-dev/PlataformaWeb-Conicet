@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getSitio } from "../services/sitiosService";
+import { getSitio } from "@features/site/services";
 
 interface SitioState {
     sitios: any[];

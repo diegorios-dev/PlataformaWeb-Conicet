@@ -4,7 +4,7 @@ import {
   saveUser,
   getAllUsers,
   deleteUser,
-} from "@services/userService";
+} from "@features/user/services";
 import FormEditUser from "./FormEditUser";
 import SearchUser from "./searchUser";
 import useNavegation from "@hooks/useNavegation";

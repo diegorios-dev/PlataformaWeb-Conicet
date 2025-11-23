@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getAllUsers } from "../services/userService";
+import { getAllUsers } from "@features/user/services";
 
 function useUsers() {
   const [users, setUsers] = useState([]);

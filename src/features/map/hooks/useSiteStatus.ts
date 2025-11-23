@@ -1,6 +1,6 @@
 // src/hooks/useSiteStatus.ts
 import { useEffect, useState, useRef } from "react";
-import { getStatusSite } from "@services/sitiosService";
+import { getStatusSite } from "@features/site/services";
 import type { Coord, SiteStatus } from "../types/interfaces";
 
 export function useSiteStatus(position: Coord[]) {

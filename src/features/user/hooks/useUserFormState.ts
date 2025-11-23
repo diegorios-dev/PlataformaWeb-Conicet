@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import type { UserType, Zona, Site, Instrument } from '../types';
-import { getAllSitios } from '@services/sitiosService';
-import { getAllZonas } from '@services/zonaService';
+import { getAllSitios } from '@features/site/services';
+import { getAllZonas } from '@features/zona/services';
 import {
   getAllInstruments,
   getUserInstruments
-} from '@services/instrumentService';
+} from '@features/user/services';
 
 interface UseUserFormStateProps {
   selectedUser: UserType;
