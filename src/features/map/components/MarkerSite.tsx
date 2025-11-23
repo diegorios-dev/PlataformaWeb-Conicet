@@ -22,7 +22,8 @@ export const MarkerSite: React.FC<Props> = ({ site, reports, status, selectedYea
     return null;
   }
 
-  const isHealthy = status?.status !== false;
+  // Un sitio está saludable solo si status es true Y NO tiene instrumentos averiados
+  const isHealthy = status?.status !== false && !status?.tiene_instrumentos_averiados;
 
   return (
     <Marker position={site.coordenadas} icon={getCustomIcon(site.tipo, isHealthy)}>

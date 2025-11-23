@@ -2,8 +2,18 @@ import { useState, useEffect } from "react";
 import { createReporteRotura } from "@features/report/services";
 import { getAllSitios } from "@features/site/services";
 import { getAllZonas } from "@features/zona/services";
-import {AlertTriangle,X,MapPin,Calendar,CheckCircle2,Loader2,Wrench,MessageSquare,Camera,Mic,Save} from "lucide-react";
+import { AlertTriangle, MapPin, Calendar, Loader2, Wrench, MessageSquare, Camera, Mic, Save } from "lucide-react";
 import BackButton from "@shared/ui/buttons/BackButton";
+import {
+  Input,
+  Select,
+  Textarea,
+  FormField,
+  ImageInput,
+  AudioInput,
+  ConfirmationModal,
+  InfoBox,
+} from "@shared/ui";
 
 const FormAddRotura = () => {
   
@@ -74,8 +84,7 @@ const FormAddRotura = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageChange = (file: File | null) => {
     if (file) {
       setImageFile(file);
       const reader = new FileReader();
@@ -83,23 +92,14 @@ const FormAddRotura = () => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+    } else {
+      setImageFile(null);
+      setImagePreview("");
     }
   };
 
-  const handleAudioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setAudioFile(file);
-    }
-  };
-
-  const removeImage = () => {
-    setImageFile(null);
-    setImagePreview("");
-  };
-
-  const removeAudio = () => {
-    setAudioFile(null);
+  const handleAudioChange = (file: File | null) => {
+    setAudioFile(file);
   };
 
   const showModal = (type: "success" | "error", message: string) => {
@@ -194,32 +194,22 @@ const FormAddRotura = () => {
           <div className="bg-white/90 backdrop-blur-md border-2 border-slate-200 rounded-3xl shadow-xl p-6 md:p-8 space-y-6">
             
             {/* Fecha */}
-            <div className="space-y-3">
-              <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
-                <Calendar className="w-5 h-5 text-red-600" />
-                Fecha del Reporte
-              </label>
-              <input
+            <FormField label="Fecha del Reporte" icon={Calendar} required>
+              <Input
                 type="date"
                 name="date"
                 value={formData.date}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:border-red-500 text-slate-700 font-medium transition-all duration-200"
                 required
               />
-            </div>
+            </FormField>
 
             {/* Zona */}
-            <div className="space-y-3">
-              <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
-                <MapPin className="w-5 h-5 text-red-600" />
-                Zona
-              </label>
-              <select
+            <FormField label="Zona" icon={MapPin} required>
+              <Select
                 name="zona_id"
                 value={formData.zona_id}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:border-red-500 text-slate-700 font-medium transition-all duration-200"
                 required
               >
                 <option value="">Seleccionar zona...</option>
@@ -228,20 +218,15 @@ const FormAddRotura = () => {
                     {zona.locality}
                   </option>
                 ))}
-              </select>
-            </div>
+              </Select>
+            </FormField>
 
             {/* Sitio */}
-            <div className="space-y-3">
-              <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
-                <MapPin className="w-5 h-5 text-red-600" />
-                Sitio de Medición
-              </label>
-              <select
+            <FormField label="Sitio de Medición" icon={MapPin} required>
+              <Select
                 name="site_id"
                 value={formData.site_id}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:border-red-500 text-slate-700 font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={!formData.zona_id}
                 required
               >
@@ -255,103 +240,47 @@ const FormAddRotura = () => {
                     {sitio.nombre}
                   </option>
                 ))}
-              </select>
-            </div>
+              </Select>
+            </FormField>
 
             {/* Descripción del Daño */}
-            <div className="space-y-3">
-              <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
-                <Wrench className="w-5 h-5 text-red-600" />
-                Descripción del Daño *
-              </label>
-              <textarea
+            <FormField label="Descripción del Daño" icon={Wrench} required>
+              <Textarea
                 name="description_damage"
                 value={formData.description_damage}
                 onChange={handleInputChange}
                 placeholder="Describe el daño o rotura del instrumento..."
                 rows={4}
-                className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:border-red-500 text-slate-700 font-medium transition-all duration-200 resize-none"
                 required
               />
-            </div>
+            </FormField>
 
             {/* Nota Adicional (Opcional) */}
-            <div className="space-y-3">
-              <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
-                <MessageSquare className="w-5 h-5 text-red-600" />
-                Nota Adicional (Opcional)
-              </label>
-              <textarea
+            <FormField label="Nota Adicional (Opcional)" icon={MessageSquare}>
+              <Textarea
                 name="note"
                 value={formData.note}
                 onChange={handleInputChange}
                 placeholder="Información adicional sobre el reporte..."
                 rows={3}
-                className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:border-red-500 text-slate-700 font-medium transition-all duration-200 resize-none"
               />
-            </div>
+            </FormField>
 
             {/* Imagen */}
-            <div className="space-y-3">
-              <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
-                <Camera className="w-5 h-5 text-red-600" />
-                Imagen (Opcional)
-              </label>
-              <div className="flex flex-col gap-3">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:border-red-500 text-slate-700 font-medium transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
-                />
-                {imagePreview && (
-                  <div className="relative inline-block">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-full max-w-md h-48 object-cover rounded-xl border-2 border-slate-200 shadow-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      className="absolute top-2 right-2 p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 shadow-lg"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
+            <FormField label="Imagen (Opcional)" icon={Camera}>
+              <ImageInput
+                onImageChange={handleImageChange}
+                imagePreview={imagePreview}
+              />
+            </FormField>
 
             {/* Audio */}
-            <div className="space-y-3">
-              <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
-                <Mic className="w-5 h-5 text-red-600" />
-                Audio (Opcional)
-              </label>
-              <div className="flex flex-col gap-3">
-                <input
-                  type="file"
-                  accept="audio/*"
-                  onChange={handleAudioChange}
-                  className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-red-500/20 focus:border-red-500 text-slate-700 font-medium transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
-                />
-                {audioFile && (
-                  <div className="flex items-center justify-between bg-red-50 border-2 border-red-200 rounded-xl p-4">
-                    <span className="text-sm font-semibold text-red-700">
-                      {audioFile.name}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={removeAudio}
-                      className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
+            <FormField label="Audio (Opcional)" icon={Mic}>
+              <AudioInput
+                onAudioChange={handleAudioChange}
+                audioFile={audioFile}
+              />
+            </FormField>
 
             {/* Botones */}
             <div className="flex gap-4 pt-6 border-t-2 border-slate-200">
@@ -377,59 +306,20 @@ const FormAddRotura = () => {
         </form>
 
         {/* Información */}
-        <div className="mt-6 bg-red-50 border-2 border-red-200 rounded-2xl p-5 shadow-md">
-          <div className="flex items-start gap-3">
-            <div className="bg-red-100 p-3 rounded-xl shadow-sm flex-shrink-0">
-              <AlertTriangle className="w-6 h-6 text-red-600" />
-            </div>
-            <div>
-              <h4 className="text-base font-bold text-red-900 mb-1">
-                Reporte de Rotura
-              </h4>
-              <p className="text-sm text-red-800">
-                Este formulario es para registrar daños o roturas en los instrumentos de medición.
-                Asegurate de describir detalladamente el problema para facilitar su reparación.
-              </p>
-            </div>
-          </div>
-        </div>
+        <InfoBox
+          icon={AlertTriangle}
+          title="Reporte de Rotura"
+          description="Este formulario es para registrar daños o roturas en los instrumentos de medición. Asegurate de describir detalladamente el problema para facilitar su reparación."
+          variant="warning"
+        />
       </div>
 
       {/* Modal de confirmación */}
-      {modalOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="relative bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full transform transition-all duration-300">
-            <div className="flex flex-col items-center text-center">
-              <div
-                className={`p-4 rounded-2xl mb-4 ${
-                  modalType === "success" ? "bg-green-100" : "bg-red-100"
-                }`}
-              >
-                {modalType === "success" ? (
-                  <CheckCircle2 className="w-12 h-12 text-green-600" />
-                ) : (
-                  <AlertTriangle className="w-12 h-12 text-red-600" />
-                )}
-              </div>
-
-              <h3
-                className={`text-2xl font-bold mb-2 ${
-                  modalType === "success" ? "text-green-900" : "text-red-900"
-                }`}
-              >
-                {modalType === "success" ? "¡Éxito!" : "Error"}
-              </h3>
-              <p
-                className={`text-base ${
-                  modalType === "success" ? "text-green-700" : "text-red-700"
-                }`}
-              >
-                {modalMessage}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        isOpen={modalOpen}
+        type={modalType}
+        message={modalMessage}
+      />
     </div>
   );
 };

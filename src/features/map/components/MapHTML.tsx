@@ -6,9 +6,9 @@ import { tileConfigs } from "../constants/tileConfigs";
 import { YearPicker } from "@shared/ui/molecules/YearPicker";
 import { BaseMapSelector } from "./BaseMapSelector";
 import { MarkerSite } from "./MarkerSite";
-import { useAvailableYears } from "../hooks/useAvailableYears";
-import { useSiteStatus } from "../hooks/useSiteStatus";
-import { useSiteReports } from "../hooks/useSiteReports";
+import { useAvailableYears } from "@/features/menu/components/hooks/useAvailableYears";
+import { useSiteStatus } from "@/features/menu/components/hooks/useSiteStatus";
+import { useSiteReports } from "@/features/menu/components/hooks/useSiteReports";
 import { LoadingMap, LoadingSpinner } from "@shared/ui/Loading/LoadingState";
 import type { MapHTMLProps } from "../types/interfaces";
 
@@ -84,9 +84,9 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
           noWrap={true}
         />
 
-        {position.map((site) => (
+        {position.map((site, index) => (
           <MarkerSite
-            key={site.idSitio}
+            key={`${site.idSitio}-${site.tipo}-${index}`}
             site={site}
             reports={siteReports?.get(site.idSitio) ?? null}
             status={siteStatus?.get(site.idSitio) ?? null}

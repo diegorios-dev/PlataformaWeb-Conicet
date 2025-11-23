@@ -2,7 +2,7 @@ import { useReportSelection } from "@context/ReportContext";
 import { useNavigate } from "react-router-dom";
 import { useResolveRotura } from "../../hooks/useResolveRotura";
 import { CheckCircle2 } from "lucide-react";
-import BackButton from "@shared/ui/buttons/BackButton";
+import IconNavMenu from "@features/menu/components/IconNavMenu";
 import { FeedbackModal } from "./FeedbackModal";
 import { ReportDamageInfo } from "./ReportDamageInfo";
 import { ConfirmationMessage } from "./ConfirmationMessage";
@@ -37,9 +37,8 @@ const FormResolveRotura = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50/30 to-emerald-50/20 p-4 md:p-6 lg:p-8">
+      <IconNavMenu />
       <div className="w-full max-w-4xl mx-auto">
-        <BackButton />
-
         {/* Header */}
         <div className="mb-8 flex items-center gap-4">
           <div className="p-4 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg shadow-green-500/30">
