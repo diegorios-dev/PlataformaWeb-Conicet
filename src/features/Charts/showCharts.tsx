@@ -13,7 +13,7 @@ import {
   FileDown,
 } from "lucide-react";
 import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
-import ChartCard from "./ChartCard";
+import { Card } from "@shared/ui/molecules/Card";
 import PrecipitacionPorZona from "./PrecipitacionPorZona";
 import ReportesPorInstrumento from "./ReportesPorInstrumento";
 import TopZonasPorRegistro from "./TopZonasPorRegistro";
@@ -102,19 +102,19 @@ const ShowCharts = () => {
         throw new Error('No se encontró el contenedor de gráficos');
       }
 
-      // Obtener solo los ChartCard directos (evitar duplicados)
+      // Obtener solo los Card directos (evitar duplicados)
       // Los gráficos están en divs con grid o como hijos directos del contenedor
       const allElements = Array.from(chartsContainer.children) as HTMLElement[];
-      const chartCards: HTMLElement[] = [];
+      const Cards: HTMLElement[] = [];
       
       allElements.forEach(element => {
         if (element.classList.contains('grid')) {
           // Es un grid, obtener sus hijos
           const gridChildren = Array.from(element.children) as HTMLElement[];
-          chartCards.push(...gridChildren);
+          Cards.push(...gridChildren);
         } else {
           // Es un gráfico individual
-          chartCards.push(element);
+          Cards.push(element);
         }
       });
       
@@ -274,8 +274,8 @@ const ShowCharts = () => {
       // Procesar gráficos con lógica especial
       let processedCharts = 0;
       
-      for (let i = 0; i < chartCards.length; i++) {
-        const card = chartCards[i] as HTMLElement;
+      for (let i = 0; i < Cards.length; i++) {
+        const card = Cards[i] as HTMLElement;
         const chartElement = card.querySelector('.recharts-wrapper') as HTMLElement;
         if (!chartElement) continue;
 
@@ -293,7 +293,7 @@ const ShowCharts = () => {
 
         // Gráficos 5 y 6 (Precipitación vs Coordenadas + Patrón Mensual Radar) - PÁGINA 2 - Abajo 50%/50%
         if (processedCharts === 5) {
-          const card2 = chartCards[i + 1] as HTMLElement;
+          const card2 = Cards[i + 1] as HTMLElement;
           const chartElement2 = card2?.querySelector('.recharts-wrapper') as HTMLElement;
           
           if (chartElement2) {
@@ -315,7 +315,7 @@ const ShowCharts = () => {
 
         // Gráficos 7 y 8 (Comparativa Zonas y Comparativa Año a Año) - PÁGINA 3 - Verticalmente 50%/50%
         if (processedCharts === 7) {
-          const card2 = chartCards[i + 1] as HTMLElement;
+          const card2 = Cards[i + 1] as HTMLElement;
           const chartElement2 = card2?.querySelector('.recharts-wrapper') as HTMLElement;
           
           if (chartElement2) {
@@ -446,7 +446,7 @@ const ShowCharts = () => {
         
         {/* Fila 1: Gráficos de barras */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ChartCard
+          <Card
             title="Precipitación Total por Zona"
             subtitle="Acumulado por región"
             description="Muestra el total acumulado de precipitación (en mm) para cada localidad de la línea sur. Permite identificar rápidamente las zonas con mayor y menor precipitación."
@@ -457,9 +457,9 @@ const ShowCharts = () => {
             onPeriodChange={setPeriodoPrecipitacion}
           >
             <PrecipitacionPorZona data={precipitacionPorZona} />
-          </ChartCard>
+          </Card>
 
-          <ChartCard
+          <Card
             title="Reportes por Instrumento"
             subtitle="Cantidad de mediciones registradas"
             description="Cantidad de mediciones realizadas por cada tipo de instrumento meteorológico. Útil para identificar qué instrumentos tienen más actividad o necesitan mantenimiento."
@@ -467,12 +467,12 @@ const ShowCharts = () => {
             isLoading={loading}
           >
             <ReportesPorInstrumento data={reportesPorInstrumento} />
-          </ChartCard>
+          </Card>
         </div>
 
         {/* Fila 2: Top sitios y distribución tipo */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ChartCard
+          <Card
             title="Top Zonas por Registro"
             subtitle="Localidades con más mediciones"
             description="Ranking de las zonas con mayor cantidad de registros meteorológicos. Muestra qué localidades tienen instrumentos más activos o datos más frecuentes."
@@ -483,9 +483,9 @@ const ShowCharts = () => {
             onPeriodChange={setPeriodoTopZonas}
           >
             <TopZonasPorRegistro data={topSitios} />
-          </ChartCard>
+          </Card>
 
-          <ChartCard
+          <Card
             title="Distribución por Tipo de Precipitación"
             subtitle="Porcentaje de cada tipo"
             description="Proporción entre diferentes tipos de precipitación: lluvia, nieve y caudal. Ayuda a entender el balance hídrico de la región."
@@ -496,11 +496,11 @@ const ShowCharts = () => {
             onPeriodChange={setPeriodoDistribucion}
           >
             <DistribucionPorTipo data={distribucionTipo} />
-          </ChartCard>
+          </Card>
         </div>
 
         {/* Fila 3: Evolución mensual (Composed Chart) */}
-        <ChartCard
+        <Card
           title="Evolución Mensual por Tipo"
           subtitle="Comparativa de lluvia, nieve y caudal"
           description="Visualiza cómo varía cada tipo de precipitación a lo largo de los meses del año. Las barras muestran lluvia, la línea representa nieve, y el área sombreada indica el caudal medido."
@@ -511,11 +511,11 @@ const ShowCharts = () => {
           onPeriodChange={setPeriodoEvolucion}
         >
           <EvolucionMensual data={evolucionMensual} />
-        </ChartCard>
+        </Card>
 
         {/* Fila 4: Scatter y Radar */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ChartCard
+          <Card
             title="Precipitación vs Coordenadas"
             subtitle="Distribución geográfica"
             description="Relaciona la precipitación con la ubicación geográfica (latitud y longitud) de cada sitio. Los puntos rojos indican sitios con precipitación y los azules sitios con medición de caudal."
@@ -544,9 +544,9 @@ const ShowCharts = () => {
                 tipoEvento={tipoEventoCoordenadas}
               />
             </div>
-          </ChartCard>
+          </Card>
 
-          <ChartCard
+          <Card
             title="Patrón Mensual (Radar)"
             subtitle="Distribución circular anual"
             description="Visualización circular del patrón de eventos a lo largo de los 12 meses del año. Permite identificar estacionalidad, meses críticos y patrones climáticos anuales."
@@ -571,11 +571,11 @@ const ShowCharts = () => {
               </div>
               <PatronMensual data={patronMensual} />
             </div>
-          </ChartCard>
+          </Card>
         </div>
 
         {/* Fila 6: Análisis de frecuencia */}
-        <ChartCard
+        <Card
           title="Comparativa de Precipitación por Zonas"
           subtitle="Áreas apiladas mostrando contribución de cada zona"
           description="Gráfico de áreas apiladas que muestra la distribución de Lluvia, Nieve y Caudal en diferentes rangos. Las tres capas representan los diferentes tipos de eventos meteorológicos."
@@ -603,10 +603,10 @@ const ShowCharts = () => {
               estadisticas={estadisticasFrecuencia}
             />
           </div>
-        </ChartCard>
+        </Card>
 
         {/* Fila 7: Comparativa anual (Line Chart) */}
-        <ChartCard
+        <Card
           title="Comparativa Año a Año"
           subtitle="Evolución de precipitación entre años"
           description="Compara la precipitación del mismo período en diferentes años. Líneas múltiples muestran tendencias anuales y cambios en los patrones climáticos."
@@ -629,7 +629,7 @@ const ShowCharts = () => {
               configuracion={configuracionComparativa}
             />
           </div>
-        </ChartCard>
+        </Card>
 
       </div>
 
@@ -692,3 +692,4 @@ const ShowCharts = () => {
 };
 
 export default ShowCharts;
+

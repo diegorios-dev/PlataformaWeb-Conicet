@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
-interface FilterOption {
+export interface FilterOption {
   value: string;
   label: string;
   icon?: React.ReactNode;
@@ -14,6 +14,7 @@ interface FilterDropdownProps {
   options: FilterOption[];
   value: string;
   onChange: (value: string) => void;
+  className?: string;
 }
 
 export const FilterDropdown: React.FC<FilterDropdownProps> = ({
@@ -22,6 +23,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   options,
   value,
   onChange,
+  className = ""
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -40,7 +42,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   }, []);
 
   return (
-    <div className="space-y-3.5" ref={dropdownRef}>
+    <div className={`space-y-3.5 ${className}`} ref={dropdownRef}>
       <label className="flex items-center gap-2.5 text-[13px] font-bold text-slate-700 uppercase tracking-[0.08em] px-0.5">
         <div className="p-1.5 bg-blue-50 rounded-lg">{icon}</div>
         {label}

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { MapPin, Lightbulb } from "lucide-react";
 import { tileConfigs } from "../constants/tileConfigs";
-import { YearSelector } from "./YearSelector";
+import { YearPicker } from "@shared/ui/molecules/YearPicker";
 import { BaseMapSelector } from "./BaseMapSelector";
 import { MarkerSite } from "./MarkerSite";
 import { useAvailableYears } from "../hooks/useAvailableYears";
@@ -58,7 +58,12 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
 
   return (
     <div className="relative w-full h-full">
-      <YearSelector availableYears={availableYears} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+      <YearPicker 
+        availableYears={availableYears} 
+        selectedYear={selectedYear} 
+        onYearChange={setSelectedYear}
+        className="absolute top-5 right-5 z-[1000]"
+      />
       <BaseMapSelector baseMap={baseMap} setBaseMap={setBaseMap} />
 
       <MapContainer 

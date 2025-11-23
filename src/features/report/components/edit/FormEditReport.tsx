@@ -12,7 +12,7 @@ import { Alerts } from "./Alerts";
 import { PrecipitacionForm } from "./PrecipitacionForm";
 import { CalidadAguaForm } from "./CalidadAguaForm";
 import ResumenParametros from "./ResumenParametros";
-import ButtonLoading from "./ButtonLoading";
+import { ButtonLoading } from "@shared/ui/atoms/Button";
 
 const FormEditReport = () => {
 
@@ -148,7 +148,12 @@ const FormEditReport = () => {
 
             </div>
 
-            <ButtonLoading handleSubmit={handleSubmit} loading={loading} success={success} go={go}/>
+            <ButtonLoading 
+              onSubmit={handleSubmit} 
+              onCancel={go.reports.list} 
+              loading={loading} 
+              success={success}
+            />
             
           </div>
         </div>

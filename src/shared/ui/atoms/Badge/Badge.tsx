@@ -1,10 +1,20 @@
-interface ResultsBadgeProps {
+interface BadgeProps {
   count: number;
+  singularLabel?: string;
+  pluralLabel?: string;
+  variant?: "primary" | "success" | "warning" | "danger";
+  className?: string;
 }
 
-export const ResultsBadge = ({ count }: ResultsBadgeProps) => {
+export const Badge = ({ 
+  count,
+  singularLabel = "reporte encontrado",
+  pluralLabel = "reportes encontrados",
+  variant = "primary",
+  className = ""
+}: BadgeProps) => {
   return (
-    <div className="mt-7 pt-6 border-t border-slate-100">
+    <div className={`mt-7 pt-6 border-t border-slate-100 ${className}`}>
       <div className="inline-flex items-center gap-3 text-[15px] font-semibold text-slate-800 
                     bg-gradient-to-r from-blue-50 to-indigo-50 px-5 py-3 rounded-[14px] 
                     shadow-sm border border-blue-100/50 transition-all duration-300 hover:shadow-md">
@@ -16,7 +26,7 @@ export const ResultsBadge = ({ count }: ResultsBadgeProps) => {
           {count}
         </span>
         <span className="text-slate-600 font-medium">
-          {count === 1 ? "reporte encontrado" : "reportes encontrados"}
+          {count === 1 ? singularLabel : pluralLabel}
         </span>
       </div>
     </div>

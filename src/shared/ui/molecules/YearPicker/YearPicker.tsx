@@ -1,20 +1,30 @@
-// src/components/YearSelector.tsx
-import React from "react";
 import { CalendarDays } from "lucide-react";
 
-interface Props {
+interface YearPickerProps {
   availableYears: number[];
   selectedYear: number | null;
-  setSelectedYear: (y: number | null) => void;
+  onYearChange: (year: number | null) => void;
+  label?: string;
+  className?: string;
+  showAllOption?: boolean;
+  allOptionLabel?: string;
 }
 
-export const YearSelector: React.FC<Props> = ({ availableYears, selectedYear, setSelectedYear }) => {
+export const YearPicker = ({ 
+  availableYears, 
+  selectedYear, 
+  onYearChange,
+  label = "Filtrar por año:",
+  className = "",
+  showAllOption = true,
+  allOptionLabel = "Todos los años"
+}: YearPickerProps) => {
   return (
-    <div className="absolute top-5 right-5 z-[1000] bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+    <div className={`bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden ${className}`}>
       <div className="px-4 py-3 flex items-center gap-3">
         <label htmlFor="year-filter" className="font-semibold text-sm text-slate-700 flex items-center gap-2">
           <CalendarDays className="w-4 h-4 text-blue-600" />
-          Filtrar por año:
+          {label}
         </label>
         <div className="relative">
           <select
@@ -22,11 +32,11 @@ export const YearSelector: React.FC<Props> = ({ availableYears, selectedYear, se
             value={selectedYear || "all"}
             onChange={(e) => {
               const value = e.target.value;
-              setSelectedYear(value === "all" ? null : parseInt(value));
+              onYearChange(value === "all" ? null : parseInt(value));
             }}
             className="pl-3 pr-8 py-2 rounded-lg border border-slate-200 text-sm cursor-pointer bg-slate-50 font-medium hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
           >
-            <option value="all">Todos los años</option>
+            {showAllOption && <option value="all">{allOptionLabel}</option>}
             {availableYears.map(year => (
               <option key={year} value={year}>{year}</option>
             ))}

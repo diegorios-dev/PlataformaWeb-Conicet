@@ -1,39 +1,44 @@
 import { useState, memo } from "react";
-import { HelpCircle, Calendar, ChevronDown, Check, Database, CalendarDays, CalendarClock, CalendarRange, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon } from "lucide-react";
+import type { ReactNode } from "react";
+import { HelpCircle, ChevronDown, Check, Database, CalendarDays, CalendarClock, CalendarRange, TrendingUp as TrendingUpIcon } from "lucide-react";
 
 // Ruta absoluta para assets en /public/
-const img = "/assets/logo-CONICET_opt.png"
+const img = "/assets/logo-CONICET_opt.png";
 
-interface ChartCardProps {
+interface CardProps {
   title: string;
   subtitle?: string;
   description?: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
+  icon: ReactNode;
+  children: ReactNode;
   isLoading?: boolean;
   showPeriodSelector?: boolean;
   selectedPeriod?: string;
   onPeriodChange?: (period: string) => void;
+  className?: string;
+  showWatermark?: boolean;
 }
 
 // ⚡ Memorizar componente para evitar re-renders innecesarios
-const ChartCard = memo(({ 
+const Card = memo(({ 
   title, 
   subtitle, 
   description, 
   icon, 
   children, 
-  isLoading,
+  isLoading = false,
   showPeriodSelector = false,
   selectedPeriod = "todos",
-  onPeriodChange
-}: ChartCardProps) => {
+  onPeriodChange,
+  className = "",
+  showWatermark = true
+}: CardProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const periodIcons: Record<string, React.ReactNode> = {
+  const periodIcons: Record<string, ReactNode> = {
     "todos": <Database className="w-3.5 h-3.5" />,
-    "trimestre": <Calendar className="w-3.5 h-3.5" />,
+    "trimestre": <CalendarDays className="w-3.5 h-3.5" />,
     "6meses": <CalendarDays className="w-3.5 h-3.5" />,
     "anio": <CalendarClock className="w-3.5 h-3.5" />,
     "5anios": <TrendingUpIcon className="w-3.5 h-3.5" />,
@@ -59,7 +64,7 @@ const ChartCard = memo(({
   };
 
   return (
-    <div className="backdrop-blur-2xl bg-white/70 border border-white/60 rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300">
+    <div className={`backdrop-blur-2xl bg-white/70 border border-white/60 rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 ${className}`}>
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 backdrop-blur-xl border border-white/40">
           {icon}
@@ -135,31 +140,34 @@ const ChartCard = memo(({
           </div>
         )}
       </div>
-    {isLoading ? (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" />
-      </div>
-    ) : (
-      <div className="relative mt-4">
-        {children}
-        {/* Marca de agua - Grande y centrada sobre el gráfico */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10">
-          <img 
-            src={img} 
-            alt="Watermark"
-            className="w-27 h-20 opacity-70"
-            style={{ 
-              filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))',
-            }}
-          />
+      
+      {isLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" />
         </div>
-      </div>
-    )}
-  </div>
-);
+      ) : (
+        <div className="relative mt-4">
+          {children}
+          {/* Marca de agua - Grande y centrada sobre el gráfico */}
+          {showWatermark && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10">
+              <img 
+                src={img} 
+                alt="Watermark"
+                className="w-27 h-20 opacity-70"
+                style={{ 
+                  filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))',
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 });
 
 // ⚡ Nombre de display para debugging
-ChartCard.displayName = 'ChartCard';
+Card.displayName = 'Card';
 
-export default ChartCard;
+export { Card };

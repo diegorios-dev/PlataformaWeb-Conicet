@@ -10,9 +10,9 @@ import { filterByType, filterByPrecipitation, filterByZona, filterBySearch } fro
 import {DashboardLayout} from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import IconNavMenu from "@features/menu/components/IconNavMenu";
 import { ReportHeader } from "./ReportHeader";
-import { SearchBar } from "./SearchBar";
+import { SearchBar } from "@shared/ui/molecules/SearchBar";
 import { ReportFilters } from "./ReportFiltersProps";
-import { ResultsBadge } from "./ResultsBadge";
+import { Badge } from "@shared/ui/atoms/Badge";
 import { ReportList } from "./ReportList";
 import { ImageModal } from "./ImageModal";
 
@@ -54,7 +54,11 @@ const ShowReport = () => {
         <ReportHeader count={filtered.length} />
 
         <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-[24px] shadow-2xl shadow-slate-900/5 p-6 md:p-8 mb-6 transition-all duration-300 hover:shadow-slate-900/10">
-          <SearchBar value={search} onChange={setSearch} />
+          <SearchBar 
+            value={search} 
+            onChange={setSearch} 
+            placeholder="Buscar por ID, nota o zona..."
+          />
           
           <ReportFilters
             filterType={filterType}
@@ -66,7 +70,7 @@ const ShowReport = () => {
             zonas={zonas}
           />
 
-          <ResultsBadge count={filtered.length} />
+          <Badge count={filtered.length} />
         </div>
 
         <ReportList

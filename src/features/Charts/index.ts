@@ -1,5 +1,6 @@
 // Exportaciones centralizadas de componentes de gráficos
-export { default as ChartCard } from './ChartCard';
+// ChartCard ahora es Card y está en @shared/ui/molecules/Card
+export { Card as ChartCard } from '@shared/ui/molecules/Card';
 export { default as PrecipitacionPorZona } from './PrecipitacionPorZona';
 export { default as ReportesPorInstrumento } from './ReportesPorInstrumento';
 export { default as TopZonasPorRegistro } from './TopZonasPorRegistro';

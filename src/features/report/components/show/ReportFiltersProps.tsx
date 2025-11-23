@@ -1,5 +1,5 @@
 import { FileText, Droplet, Snowflake, AlertTriangle, MapPin, Waves } from "lucide-react";
-import { FilterDropdown } from "./FilterDropdown";
+import { FilterDropdown } from "@shared/ui/molecules/FilterDropdown";
 
 interface ReportFiltersProps {
   filterType: string;
