@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import L from "leaflet";
 import "leaflet.heat";
 import "leaflet/dist/leaflet.css";
-import BackButton from "@shared/ui/buttons/BackButton";
 import { getReportes } from "@features/report/services";
 import { getAllEvents, type Event } from "@features/event/services";
 import { BeatLoader } from "react-spinners";
 import { Droplet, Snowflake, Activity, MapPin, TrendingUp, TrendingDown } from "lucide-react";
 import "@/App.css"
+import NavMenu from "@/shared/ui/layouts/navMenu";
 
 const HeatMapView = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -300,11 +300,11 @@ const HeatMapView = () => {
 
       {/* Botón de volver */}
       <div className="absolute top-6 left-6 z-[999]">
-        <BackButton />
+        <NavMenu />
       </div>
 
       {/* Leyenda */}
-      <div className="absolute bottom-6 left-6 bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl p-5 border border-white/30 text-xs text-gray-800 z-[1000] min-w-[220px]">
+      <div className="absolute bottom-6 left-20 bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl p-5 border border-white/30 text-xs text-gray-800 z-[1000] min-w-[220px]">
         <div className="font-bold mb-3 text-gray-900 text-sm flex items-center gap-2">
           <div className="w-1 h-5 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full" />
           Intensidad ({legendUnit})

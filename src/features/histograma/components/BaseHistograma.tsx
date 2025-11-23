@@ -7,12 +7,16 @@ import HistogramaChart from "./HistogramaChart";
 import HistogramaEmpty from "./HistogramaEmpty";
 import HistogramaError from "./HistogramaError";
 import HistogramaLoading from "./HistogramaLoading";
+import NavMenu from "@/shared/ui/layouts/navMenu";
 
 export default function BaseHistograma({ title, service, unidad, color, filenamePrefix }) {
   const h = useHistograma(service);
 
   return (
-    <div className="p-6">
+      <div className="w-full max-w-7xl mx-auto mt-10">
+
+      <NavMenu />
+      
       <HistogramaHeader title={title} unidad={unidad} />
 
       <HistogramaControls

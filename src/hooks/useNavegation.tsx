@@ -57,6 +57,8 @@ const useNavigation = () => {
 
       heatmap: () => go("/components/MapHeatView.tsx"),
 
+      map : () => go("/"),
+
 
       back: () => {
         const current = window.location.pathname;

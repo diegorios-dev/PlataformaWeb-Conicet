@@ -16,6 +16,7 @@ import SiteFormPanel from "./SiteFormPanel";
 import SiteMapPanel from "./SiteMapPanel";
 
 const FormAddSite = () => {
+  
   const [formData, setFormData] = useState({
     nombre: "",
     latitude: "",
