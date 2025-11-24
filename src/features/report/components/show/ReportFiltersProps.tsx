@@ -48,6 +48,7 @@ export const ReportFilters = ({
             { value: "nieve", label: "Nieve", icon: <Snowflake className="w-4 h-4" /> },
             { value: "caudal", label: "Caudal", icon: <Waves className="w-4 h-4" /> },
           ]}
+          zIndex={20}
         />
 
         {/* Filtro: Zona */}

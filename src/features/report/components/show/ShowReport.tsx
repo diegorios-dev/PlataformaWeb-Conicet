@@ -53,7 +53,7 @@ const ShowReport = () => {
         
         <ReportHeader count={filtered.length} />
 
-        <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-[24px] shadow-2xl shadow-slate-900/5 p-6 md:p-8 mb-6 transition-all duration-300 hover:shadow-slate-900/10">
+        <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-[24px] shadow-2xl shadow-slate-900/5 p-6 md:p-8 mb-6 transition-all duration-300 hover:shadow-slate-900/10 relative z-50">
           <SearchBar 
             value={search} 
             onChange={setSearch} 
