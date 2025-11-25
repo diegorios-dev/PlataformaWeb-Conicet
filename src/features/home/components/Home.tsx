@@ -4,13 +4,13 @@ import { LogIn, LogOut, Wrench, CheckCircle, AlertCircle } from "lucide-react";
 // Ruta absoluta para assets en /public/
 const img = "/assets/logo-CONICET_opt.png";
 
-import useSitio from "@hooks/useSitio";
+import { useSitio } from "@features/site/hooks";
 import MapHTML from "@features/map/components/MapHTML";
-import useNavegation from "@hooks/useNavegation";
+import { useNavegation } from "@shared/hooks";
 import ViewOptionMenu from "@features/menu/components/ViewOptionMenu";
 import ViewComplementMenu from "@features/menu/components/ViewComplementMenu";
 
-import { useAuth } from "@context/AuthContext";
+import { useAuth } from "@features/auth";
 import { OPTION_INSTRUMENTS } from "@shared/utils/optionInstruments";
 import { btnPrimary, btnWarn } from "../constants/sidebarButtons";
 import { getOptionComplements } from "../constants/optionComplements";

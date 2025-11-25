@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
-import useReports from "@hooks/useReports";
-import useNavigation from "@hooks/useNavegation";
+import { useReports } from "@features/report/hooks";
+import { useNavegation as useNavigation } from "@shared/hooks";
 import { buildAudioUrl, buildImageUrl } from "@shared/utils/urlBuilder";
 import { useZonas } from "../../hooks/useZonas";
 import { useAudioPlayer } from "../../hooks/useAudioPlayer";
@@ -8,7 +8,6 @@ import { useImageModal } from "../../hooks/useImageModal";
 import { filterByType, filterByPrecipitation, filterByZona, filterBySearch } from "../../utils/reportFilters";
 
 import {DashboardLayout} from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
-import IconNavMenu from "@features/menu/components/IconNavMenu";
 import { ReportHeader } from "./ReportHeader";
 import { SearchBar } from "@shared/ui/molecules/SearchBar";
 import { ReportFilters } from "./ReportFiltersProps";
@@ -49,8 +48,6 @@ const ShowReport = () => {
   return (
    <DashboardLayout contentClassName="">
       <div className="w-full max-w-7xl mx-auto">
-        <IconNavMenu />
-        
         <ReportHeader count={filtered.length} />
 
         <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-[24px] shadow-2xl shadow-slate-900/5 p-6 md:p-8 mb-6 transition-all duration-300 hover:shadow-slate-900/10 relative z-50">

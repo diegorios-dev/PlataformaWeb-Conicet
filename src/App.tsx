@@ -1,8 +1,7 @@
 import "leaflet/dist/leaflet.css";
 import Home from "./features/home/components/Home";
 import { Routes, Route} from "react-router-dom";
-import Login from "./features/Login/components/Login";
-import { AuthProvider } from "@context/AuthContext";
+import { Login, AuthProvider } from "@features/auth";
 import { ReportProvider } from "@context/ReportContext";
 import Dashboard from "./features/dashboard/components/Dashboard";
 import ShowReport from "./features/report/components/show/ShowReport";
@@ -18,7 +17,7 @@ import HeatMapView from "./features/map/components/MapHeatView";
 import FormAddSite from "./features/site/components/add/FormAddSite";
 import { ShowCharts } from "./features/Charts";
 import ImportExcel from "./features/excel/components/ImportExcel";
-import ProtectedRoute from "./features/PrivatedRoute/ProtectedRoute";
+import { ProtectedRoute } from "@features/auth";
 import ExportExcel from "./features/excel/components/ExportExcel";
 import FormAddRotura from "./features/report/components/add/FormAddRotura";
 import FormResolveRotura from "./features/report/components/resolveRotura/FormResolveRotura";

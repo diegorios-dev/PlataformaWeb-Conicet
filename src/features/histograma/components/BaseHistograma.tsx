@@ -8,14 +8,19 @@ import HistogramaEmpty from "./HistogramaEmpty";
 import HistogramaError from "./HistogramaError";
 import HistogramaLoading from "./HistogramaLoading";
 import NavMenu from "@/shared/ui/layouts/navMenu";
+import BackButton from "@shared/ui/buttons/BackButton";
+import { useNavegation } from "@shared/hooks";
 
 export default function BaseHistograma({ title, service, unidad, color, filenamePrefix }) {
   const h = useHistograma(service);
+  const { go } = useNavegation();
 
   return (
       <div className="w-full max-w-7xl mx-auto mt-10">
 
       <NavMenu />
+      
+      <BackButton className="m-8" onClick={go.histograma.list}  />
       
       <HistogramaHeader title={title} unidad={unidad} />
 

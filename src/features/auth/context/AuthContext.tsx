@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo } from 'react';
 import type { ReactNode } from 'react';
-import useUser from '@hooks/useUser';
+import useUser from '../hooks/useUser';
 
 interface AuthContextType {
   user: any;

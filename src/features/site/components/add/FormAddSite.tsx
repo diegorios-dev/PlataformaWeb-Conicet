@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { postNewSite } from "@features/site/services";
 import { getAllZonas } from "@features/zona/services";
 import { getAllEvents, type Event } from "@features/event/services";
-import useNavegation from "@hooks/useNavegation";
-import BackButton from "@shared/ui/buttons/BackButton";
+import { useNavegation } from "@shared/hooks";
 import Toast from "@shared/ui/Loading/Toast";
+import BackButton from "@shared/ui/buttons/BackButton";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
@@ -249,10 +249,8 @@ const FormAddSite = () => {
   };
 
   return (
-    <div className="relative w-full h-screen flex overflow-hidden bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50">
-
-      {/* Botón de volver - Posición absoluta sobre el mapa */}
-      <div className="absolute top-6 left-6 z-[1000]">
+    <div className="relative w-full h-screen flex overflow-hidden">
+      <div className="absolute top-4 left-4 z-[1000]">
         <BackButton />
       </div>
 

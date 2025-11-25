@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
-import { Check, X } from "lucide-react";
+import { Check, X, Calendar } from "lucide-react";
+import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 
 interface YearPickerProps {
   availableYears: number[];
@@ -130,21 +131,20 @@ const YearPicker = ({
           </div>
           
           {/* Selector de rango */}
-          <div className="flex items-center gap-2">
-            <label className="text-xs text-slate-600 font-medium whitespace-nowrap">
-              Mostrar:
-            </label>
-            <select
-              value={yearRange}
-              onChange={(e) => setYearRange(Number(e.target.value))}
-              className="text-xs border border-slate-300 rounded-lg px-2 py-1.5 bg-white hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-            >
-              <option value={5}>5 años</option>
-              <option value={10}>10 años</option>
-              <option value={15}>15 años</option>
-              <option value={20}>20 años</option>
-              <option value={30}>30 años</option>
-            </select>
+          <div className="w-44">
+            <CustomSelect
+              options={[
+                { value: "5", label: "5 años", icon: <Calendar className="w-4 h-4" /> },
+                { value: "10", label: "10 años", icon: <Calendar className="w-4 h-4" /> },
+                { value: "15", label: "15 años", icon: <Calendar className="w-4 h-4" /> },
+                { value: "20", label: "20 años", icon: <Calendar className="w-4 h-4" /> },
+                { value: "30", label: "30 años", icon: <Calendar className="w-4 h-4" /> },
+              ]}
+              value={yearRange.toString()}
+              onChange={(value) => setYearRange(Number(value))}
+              placeholder="Mostrar años"
+              icon={<Calendar className="w-5 h-5" />}
+            />
           </div>
         </div>
       </div>

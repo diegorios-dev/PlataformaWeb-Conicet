@@ -3,7 +3,6 @@ import axios from 'axios';
 
 
 import type { ImportResponse, ImportResult } from '../types/interfaces';
-import IconNavMenu from '@features/menu/components/IconNavMenu';
 
 import {
   FileSpreadsheet,
@@ -123,7 +122,6 @@ export default function ImportarExcel() {
 
   return (
     <DashboardLayout contentClassName="">
-      <IconNavMenu />
       <div className="w-full max-w-7xl mx-auto">
 
         {/* Header estilo ShowReport */}

@@ -13,7 +13,7 @@ import {
   BarChart3,
   MapPinned,
 } from "lucide-react";
-import useNavegation from "@hooks/useNavegation";
+import { useNavegation } from "@shared/hooks";
 
 // Simple mapping type for menu items
 interface NavItemConfig {
@@ -22,7 +22,7 @@ interface NavItemConfig {
   icon: React.ComponentType<{ className?: string }>;
   action: () => void;
   matches: (path: string) => boolean;
-  color?: string; // tailwind text color
+  color?: string; 
 }
 
 // Utility to combine conditional classes
@@ -32,7 +32,7 @@ function cn(...classes: (string | false | undefined)[]) {
 
 const IconNavMenu: React.FC = () => {
   const { go } = useNavegation();
-  const [expanded, setExpanded] = useState<boolean>(false);
+  const [hovered, setHovered] = useState<boolean>(false);
   const [activePath, setActivePath] = useState<string>(window.location.pathname);
 
   // Update active path on navigation popstate (basic route awareness)
@@ -109,45 +109,27 @@ const IconNavMenu: React.FC = () => {
     }
   ];
 
-  // Active detection fallback (when path doesn't match configured routes)
     function isActive(item: NavItemConfig) {
     return item.matches(activePath);
   }
-
-  const toggleExpanded = () => setExpanded((prev) => !prev);
 
   return (
     <>
       {/* Desktop Sidebar */}
       <div
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         className={cn(
           "fixed z-40 top-0 left-0 h-screen flex flex-col transition-all duration-300",
-          expanded ? "w-60" : "w-16"
+          hovered ? "w-60" : "w-16"
         )}
       >
         <div
           className={cn(
             "flex-1 backdrop-blur-2xl bg-white/50 border-r border-white/70 shadow-2xl",
-            "pt-4 pb-4 flex flex-col"
+            "pt-10 pb-4 flex flex-col"
           )}
         >
-          {/* Toggle Button */}
-          <button
-            aria-label={expanded ? "Contraer menú" : "Expandir menú"}
-            onClick={toggleExpanded}
-            className={cn(
-              "mx-2 mb-4 rounded-lg border border-white/60 bg-gradient-to-br from-slate-100/60 to-slate-200/40",
-              "hover:from-indigo-100/70 hover:to-indigo-200/60 active:scale-[0.97]",
-              "transition-all group flex items-center justify-center h-10"
-            )}
-          >
-            {expanded ? (
-              <ChevronLeft className="w-5 h-5 text-slate-600 group-hover:text-indigo-700" />
-            ) : (
-              <ChevronRight className="w-5 h-5 text-slate-600 group-hover:text-indigo-700" />
-            )}
-          </button>
-
           {/* Menu Items */}
           <nav className="flex-1 flex flex-col gap-2 px-2">
             {items.map((item) => {
@@ -172,14 +154,14 @@ const IconNavMenu: React.FC = () => {
                     <ActiveIcon
                       className={cn(
                         "w-5 h-5 transition-colors",
-                        active ? "text-indigo-700" : item.color || "text-slate-600",
+                        active ? item.color || "text-indigo-700" : item.color || "text-slate-600",
                         "group-hover:scale-110"
                       )}
                     />
                   </div>
 
                   {/* Label (only when expanded) */}
-                  {expanded && (
+                  {hovered && (
                     <span
                       className={cn(
                         "pr-4 text-sm font-semibold text-slate-700 truncate",
@@ -191,7 +173,7 @@ const IconNavMenu: React.FC = () => {
                   )}
 
                   {/* Tooltip when collapsed */}
-                  {!expanded && (
+                  {!hovered && (
                     <span
                       className={cn(
                         "pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2",
@@ -224,12 +206,12 @@ const IconNavMenu: React.FC = () => {
               <div className="p-3">
                 <LogOut className="w-5 h-5 text-slate-600 group-hover:text-red-700" />
               </div>
-              {expanded && (
+              {hovered && (
                 <span className="text-sm font-semibold text-slate-700 group-hover:text-red-700 pr-4">
                   Cerrar / Volver
                 </span>
               )}
-              {!expanded && (
+              {!hovered && (
                 <span
                   className={cn(
                     "pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2",
@@ -256,12 +238,12 @@ const IconNavMenu: React.FC = () => {
               <div className="p-3">
                 <BarChart3 className="w-5 h-5 text-slate-600 group-hover:text-emerald-700" />
               </div>
-              {expanded && (
+              {hovered && (
                 <span className="text-sm font-semibold text-slate-700 group-hover:text-emerald-700 pr-4">
                   Inicio
                 </span>
               )}
-              {!expanded && (
+              {!hovered && (
                 <span
                   className={cn(
                     "pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2",

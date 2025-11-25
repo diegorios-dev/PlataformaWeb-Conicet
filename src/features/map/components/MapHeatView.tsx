@@ -5,9 +5,11 @@ import "leaflet/dist/leaflet.css";
 import { getReportes } from "@features/report/services";
 import { getAllEvents, type Event } from "@features/event/services";
 import { BeatLoader } from "react-spinners";
-import { Droplet, Snowflake, Activity, MapPin, TrendingUp, TrendingDown } from "lucide-react";
+import { BaseMapSelector } from "./BaseMapSelector";
+import { createHeatmapTooltipContent } from "./HeatmapTooltip";
+import { Droplet, Snowflake, Activity, TrendingUp, TrendingDown } from "lucide-react";
 import "@/App.css"
-import NavMenu from "@/shared/ui/layouts/navMenu";
+import NavMenu from "@shared/ui/layouts/NavMenu";
 
 const HeatMapView = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -61,14 +63,6 @@ const HeatMapView = () => {
     } else {
       return <Droplet className="w-5 h-5" />;
     }
-  };
-
-  // Helper para obtener emoji según el tipo de evento
-  const getEventEmoji = (eventType: string) => {
-    const type = eventType.toLowerCase();
-    if (type.includes("nieve")) return "❄️";
-    if (type.includes("caudal")) return "🌊";
-    return "💧";
   };
 
   useEffect(() => {
@@ -221,24 +215,15 @@ const HeatMapView = () => {
       });
 
       const currentEvent = events.find((e) => e.id === selectedEventId);
-      const emoji = currentEvent ? getEventEmoji(currentEvent.type) : "💧";
+      const eventType = currentEvent?.type || "Precipitación";
 
-      const tooltipContent = `
-        <div class="tooltip-container">
-          <div class="tooltip-header">
-            <span class="tooltip-icon">📍</span>
-            <span>${d.nombre}</span>
-          </div>
-          <div class="tooltip-value">
-            <span class="tooltip-icon">${emoji}</span>
-            <span>${d.valor} ${d.unidad}</span>
-          </div>
-          <div class="tooltip-date">
-            <span class="tooltip-icon">📅</span>
-            <span>${d.fecha}</span>
-          </div>
-        </div>
-      `;
+      const tooltipContent = createHeatmapTooltipContent({
+        nombre: d.nombre,
+        valor: d.valor,
+        unidad: d.unidad,
+        fecha: d.fecha,
+        eventType: eventType,
+      });
 
       marker.bindTooltip(tooltipContent, {
         direction: "top",
@@ -254,7 +239,8 @@ const HeatMapView = () => {
   }, [selectedEventId, mapInstance, loading, pluvData, events]);
 
   return (
-    <div className="relative w-full h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50 flex flex-col">
+    <div className="relative w-full h-screen flex flex-col">
+      <NavMenu />
       <div id="heatmap" className="absolute inset-0 z-0" />
 
       {/* Botones de tipo */}
@@ -280,31 +266,16 @@ const HeatMapView = () => {
       </div>
 
       {/* Selector de mapa base */}
-      <div className="absolute top-6 right-6 z-[999]">
-        <div className="bg-white/20 backdrop-blur-lg px-6 py-4 rounded-2xl border border-white/30 shadow-xl">
-          <label className="text-xs font-bold text-slate-800 flex items-center gap-2 mb-3 tracking-wide uppercase">
-            <MapPin className="w-4 h-4 text-blue-600" />
-            Mapa Base
-          </label>
-          <select
-            value={baseMap}
-            onChange={(e) => setBaseMap(e.target.value as "original" | "vegetacion" | "topografia")}
-            className="text-sm bg-white/60 backdrop-blur-sm border-2 border-white/40 rounded-xl px-4 py-2.5 font-semibold text-slate-800 cursor-pointer transition-all duration-200 hover:border-blue-400 hover:bg-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 w-full [&>option]:bg-white [&>option]:text-slate-800 [&>option]:font-semibold [&>option]:py-2"
-          >
-            <option value="original">Mapa Estándar</option>
-            <option value="vegetacion">Satelital</option>
-            <option value="topografia">Topografía + Ríos</option>
-          </select>
-        </div>
-      </div>
+      <BaseMapSelector 
+        baseMap={baseMap} 
+        setBaseMap={setBaseMap as any} 
+        position="right" 
+      />
 
-      {/* Botón de volver */}
-      <div className="absolute top-6 left-6 z-[999]">
-        <NavMenu />
-      </div>
+
 
       {/* Leyenda */}
-      <div className="absolute bottom-6 left-20 bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl p-5 border border-white/30 text-xs text-gray-800 z-[1000] min-w-[220px]">
+      <div className="absolute bottom-6 right-20 bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl p-5 border border-white/30 text-xs text-gray-800 z-[1000] min-w-[220px]">
         <div className="font-bold mb-3 text-gray-900 text-sm flex items-center gap-2">
           <div className="w-1 h-5 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full" />
           Intensidad ({legendUnit})

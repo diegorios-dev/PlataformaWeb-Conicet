@@ -7,9 +7,8 @@ import {
 } from "@features/user/services";
 import FormEditUser from "./FormEditUser";
 import SearchUser from "./searchUser";
-import useNavegation from "@hooks/useNavegation";
+import { useNavegation } from "@shared/hooks";
 import BackButton from "@shared/ui/buttons/BackButton";
-import IconNavMenu from "@features/menu/components/IconNavMenu";
 import { DashboardLayout } from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import {
   UserPlus,
@@ -136,8 +135,6 @@ const ViewManagementUsers = () => {
 
   return (
     <DashboardLayout contentClassName="">
-    
-      <IconNavMenu />
       <div className="w-full max-w-7xl mx-auto">  
         {/* Header mejorado - copiado de ShowReport */}
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

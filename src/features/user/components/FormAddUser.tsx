@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import { postNewUser } from "@features/user/services";
 import { getAllSitios } from "@features/site/services";
-import useNavegation from "@hooks/useNavegation";
-import BackButton from "@shared/ui/buttons/BackButton";
+import { useNavegation } from "@shared/hooks";
+import { DashboardLayout } from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
+import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 import Toast from "@shared/ui/Loading/Toast";
+import BackButton from "@shared/ui/buttons/BackButton";
 import {
   User,
   Plus,
   Shield,
   MapPin,
   Locate,
-  CloudRain,
-  Snowflake,
-  ArrowRight
+  UserCog
 } from "lucide-react";
 
 const FormAddUser = () => {
@@ -95,22 +95,25 @@ const FormAddUser = () => {
   };
 
   return (
-    <div>
-      <div className="p-8">
-        <BackButton onClick={go.back} />
-      </div>
-      <div className="max-w-4xl mx-auto pb-8">
-        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800 flex items-center justify-center gap-2">
-          <User className="w-7 h-7 text-blue-500" />
-          Agregar Usuario
-        </h1>
-        <div className="bg-white shadow-xl rounded-3xl px-10 pt-8 pb-10 border border-gray-100">
+    <DashboardLayout>
+      <div className="max-w-6xl mx-auto pb-8">
+        <BackButton />
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 backdrop-blur-sm px-8 py-4 rounded-2xl border-2 border-blue-200/50 shadow-lg">
+            <User className="w-8 h-8 text-blue-600" />
+            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+              Agregar Usuario
+            </h1>
+          </div>
+        </div>
+        <div className="bg-white/80 backdrop-blur-xl shadow-2xl rounded-3xl px-12 pt-10 pb-12 border-2 border-white/60">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Columna 1 */}
             <div>
               {/* Nombre */}
               <div className="mb-6">
-                <label className="block text-gray-600 text-sm font-medium mb-2" htmlFor="name">
+                <label className="flex items-center gap-2 text-slate-700 text-sm font-bold mb-3" htmlFor="name">
+                  <User className="w-4 h-4 text-blue-600" />
                   Nombre
                 </label>
                 <input
@@ -120,13 +123,14 @@ const FormAddUser = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
+                  className="w-full py-4 px-6 rounded-2xl border-2 border-blue-200/50 bg-white/80 backdrop-blur-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all shadow-sm hover:shadow-md"
                 />
               </div>
 
               {/* Password */}
               <div className="mb-6">
-                <label className="block text-gray-600 text-sm font-medium mb-2" htmlFor="password">
+                <label className="flex items-center gap-2 text-slate-700 text-sm font-bold mb-3" htmlFor="password">
+                  <Shield className="w-4 h-4 text-indigo-600" />
                   Contraseña
                 </label>
                 <input
@@ -137,74 +141,35 @@ const FormAddUser = () => {
                   onChange={handleChange}
                   required
                   minLength={6}
-                  className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
+                  className="w-full py-4 px-6 rounded-2xl border-2 border-indigo-200/50 bg-white/80 backdrop-blur-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all shadow-sm hover:shadow-md"
                 />
               </div>
 
               {/* Rol */}
               <div className="mb-6">
-                <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="rol">
-                  <Shield className="w-5 h-5 text-blue-400" />
+                <label className="flex items-center gap-2 text-slate-700 text-sm font-bold mb-3">
+                  <Shield className="w-4 h-4 text-purple-600" />
                   Rol
                 </label>
-                <select
-                  id="rol"
+                <CustomSelect
+                  options={[
+                    { value: "admin", label: "Administrador", icon: <Shield className="w-4 h-4" /> },
+                    { value: "user", label: "Usuario", icon: <UserCog className="w-4 h-4" /> }
+                  ]}
                   value={formData.rol}
-                  onChange={handleChange}
-                  required
-                  className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
-                >
-                  <option value="">Seleccione un rol</option>
-                  <option value="admin">Administrador</option>
-                  <option value="user">Usuario</option>
-                </select>
+                  onChange={(value) => handleChange({ target: { id: "rol", value } })}
+                  placeholder="Seleccione un rol"
+                  icon={<Shield className="w-5 h-5" />}
+                />
               </div>
             </div>
 
             {/* Columna 2 */}
             <div>
-              {/* Sitio */}
-              <div className="mb-6">
-                <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="site_id">
-                  <Locate className="w-5 h-5 text-blue-400" />
-                  Sitio
-                </label>
-                <div className="flex gap-2">
-                  <select
-                    id="site_id"
-                    value={formData.site_id}
-                    onChange={handleChange}
-                    required
-                    className="flex-1 py-3 px-4 w-full rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
-                  >
-                    <option value="">Seleccione un sitio</option>
-                    {sitios.map(sitio => (
-                      <option key={sitio.id} value={sitio.id}>
-                        {sitio.zona?.locality} ({sitio.latitude}) , ({sitio.longitude})
-                        {sitio.event && ` (${sitio.event.type})`}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Botón para crear nuevo sitio */}
-              <div className="mb-6">
-                <button
-                  type="button"
-                  onClick={go.sites.add}
-                  className="w-full py-3 px-4 bg-green-50 hover:bg-green-100 text-green-700 rounded-full border-2 border-green-200 hover:border-green-300 transition flex items-center justify-center gap-2 font-medium"
-                >
-                  <Plus className="w-5 h-5" />
-                  Crear Nuevo Sitio
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-
               {/* Zona (solo lectura) */}
               <div className="mb-6">
-                <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2" htmlFor="zona">
-                  <MapPin className="w-5 h-5 text-blue-400" />
+                <label className="flex items-center gap-2 text-slate-700 text-sm font-bold mb-3" htmlFor="zona">
+                  <MapPin className="w-4 h-4 text-violet-600" />
                   Zona (automática)
                 </label>
                 <input
@@ -213,38 +178,61 @@ const FormAddUser = () => {
                   value={zonaSeleccionada?.locality || ""}
                   disabled
                   placeholder="Seleccione un sitio primero"
-                  className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed"
+                  className="w-full py-4 px-6 rounded-2xl border-2 border-slate-200/50 bg-slate-50/50 backdrop-blur-sm text-slate-500 font-medium cursor-not-allowed shadow-sm"
                 />
               </div>
 
-              {/* Tipo de precipitación (solo lectura) */}
-              {zonaSeleccionada && formData.site_id && (
-                <div className="mb-6">
-                  <label className="block text-gray-600 text-sm font-medium mb-2 flex items-center gap-2">
-                    {sitios.find(s => s.id === parseInt(formData.site_id))?.event?.type === "Nieve" ? (
-                      <Snowflake className="w-5 h-5 text-blue-400" />
-                    ) : (
-                      <CloudRain className="w-5 h-5 text-blue-400" />
-                    )}
-                    Tipo de Precipitación
-                  </label>
-                  <input
-                    type="text"
-                    value={sitios.find(s => s.id === parseInt(formData.site_id))?.event?.type || ""}
-                    disabled
-                    className="w-full py-3 px-4 rounded-full border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed"
-                  />
+              {/* Sitio */}
+              <div className="mb-6">
+                <label className="flex items-center gap-2 text-slate-700 text-sm font-bold mb-3">
+                  <Locate className="w-4 h-4 text-emerald-600" />
+                  Sitio
+                </label>
+                <CustomSelect
+                  options={sitios.map(sitio => ({
+                    value: sitio.id.toString(),
+                    label: sitio.zona?.locality || "Sin localidad",
+                    subtitle: `Lat: ${sitio.latitude}, Lon: ${sitio.longitude}${sitio.event ? ` (${sitio.event.type})` : ""}`,
+                    icon: <MapPin className="w-4 h-4" />
+                  }))}
+                  value={formData.site_id}
+                  onChange={(value) => handleChange({ target: { id: "site_id", value } })}
+                  placeholder="Seleccione un sitio"
+                  icon={<Locate className="w-5 h-5" />}
+                />
+                
+                {/* Sección auxiliar - Crear sitio */}
+                <div className="mt-12">
+                  <div className="backdrop-blur-xl bg-gradient-to-r from-emerald-50/80 to-green-50/80 border border-emerald-200/50 rounded-xl p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-emerald-600" />
+                        <p className="text-xs text-slate-700 font-medium">
+                          ¿No encuentras el sitio?
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={go.sites.add}
+                        className="px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white rounded-lg transition-all flex items-center gap-1.5 text-xs font-bold shadow-sm hover:shadow-md transform hover:scale-105 whitespace-nowrap"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Crear Sitio
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
+
           <div className="flex items-center justify-center mt-8">
             <button
               type="button"
               onClick={handleSubmit}
-              className="bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-3 px-8 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-200 transition flex items-center gap-2"
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold py-4 px-12 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all shadow-lg hover:shadow-xl flex items-center gap-3 text-lg backdrop-blur-sm transform hover:scale-105"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-6 h-6" />
               Agregar Usuario
             </button>
           </div>
@@ -257,7 +245,7 @@ const FormAddUser = () => {
         message={toastMessage}
         onClose={() => setToastOpen(false)}
       />
-    </div>
+    </DashboardLayout>
   );
 };
 

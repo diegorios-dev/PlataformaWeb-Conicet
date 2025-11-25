@@ -11,7 +11,12 @@ import {
   Globe,
   Clock,
   FileDown,
+  Filter,
+  Droplet,
+  Snowflake,
+  GitCompare,
 } from "lucide-react";
+import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 import { Card } from "@shared/ui/molecules/Card";
 import PrecipitacionPorZona from "./PrecipitacionPorZona";
@@ -525,18 +530,22 @@ const ShowCharts = () => {
             selectedPeriod={periodoCoordenadas}
             onPeriodChange={setPeriodoCoordenadas}
           >
-            <div className="space-y-2">
-              <div className="flex justify-end space-x-2">
-                <select
-                  className="px-3 py-1 text-sm border rounded-lg bg-white/50 border-gray-200"
-                  value={tipoEventoCoordenadas || 'todos'}
-                  onChange={(e) => setTipoEventoCoordenadas(e.target.value === 'todos' ? undefined : e.target.value)}
-                >
-                  <option value="todos">Todos los tipos</option>
-                  <option value="lluvia">Lluvia</option>
-                  <option value="nieve">Nieve</option>
-                  <option value="caudal">Caudal</option>
-                </select>
+            <div className="space-y-3">
+              <div className="flex justify-end">
+                <div className="w-56">
+                  <CustomSelect
+                    options={[
+                      { value: "todos", label: "Todos los tipos", icon: <Filter className="w-4 h-4" /> },
+                      { value: "lluvia", label: "Lluvia", icon: <Droplet className="w-4 h-4" /> },
+                      { value: "nieve", label: "Nieve", icon: <Snowflake className="w-4 h-4" /> },
+                      { value: "caudal", label: "Caudal", icon: <Waves className="w-4 h-4" /> },
+                    ]}
+                    value={tipoEventoCoordenadas || "todos"}
+                    onChange={(value) => setTipoEventoCoordenadas(String(value) === 'todos' ? undefined : String(value))}
+                    placeholder="Tipo de evento"
+                    icon={<Filter className="w-5 h-5" />}
+                  />
+                </div>
               </div>
               <PrecipitacionCoordenadas 
                 data={precipitacionCoordenadas} 
@@ -556,18 +565,22 @@ const ShowCharts = () => {
             selectedPeriod={periodoPatronMensual}
             onPeriodChange={setPeriodoPatronMensual}
           >
-            <div className="space-y-2">
-              <div className="flex justify-end space-x-2">
-                <select
-                  className="px-3 py-1 text-sm border rounded-lg bg-white/50 border-gray-200"
-                  value={tipoEventoPatronMensual || 'todos'}
-                  onChange={(e) => setTipoEventoPatronMensual(e.target.value === 'todos' ? undefined : e.target.value)}
-                >
-                  <option value="todos">Todos los tipos</option>
-                  <option value="Lluvia">Lluvia</option>
-                  <option value="Nieve">Nieve</option>
-                  <option value="Caudal">Caudal</option>
-                </select>
+            <div className="space-y-3">
+              <div className="flex justify-end">
+                <div className="w-56">
+                  <CustomSelect
+                    options={[
+                      { value: "todos", label: "Todos los tipos", icon: <Filter className="w-4 h-4" /> },
+                      { value: "Lluvia", label: "Lluvia", icon: <Droplet className="w-4 h-4" /> },
+                      { value: "Nieve", label: "Nieve", icon: <Snowflake className="w-4 h-4" /> },
+                      { value: "Caudal", label: "Caudal", icon: <Waves className="w-4 h-4" /> },
+                    ]}
+                    value={tipoEventoPatronMensual || "todos"}
+                    onChange={(value) => setTipoEventoPatronMensual(String(value) === 'todos' ? undefined : String(value))}
+                    placeholder="Tipo de evento"
+                    icon={<Filter className="w-5 h-5" />}
+                  />
+                </div>
               </div>
               <PatronMensual data={patronMensual} />
             </div>
@@ -585,18 +598,22 @@ const ShowCharts = () => {
           selectedPeriod={periodoAnalisisFrecuencia}
           onPeriodChange={setPeriodoAnalisisFrecuencia}
         >
-          <div className="space-y-2">
-            <div className="flex justify-end space-x-2">
-              <select
-                className="px-2 py-1 text-xs border rounded-lg bg-white/50 border-gray-200"
-                value={rangoAnalisisFrecuencia}
-                onChange={(e) => setRangoAnalisisFrecuencia(Number(e.target.value))}
-              >
-                <option value={5}>Rango: 5</option>
-                <option value={10}>Rango: 10</option>
-                <option value={20}>Rango: 20</option>
-                <option value={50}>Rango: 50</option>
-              </select>
+          <div className="space-y-3">
+            <div className="flex justify-end">
+              <div className="w-44">
+                <CustomSelect
+                  options={[
+                    { value: "5", label: "Rango: 5", icon: <GitCompare className="w-4 h-4" /> },
+                    { value: "10", label: "Rango: 10", icon: <GitCompare className="w-4 h-4" /> },
+                    { value: "20", label: "Rango: 20", icon: <GitCompare className="w-4 h-4" /> },
+                    { value: "50", label: "Rango: 50", icon: <GitCompare className="w-4 h-4" /> },
+                  ]}
+                  value={rangoAnalisisFrecuencia.toString()}
+                  onChange={(value) => setRangoAnalisisFrecuencia(Number(value))}
+                  placeholder="Seleccione rango"
+                  icon={<GitCompare className="w-5 h-5" />}
+                />
+              </div>
             </div>
             <AnalisisFrecuencia 
               data={analisisFrecuencia} 

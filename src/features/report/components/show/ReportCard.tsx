@@ -26,7 +26,7 @@ export const ReportCard = ({
   buildAudioUrl,
 }: ReportCardProps) => {
   return (
-    <div className="group bg-white/90 backdrop-blur-sm border-2 border-slate-200 rounded-3xl overflow-hidden hover:shadow-2xl hover:border-blue-300 hover:scale-[1.01] transition-all duration-300 flex flex-col">
+    <div className="group bg-white/90 backdrop-blur-sm border-2 border-slate-200 rounded-3xl overflow-hidden hover:scale-[1.005] transition-all duration-300 flex flex-col">
       <ReportCardHeader 
         id={reporte.id} 
         type={reporte.type} 

@@ -1,5 +1,6 @@
-import { FileText } from "lucide-react";
+import { FileText, Gauge, Calendar } from "lucide-react";
 import { months } from "../contants/constants";
+import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 
 export default function HistogramaControls({
   periodo,
@@ -16,7 +17,7 @@ export default function HistogramaControls({
   onGeneratePDF
 }) {
   return (
-    <div className="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-3xl shadow-xl p-6 md:p-8 mb-6">
+    <div className="relative z-50 bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-3xl shadow-xl p-6 md:p-8 mb-6">
       {/* Config */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
         <span className="text-base font-semibold text-slate-800">Configuración</span>
@@ -24,16 +25,19 @@ export default function HistogramaControls({
         <div className="flex items-center gap-3">
           <label className="text-xs font-medium text-slate-600">Calidad:</label>
 
-          <select
-            value={pdfQuality}
-            onChange={(e) => setPdfQuality(Number(e.target.value))}
-            className="px-2 py-1 rounded border border-slate-300 text-xs bg-slate-50 font-medium"
-            disabled={generandoPDF}
-          >
-            <option value={1}>Baja</option>
-            <option value={2}>Media</option>
-            <option value={3}>Alta</option>
-          </select>
+          <div className="w-32">
+            <CustomSelect
+              options={[
+                { value: "1", label: "Baja", icon: <Gauge className="w-4 h-4" /> },
+                { value: "2", label: "Media", icon: <Gauge className="w-4 h-4" /> },
+                { value: "3", label: "Alta", icon: <Gauge className="w-4 h-4" /> }
+              ]}
+              value={String(pdfQuality)}
+              onChange={(value) => setPdfQuality(Number(value))}
+              icon={<Gauge className="w-5 h-5" />}
+              disabled={generandoPDF}
+            />
+          </div>
 
           {/* Botón PDF */}
           <button
@@ -79,17 +83,16 @@ export default function HistogramaControls({
         {periodo === "dia" && (
           <div className="space-y-2">
             <label className="text-xs font-semibold text-slate-600">Mes</label>
-            <select
-              value={month}
-              onChange={(e) => setMonth(Number(e.target.value))}
-              className="w-full pl-4 pr-10 py-2.5 bg-white/70 border border-slate-200 rounded-xl"
-            >
-              {months.map((m) => (
-                <option key={m.value} value={m.value}>
-                  {m.label}
-                </option>
-              ))}
-            </select>
+            <CustomSelect
+              options={months.map((m) => ({
+                value: String(m.value),
+                label: m.label,
+                icon: <Calendar className="w-4 h-4" />
+              }))}
+              value={String(month)}
+              onChange={(value) => setMonth(Number(value))}
+              icon={<Calendar className="w-5 h-5" />}
+            />
           </div>
         )}
 

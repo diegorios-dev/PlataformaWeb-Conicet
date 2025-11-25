@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { updateReporte } from "@features/report/services";
 import { useReportSelection } from "@context/ReportContext";
-import useNavegation from "@hooks/useNavegation";
+import { useNavegation } from "@shared/hooks";
 
 import { useSitiosYzonas } from "../../hooks/useSitiosYzonas";
 import { useWaterQualityGroups } from "../../hooks/useWaterQualityGroups";
 
-import { HeaderEdit } from "./HeaderEdit";
+import { DashboardLayout } from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import { ReportInfoCard } from "./ReportInfoCard";
 import { Alerts } from "./Alerts";
 import { PrecipitacionForm } from "./PrecipitacionForm";
@@ -97,12 +97,8 @@ const FormEditReport = () => {
 
 
   return (
-
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <HeaderEdit />
-
-      <div className="flex items-center justify-center p-6 md:p-8">
-
+    <DashboardLayout>
+      <div className="flex items-center justify-center">
         <div className="w-full max-w-7xl">
           
           {/* Info Card del reporte - full width */}
@@ -112,10 +108,10 @@ const FormEditReport = () => {
           <Alerts success={success} error={error} />
     
           {/* columna de a 2 */}
-          <div className="grid gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
+            {/* COLUMNA IZQUIERDA - Precipitación */}
             <div className="flex flex-col gap-6">
-
               <PrecipitacionForm
                 report={report}
                 formData={formData}
@@ -124,8 +120,10 @@ const FormEditReport = () => {
                 zonaSeleccionada={zonaSeleccionada}
                 sitioSeleccionado={sitioSeleccionado}
               />
+            </div>
 
-              {/* FORMULARIO DERECHO - Calidad del Agua */}
+            {/* COLUMNA DERECHA - Calidad del Agua */}
+            <div className="flex flex-col gap-6">
               <CalidadAguaForm 
                 grupoSeleccionado={grupoSeleccionado}
                 setGrupoSeleccionado={setGrupoSeleccionado}
@@ -144,24 +142,21 @@ const FormEditReport = () => {
                 grupo2Data={grupo2Data}
                 grupo3Data={grupo3Data}
               />
-
-
             </div>
+          </div>
 
+          {/* Botones al final - full width */}
+          <div className="mt-6">
             <ButtonLoading 
-              onSubmit={handleSubmit} 
+              onSubmit={(e) => handleSubmit(e)} 
               onCancel={go.reports.list} 
               loading={loading} 
               success={success}
             />
-            
           </div>
         </div>
-
-
-      
       </div>
-  </div>
+    </DashboardLayout>
   );
 };
 

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useAuth } from "@context/AuthContext";
-import useNavegation from "@hooks/useNavegation";
+import { useAuth } from "../context/AuthContext";
+import { useNavegation } from "@shared/hooks";
 import { storageService } from '@shared/services';
 import { Lock, LogIn, ArrowLeft, AlertCircle } from "lucide-react";
 

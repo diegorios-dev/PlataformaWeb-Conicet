@@ -47,4 +47,5 @@ const useModal = (onClose?: () => void): UseModalReturn => {
   };
 };
 
+export { useModal };
 export default useModal;

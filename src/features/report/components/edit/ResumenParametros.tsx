@@ -8,7 +8,7 @@ const ResumenParametros = ({
 }) => {
   const grupos = {
     grupo1: {
-      title: "📊 Muestras Químicas",
+      title: "Muestras Químicas",
       items: [
         { label: "pH", value: grupo1Data.ph },
         { label: "Conductividad (µS/cm)", value: grupo1Data.conductividad },
@@ -17,7 +17,7 @@ const ResumenParametros = ({
     },
 
     grupo2: {
-      title: "🧪 Isótopos",
+      title: "Isótopos",
       items: [
         { label: "δ2H (‰)", value: grupo2Data.delta_2h },
         { label: "δ¹⁸O (‰)", value: grupo2Data.delta_18o },
@@ -25,7 +25,7 @@ const ResumenParametros = ({
     },
 
     grupo3: {
-      title: "🌊 Hidrogeología",
+      title: "Hidrogeología",
       items: [
         { label: "Nivel Freático (m)", value: grupo3Data.nivel_freatico },
       ],
@@ -35,7 +35,7 @@ const ResumenParametros = ({
   const grupo = grupos[grupoSeleccionado];
 
   return (
-    <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-4">
+    <div className="bg-cyan-50 border border-cyan-100 rounded-xl p-4">
       <h4 className="text-xs font-semibold text-cyan-800 uppercase tracking-wide mb-3">
         Resumen de Datos Ingresados
       </h4>

@@ -11,8 +11,6 @@
       "@/*": ["./src/*"],
       "@features/*": ["./src/features/*"],
       "@shared/*": ["./src/shared/*"],
-      "@services/*": ["./src/services/*"],
-      "@hooks/*": ["./src/hooks/*"],
       "@context/*": ["./src/context/*"],
       "@config/*": ["./src/config/*"]
     },

@@ -10,12 +10,12 @@ import {
   User as UserIcon,
   Filter,
   Loader2,
-  Lightbulb
+  Lightbulb,
+  CalendarDays
 } from "lucide-react";
+import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 
-import BackButton from "@shared/ui/buttons/BackButton";
 import { API_URL } from "@config/api";
-import IconNavMenu from "@features/menu/components/IconNavMenu";
 import type { Zona, Usuario } from "../types/interfaces";
 import { DashboardLayout } from "@/shared/ui/layouts/DashboardLayout";
 
@@ -142,7 +142,6 @@ export default function ExportExcel() {
 
   return (
     <DashboardLayout contentClassName="">
-      <IconNavMenu />
       <div className="w-full max-w-7xl mx-auto">
 
         {/* Header estilo ShowReport */}
@@ -211,49 +210,55 @@ export default function ExportExcel() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Año</label>
-                  <select
+                  <CustomSelect
+                    options={[
+                      { value: "", label: "Todos los años", icon: <Calendar className="w-4 h-4" /> },
+                      ...availableYears.map((y) => ({
+                        value: y.toString(),
+                        label: y.toString(),
+                        icon: <Calendar className="w-4 h-4" />
+                      }))
+                    ]}
                     value={year}
-                    onChange={(e) => setYear(e.target.value)}
+                    onChange={(value) => setYear(String(value))}
+                    placeholder="Seleccione un año"
+                    icon={<Calendar className="w-5 h-5" />}
                     disabled={loadingData}
-                    className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
-                  >
-                    <option value="">Todos</option>
-                    {availableYears.map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Mes</label>
-                  <select
+                  <CustomSelect
+                    options={[
+                      { value: "", label: "Todos los meses", icon: <CalendarDays className="w-4 h-4" /> },
+                      ...months.map((m) => ({
+                        value: m.value,
+                        label: m.label,
+                        icon: <CalendarDays className="w-4 h-4" />
+                      }))
+                    ]}
                     value={month}
-                    onChange={(e) => setMonth(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                  >
-                    <option value="">Todos</option>
-                    {months.map((m) => (
-                      <option key={m.value} value={m.value}>
-                        {m.label}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(value) => setMonth(String(value))}
+                    placeholder="Seleccione un mes"
+                    icon={<CalendarDays className="w-5 h-5" />}
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Día</label>
-                  <select
+                  <CustomSelect
+                    options={[
+                      { value: "", label: "Todos los días", icon: <Calendar className="w-4 h-4" /> },
+                      ...Array.from({ length: 31 }, (_, i) => i + 1).map((d) => ({
+                        value: d.toString(),
+                        label: d.toString(),
+                        icon: <Calendar className="w-4 h-4" />
+                      }))
+                    ]}
                     value={day}
-                    onChange={(e) => setDay(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
-                  >
-                    <option value="">Todos</option>
-                    {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                      <option key={d} value={d}>
-                        {d}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(value) => setDay(String(value))}
+                    placeholder="Seleccione un día"
+                    icon={<Calendar className="w-5 h-5" />}
+                  />
                 </div>
               </div>
               <p className="text-sm text-slate-500 mt-3">
@@ -268,19 +273,21 @@ export default function ExportExcel() {
                 <MapPin className="w-6 h-6 text-slate-600" />
                 <h3 className="text-base font-semibold text-slate-700">Filtrar por zona</h3>
               </div>
-              <select
+              <CustomSelect
+                options={[
+                  { value: "", label: "Todas las zonas", icon: <MapPin className="w-4 h-4" /> },
+                  ...zonas.map((z) => ({
+                    value: z.id.toString(),
+                    label: z.locality,
+                    icon: <MapPin className="w-4 h-4" />
+                  }))
+                ]}
                 value={zonaId}
-                onChange={(e) => setZonaId(e.target.value)}
+                onChange={(value) => setZonaId(String(value))}
+                placeholder="Seleccione una zona"
+                icon={<MapPin className="w-5 h-5" />}
                 disabled={loadingData}
-                className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
-              >
-                <option value="">Todas</option>
-                {zonas.map((z) => (
-                  <option key={z.id} value={z.id}>
-                    {z.locality}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             {/* Usuario */}
@@ -289,19 +296,21 @@ export default function ExportExcel() {
                 <UserIcon className="w-6 h-6 text-slate-600" />
                 <h3 className="text-base font-semibold text-slate-700">Filtrar por usuario</h3>
               </div>
-              <select
+              <CustomSelect
+                options={[
+                  { value: "", label: "Todos los usuarios", icon: <UserIcon className="w-4 h-4" /> },
+                  ...usuarios.map((u) => ({
+                    value: u.id.toString(),
+                    label: u.name,
+                    icon: <UserIcon className="w-4 h-4" />
+                  }))
+                ]}
                 value={userId}
-                onChange={(e) => setUserId(e.target.value)}
+                onChange={(value) => setUserId(String(value))}
+                placeholder="Seleccione un usuario"
+                icon={<UserIcon className="w-5 h-5" />}
                 disabled={loadingData}
-                className="w-full px-4 py-3 bg-slate-50/80 border-2 border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
-              >
-                <option value="">Todos</option>
-                {usuarios.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             {/* Limpiar filtros */}

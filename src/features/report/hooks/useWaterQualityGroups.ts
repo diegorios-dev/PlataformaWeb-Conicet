@@ -45,7 +45,7 @@ export function useWaterQualityGroups(report: any) {
     else if (r.sample_level) {
       setGrupoSeleccionado("grupo3");
       setGrupo3Data({
-        nivel_freatico: r.sample_level.freaticLevel?.toString() || "",
+        nivel_freatico: r.sample_level.nivel_freatico?.toString() || "",
       });
     }
   }, [report]);

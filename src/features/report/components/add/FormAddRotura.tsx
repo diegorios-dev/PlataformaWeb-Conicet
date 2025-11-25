@@ -3,7 +3,7 @@ import { createReporteRotura } from "@features/report/services";
 import { getAllSitios } from "@features/site/services";
 import { getAllZonas } from "@features/zona/services";
 import { AlertTriangle, MapPin, Calendar, Loader2, Wrench, MessageSquare, Camera, Mic, Save } from "lucide-react";
-import BackButton from "@shared/ui/buttons/BackButton";
+import { DashboardLayout } from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import {
   Input,
   Select,
@@ -170,9 +170,8 @@ const FormAddRotura = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50/30 to-orange-50/20 p-4 md:p-6 lg:p-8">
-      <div className="w-full max-w-4xl mx-auto">
-        <BackButton />
+    <DashboardLayout>
+      <div className="w-full max-w-4xl mx-auto p-4 md:p-6 lg:p-8">
 
         {/* Header */}
         <div className="mb-8 flex items-center gap-4">
@@ -320,7 +319,7 @@ const FormAddRotura = () => {
         type={modalType}
         message={modalMessage}
       />
-    </div>
+    </DashboardLayout>
   );
 };
 

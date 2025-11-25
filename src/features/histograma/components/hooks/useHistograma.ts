@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { useFetchData } from "@hooks/useFetchData";
+import { useFetchData } from "@shared/hooks";
 
 
 export function useHistograma(service) {

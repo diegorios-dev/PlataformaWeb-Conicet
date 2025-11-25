@@ -12,7 +12,7 @@ import { SiteFormModal } from "./SiteFormModal";
 import { SiteDeleteModal } from "./SiteDeleteModal";
 import { SiteEmptyState } from "./SiteEmptyState";
 import { SiteInfoBanner } from "./SiteInfoBanner";
-import useNavigation from "@hooks/useNavegation";
+import { useNavegation as useNavigation } from "@shared/hooks";
 
 const AdminSitios = () => {
   const [toastOpen, setToastOpen] = useState(false);

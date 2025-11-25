@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useNavegation from "@hooks/useNavegation";
+import { useNavegation } from "@shared/hooks";
 import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 
 import { FileText, Users, MapPin, LogOut, Shield , TrendingUp, Upload, MapPinned} from "lucide-react";

@@ -7,7 +7,7 @@ import {
   ChevronRight,
   LogOut,
 } from "lucide-react";
-import useNavegation from "@hooks/useNavegation";
+import { useNavegation } from "@shared/hooks";
 
 // Simple mapping type for menu items
 interface NavItemConfig {
@@ -50,15 +50,21 @@ const NavMenu: React.FC = () => {
         p.startsWith("/dashboard/map") ||
         p.includes("/mapa") ||
         p.includes("/Mapa"),
-      color: "text-emerald-600",
+      color: "text-emerald-400",
     },
     {
       key: "histograma",
       label: "Ver Histograma",
       icon: BarChart3,
-      action: go?.histograma || (() => window.location.assign("/dashboard/histogram")),
+      action: () => {
+        if (go?.histograma?.list) {
+          go.histograma.list();
+        } else {
+          window.location.assign("/histograma");
+        }
+      },
       matches: (p) => p.includes("/histogram") || p.includes("/histograma"),
-      color: "text-indigo-600",
+      color: "text-indigo-400",
     },
     {
       key: "heatmap",
@@ -66,7 +72,7 @@ const NavMenu: React.FC = () => {
       icon: MapPin,
       action: go?.heatmap || (() => window.location.assign("/dashboard/heatmap")),
       matches: (p) => p.includes("/heatmap") || p.includes("/mapa-de-calor") || p.includes("/calor"),
-      color: "text-red-600",
+      color: "text-red-300",
     },
   ];
 
@@ -81,7 +87,7 @@ const NavMenu: React.FC = () => {
       {/* Desktop Sidebar */}
       <div
         className={cn(
-          "fixed z-40 top-0 bottom-0 left-0 flex flex-col transition-all duration-300 w-16",
+          "fixed z-[1000] top-0 bottom-0 left-0 flex flex-col transition-all duration-300 w-16",
           expanded ? "w-56" : "w-16"
         )}
       >

@@ -75,4 +75,5 @@ const useSiteForm = ({ onSuccess, onError, onClose }: UseSiteFormParams = {}) =>
   };
 };
 
+export { useSiteForm };
 export default useSiteForm;

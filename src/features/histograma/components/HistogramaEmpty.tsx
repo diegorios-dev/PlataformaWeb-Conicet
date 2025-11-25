@@ -8,7 +8,7 @@ export default function HistogramaEmpty({ periodo }) {
         Sin datos disponibles
       </h3>
       <p className="text-slate-500">
-        No hay registros para el período seleccionado ({periodo})
+        No hay registros para el período seleccionado {periodo}
       </p>
     </div>
   );

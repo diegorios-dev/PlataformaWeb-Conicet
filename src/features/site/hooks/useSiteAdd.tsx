@@ -9,7 +9,7 @@ import {
   Snowflake,
   Activity,
 } from "lucide-react";
-import useNavegation from "@hooks/useNavegation";
+import { useNavegation } from "@shared/hooks";
 
 const useSiteAdd = () => {
 

@@ -1,4 +1,5 @@
 import { AlertCircle, CloudRain, Locate, MapPin, Mountain, Save } from "lucide-react";
+import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 import type { JSX } from "react";
 
 const SiteFormPanel = ({handleSubmit,formData,handleChange,zonas,go,events,getEventIcon} : 
@@ -55,24 +56,21 @@ const SiteFormPanel = ({handleSubmit,formData,handleChange,zonas,go,events,getEv
 
             {/* Zona */}
             <div>
-              <label className="text-gray-700 text-sm font-bold mb-3 flex items-center gap-2" htmlFor="zona_id">
+              <label className="text-gray-700 text-sm font-bold mb-3 flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-blue-500" />
                 Zona
               </label>
-              <select
-                id="zona_id"
+              <CustomSelect
+                options={zonas.map(zona => ({
+                  value: zona.id,
+                  label: zona.locality,
+                  icon: <MapPin className="w-4 h-4" />
+                }))}
                 value={formData.zona_id}
-                onChange={handleChange}
-                required
-                className="w-full py-3.5 px-5 rounded-xl border-2 border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium"
-              >
-                <option value="">Seleccione una zona</option>
-                {zonas.map(zona => (
-                  <option key={zona.id} value={zona.id}>
-                    {zona.locality}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => handleChange({ target: { id: "zona_id", value } } as any)}
+                placeholder="Seleccione una zona"
+                icon={<MapPin className="w-5 h-5" />}
+              />
               <div className="mt-3 flex items-center justify-between bg-blue-50/50 px-4 py-3 rounded-xl">
                 <span className="text-xs text-gray-600 font-medium">
                   ¿No encuentras la zona?
@@ -146,7 +144,7 @@ const SiteFormPanel = ({handleSubmit,formData,handleChange,zonas,go,events,getEv
 
             {/* Tipo de Precipitación */}
             <div>
-              <label className="text-gray-700 text-sm font-bold mb-3 flex items-center gap-2" htmlFor="event_id">
+              <label className="text-gray-700 text-sm font-bold mb-3 flex items-center gap-2">
                 {events.length > 0 && formData.event_id ? (
                   getEventIcon(events.find(e => String(e.id) === formData.event_id)?.type || '')
                 ) : (
@@ -154,23 +152,17 @@ const SiteFormPanel = ({handleSubmit,formData,handleChange,zonas,go,events,getEv
                 )}
                 Tipo de Evento
               </label>
-              <select
-                id="event_id"
+              <CustomSelect
+                options={events.length === 0 ? [] : events.map(event => ({
+                  value: event.id,
+                  label: event.type,
+                  icon: getEventIcon(event.type)
+                }))}
                 value={formData.event_id}
-                onChange={handleChange}
-                required
-                className="w-full py-3.5 px-5 rounded-xl border-2 border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium"
-              >
-                {events.length === 0 ? (
-                  <option value="">Cargando eventos...</option>
-                ) : (
-                  events.map(event => (
-                    <option key={event.id} value={event.id}>
-                      {event.type}
-                    </option>
-                  ))
-                )}
-              </select>
+                onChange={(value) => handleChange({ target: { id: "event_id", value } } as any)}
+                placeholder={events.length === 0 ? "Cargando eventos..." : "Seleccione un tipo de evento"}
+                icon={<CloudRain className="w-5 h-5" />}
+              />
             </div>
 
             {/* Botón Submit */}

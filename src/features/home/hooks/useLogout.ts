@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import { useAuth } from "@context/AuthContext";
-import useNavegation from "@hooks/useNavegation";
+import { useAuth } from "@features/auth";
+import { useNavegation } from "@shared/hooks";
 
 export function useLogout() {
   const { handleLogout } = useAuth();
