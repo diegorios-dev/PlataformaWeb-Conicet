@@ -2,7 +2,8 @@ import {useState } from "react";
 import { LogIn, LogOut, Wrench, CheckCircle, AlertCircle } from "lucide-react";
 
 // Ruta absoluta para assets en /public/
-const img = "/assets/logo-CONICET_opt.png";
+const conicet = "/assets/logo-CONICET_opt.png";
+const unco = "/assets/unco.png";
 
 import { useSitio } from "@features/site/hooks";
 import MapHTML from "@features/map/components/MapHTML";
@@ -65,7 +66,8 @@ const Home = () => {
         {/* Header del sidebar con logo */}
         <div className="px-6 py-6 border-b border-slate-200/60">
           <div className="flex items-center justify-center mb-2">
-            <img src={img} alt="Logo CONICET" className="h-14 w-auto object-contain drop-shadow-sm" />
+            <img src={conicet} alt="Logo CONICET" className="h-14 w-16 object-contain drop-shadow-sm" />
+             <img src={unco} alt="Logo UNCO" className="h-14 w-16 object-contain drop-shadow-sm" />
           </div>
           <h1 className="text-center text-sm font-semibold text-slate-600 tracking-tight">
             Sistema de Monitoreo

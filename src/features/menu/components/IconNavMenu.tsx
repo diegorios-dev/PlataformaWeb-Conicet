@@ -120,7 +120,7 @@ const IconNavMenu: React.FC = () => {
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         className={cn(
-          "fixed z-40 top-0 left-0 h-screen flex flex-col transition-all duration-300",
+          "fixed z-50 top-0 left-0 h-screen flex flex-col transition-all duration-300",
           hovered ? "w-60" : "w-16"
         )}
       >

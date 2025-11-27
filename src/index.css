@@ -154,3 +154,36 @@ body {
   animation: shake 0.5s ease-in-out;
 }
 
+/* ============================================
+   ACCESIBILIDAD ESENCIAL (Mínimo Impacto)
+   ============================================ */
+
+/* Focus visible solo cuando se navega con teclado */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Skip link (oculto hasta que recibe foco) */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+}
+
+.skip-link:focus {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: #3b82f6;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+

@@ -24,9 +24,12 @@ export const DashboardLayout = ({
     <div 
       className={`h-screen pt-8  bg-gradient-to-br from-blue-50 via-white to-purple-50 ${className}`}
     >
+      <a href="#main-content" className="skip-link">
+        Saltar al contenido
+      </a>
       {isAdmin ? <IconNavMenu /> : <NavMenu />}
       {showBackButton && <BackButton />}
-      <main className={`container mx-auto px-4 pb-8 ${contentClassName}`}>
+      <main id="main-content" className={`container mx-auto px-4 pb-8 ${contentClassName}`}>
         {children}
       </main>
     </div>

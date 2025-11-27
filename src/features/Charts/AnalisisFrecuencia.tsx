@@ -120,32 +120,49 @@ const AnalisisFrecuencia = ({ data, estadisticas }: AnalisisFrecuenciaProps) => 
 
   const unidad = estadisticas?.unidad_medida || "mm";
 
+  const totalMediciones = data.reduce((sum, item) => sum + item.frecuencia, 0);
+  const rangoMasFrecuente = data.reduce((max, item) => item.frecuencia > max.frecuencia ? item : max, data[0]);
+
   return (
     <div className="space-y-3">
       {/* Estadísticas resumidas */}
       {estadisticas && (
-        <div className="grid grid-cols-4 gap-2 text-center">
+        <div className="grid grid-cols-4 gap-2 text-center" role="region" aria-label="Resumen estadístico">
           <div className="bg-blue-50 rounded-lg p-2">
-            <p className="text-blue-900 font-bold text-sm">{estadisticas.total_mediciones}</p>
+            <p className="text-blue-900 font-bold text-sm" aria-label={`${estadisticas.total_mediciones} mediciones totales`}>{estadisticas.total_mediciones}</p>
             <p className="text-blue-700 text-xs">Mediciones</p>
           </div>
           <div className="bg-green-50 rounded-lg p-2">
-            <p className="text-green-900 font-bold text-sm">{estadisticas.valor_promedio.toFixed(1)} {unidad}</p>
+            <p className="text-green-900 font-bold text-sm" aria-label={`Promedio ${estadisticas.valor_promedio.toFixed(1)} ${unidad}`}>{estadisticas.valor_promedio.toFixed(1)} {unidad}</p>
             <p className="text-green-700 text-xs">Promedio</p>
           </div>
           <div className="bg-orange-50 rounded-lg p-2">
-            <p className="text-orange-900 font-bold text-sm">{estadisticas.valor_minimo.toFixed(1)} {unidad}</p>
+            <p className="text-orange-900 font-bold text-sm" aria-label={`Mínimo ${estadisticas.valor_minimo.toFixed(1)} ${unidad}`}>{estadisticas.valor_minimo.toFixed(1)} {unidad}</p>
             <p className="text-orange-700 text-xs">Mínimo</p>
           </div>
           <div className="bg-red-50 rounded-lg p-2">
-            <p className="text-red-900 font-bold text-sm">{estadisticas.valor_maximo.toFixed(1)} {unidad}</p>
+            <p className="text-red-900 font-bold text-sm" aria-label={`Máximo ${estadisticas.valor_maximo.toFixed(1)} ${unidad}`}>{estadisticas.valor_maximo.toFixed(1)} {unidad}</p>
             <p className="text-red-700 text-xs">Máximo</p>
           </div>
         </div>
       )}
 
-      <ResponsiveContainer width="100%" height={320}>
-        <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
+      <div 
+        role="img" 
+        aria-label={`Gráfico de análisis de frecuencia. Total de ${totalMediciones} mediciones distribuidas en ${data.length} rangos. Rango más frecuente: ${rangoMasFrecuente?.rango} ${unidad} con ${rangoMasFrecuente?.frecuencia} ocurrencias.`}
+      >
+        <ResponsiveContainer width="100%" height={320}>
+        <AreaChart 
+          data={data} 
+          margin={{ top: 10, right: 30, left: 0, bottom: 20 }}
+          accessibilityLayer
+        >
+          <title>Análisis de Frecuencia de Precipitación</title>
+          <desc>
+            Gráfico de áreas apiladas mostrando la distribución de frecuencias de precipitación 
+            por tipo (lluvia, nieve, caudal) en {data.length} rangos. El rango más frecuente es 
+            {rangoMasFrecuente?.rango} {unidad} con {rangoMasFrecuente?.frecuencia} mediciones.
+          </desc>
           <defs>
             {/* Gradiente para Lluvia (azul) */}
             <linearGradient id="colorLluvia" x1="0" y1="0" x2="0" y2="1">
@@ -236,6 +253,7 @@ const AnalisisFrecuencia = ({ data, estadisticas }: AnalisisFrecuenciaProps) => 
           />
         </AreaChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 };

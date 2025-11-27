@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useNavegation } from "@shared/hooks";
 import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 
-import { FileText, Users, MapPin, LogOut, Shield , TrendingUp, Upload, MapPinned} from "lucide-react";
+import { FileText, Users, MapPin, LogOut , TrendingUp, Upload, MapPinned} from "lucide-react";
 import { FileSpreadsheet } from "lucide-react";
+import conicet from '../../../../public/assets/logo-CONICET_opt.png';
+import unco from '../../../../public/assets/unco.png';
 
 import DashboardButton from "./DashboardButton";
 
@@ -32,18 +34,12 @@ const Dashboard = () => {
             <div className="backdrop-blur-xl bg-white/70 border border-white/80 rounded-3xl shadow-xl p-6 md:p-8">
               
             <div className="backdrop-blur-xl bg-white/80 border border-white/70 rounded-3xl p-4 md:p-8 mb-4">
-              <div className="flex items-center justify-center gap-4 mb-3">
-
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/30">
-                  <Shield className="w-8 h-8 text-white" />
-                </div>
-
-                <div className="text-center">
-                  <h2 className="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">
-                    Panel de Administración
-                  </h2>
-                </div>
-                
+              <div className="flex items-center justify-center gap-6">
+                <img src={conicet} alt="CONICET Logo" className="h-12 md:h-16 w-16 object-contain" />
+                <img src={unco} alt="UNCO Logo" className="h-12 md:h-16 w-auto object-contain" />
+                <h2 className="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">
+                  Panel de Administración
+                </h2>
               </div>
             </div>
 

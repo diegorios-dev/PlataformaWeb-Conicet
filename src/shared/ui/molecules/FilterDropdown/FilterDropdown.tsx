@@ -45,7 +45,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     <div 
       className={`space-y-3.5 ${className}`} 
       ref={dropdownRef}
-      style={{ zIndex: isOpen ? 100 : 'auto', position: 'relative' }}
+      style={{ zIndex: isOpen ? 1000 : 'auto', position: 'relative' }}
     >
       <label className="flex items-center gap-2.5 text-[13px] font-bold text-slate-700 uppercase tracking-[0.08em] px-0.5">
         <div className="p-1.5 bg-blue-50 rounded-lg">{icon}</div>
@@ -76,8 +76,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
         {isOpen && (
           <div 
-            className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-[14px] shadow-2xl shadow-slate-900/10 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
-            style={{ zIndex: 9999 }}
+            className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-[14px] shadow-2xl shadow-slate-900/10 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-[9999]"
           >
             {options.map((option) => (
               <button

@@ -17,13 +17,14 @@ export const ImageModal = ({ open, image, onClose }: ImageModalProps) => {
       <div className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-full transition-all duration-200 hover:scale-101 z-10"
+          aria-label="Cerrar imagen"
+          className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white p-3 rounded-full transition-all duration-200 hover:scale-105 z-10"
         >
           <X size={24} />
         </button>
         <img
           src={image}
-          alt="Imagen ampliada"
+          alt="Imagen ampliada del reporte"
           className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         />
