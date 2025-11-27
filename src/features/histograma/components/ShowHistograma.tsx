@@ -1,14 +1,14 @@
-import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 import { BarChart, CloudRain, CloudSnow, Waves, TrendingUp, Calendar, MapPin } from "lucide-react";
 import { useNavegation as useNavigation } from "@shared/hooks";
+import NavMenu from "@/shared/ui/layouts/NavMenu";
 
 export default function ShowHistograma() {
 
   const {go} = useNavigation();
 
   return (
-    <DashboardLayout>
-      
+    <>
+      <NavMenu/>
       {/* Decoración de fondo sutil */}
       <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] pointer-events-none"></div>
       
@@ -141,6 +141,6 @@ export default function ShowHistograma() {
 
         </div>
       </div>
-    </DashboardLayout>
+    </>
   );
 }

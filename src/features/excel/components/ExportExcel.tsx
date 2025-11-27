@@ -356,14 +356,43 @@ export default function ExportExcel() {
           </button>
 
           {/* Ayuda */}
-          <div className="mt-8 bg-blue-50 border-2 border-blue-200 rounded-2xl p-5">
-            <h3 className="text-base font-semibold text-blue-900 mb-2">Ejemplos de uso</h3>
-            <ul className="list-disc ml-5 text-sm text-blue-800 space-y-1">
-              <li>Año 2025 + Mes Octubre: todos los reportes de octubre 2025</li>
-              <li>Mes Octubre: todos los reportes de octubre (cualquier año)</li>
-              <li>Día 15: todos los reportes del día 15 (cualquier mes/año)</li>
-              <li>Usuario + Zona: reportes de un usuario específico en una zona</li>
-            </ul>
+          <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Lightbulb className="w-5 h-5 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-bold text-blue-900">Ejemplos de Uso</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-blue-100">
+                <span className="font-bold text-blue-600 text-sm">•</span>
+                <div>
+                  <p className="font-semibold text-slate-900 text-sm">Reportes de octubre 2025</p>
+                  <p className="text-xs text-slate-600">Seleccioná: Año → 2025 | Mes → Octubre</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-blue-100">
+                <span className="font-bold text-blue-600 text-sm">•</span>
+                <div>
+                  <p className="font-semibold text-slate-900 text-sm">Todos los octubres</p>
+                  <p className="text-xs text-slate-600">Seleccioná solo: Mes → Octubre (sin año)</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-blue-100">
+                <span className="font-bold text-blue-600 text-sm">•</span>
+                <div>
+                  <p className="font-semibold text-slate-900 text-sm">Todos los días 15</p>
+                  <p className="text-xs text-slate-600">Seleccioná solo: Día → 15 (sin mes ni año)</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-blue-100">
+                <span className="font-bold text-blue-600 text-sm">•</span>
+                <div>
+                  <p className="font-semibold text-slate-900 text-sm">Reportes de un usuario en una zona</p>
+                  <p className="text-xs text-slate-600">Seleccioná: Usuario → Juan Pérez | Zona → Centro</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
