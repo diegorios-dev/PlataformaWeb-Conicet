@@ -1,6 +1,6 @@
 // src/hooks/useSiteStatus.ts
 import { useEffect, useState, useRef } from "react";
-import { getStatusSite } from "@features/site/services";
+import { getAllSitios } from "@features/site/services";
 import type { Coord, SiteStatus } from "../types/interfaces";
 
 export function useSiteStatus(position: Coord[]) {
@@ -22,33 +22,36 @@ export function useSiteStatus(position: Coord[]) {
 
     const fetchStatus = async () => {
       try {
-        // Ejecutar en paralelo
-        const promises = position.map(async (coord) => {
-          if (!coord?.idSitio) return null;
-          try {
-            const status = await getStatusSite(coord.idSitio);
-            return [coord.idSitio, status] as [number, SiteStatus];
-          } catch (err) {
-            // Fallback limpio en caso de error
-            return [
-              coord.idSitio,
-              {
-                status: true,
-                tiene_instrumentos_averiados: false,
-                instrumentos_averiados: [],
-              },
-            ] as [number, SiteStatus];
+        // ✅ OPTIMIZACIÓN: Llamar getAllSitios UNA SOLA VEZ en lugar de N veces
+        const allSites = await getAllSitios();
+        
+        // Crear mapa de estados desde todos los sitios
+        const statusMap = new Map<number, SiteStatus>();
+        
+        position.forEach((coord) => {
+          if (!coord?.idSitio) return;
+          
+          const site = allSites.find((s: any) => s.id === coord.idSitio);
+          
+          if (site) {
+            statusMap.set(coord.idSitio, {
+              status: site.status,
+              tiene_instrumentos_averiados: site.tiene_instrumentos_averiados,
+              instrumentos_averiados: site.instrumentos_averiados || []
+            });
+          } else {
+            // Fallback si no se encuentra
+            statusMap.set(coord.idSitio, {
+              status: true,
+              tiene_instrumentos_averiados: false,
+              instrumentos_averiados: []
+            });
           }
         });
 
-        const entries = (await Promise.all(promises)).filter(Boolean) as [
-          number,
-          SiteStatus
-        ][];
-
         if (!mounted) return;
 
-        setSiteStatus(new Map(entries));
+        setSiteStatus(statusMap);
       } catch (e) {
         if (!mounted) return;
         setSiteStatus(new Map());

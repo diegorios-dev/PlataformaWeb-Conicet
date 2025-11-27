@@ -1,7 +1,19 @@
-export default function HistogramaError({ error }) {
+import { ErrorState } from "@shared/ui/Loading/ErrorState";
+
+interface HistogramaErrorProps {
+  error: any;
+  onRetry?: () => void;
+}
+
+export default function HistogramaError({ error, onRetry }: HistogramaErrorProps) {
   return (
-    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mt-4">
-      <p className="text-center text-red-600 font-medium">Error: {error}</p>
+    <div className="mt-4">
+      <ErrorState 
+        error={error}
+        onRetry={onRetry}
+        retryLabel="Reintentar carga"
+        className="min-h-[300px]"
+      />
     </div>
   );
 }

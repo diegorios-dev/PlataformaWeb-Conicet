@@ -4,10 +4,11 @@ import "leaflet.heat";
 import "leaflet/dist/leaflet.css";
 import { getReportes } from "@features/report/services";
 import { getAllEvents, type Event } from "@features/event/services";
-import { BeatLoader } from "react-spinners";
 import { BaseMapSelector } from "./BaseMapSelector";
 import { createHeatmapTooltipContent } from "./HeatmapTooltip";
 import { Droplet, Snowflake, Activity, TrendingUp, TrendingDown } from "lucide-react";
+import { LoadingSpinner, EmptyState } from "@shared/ui/Loading/LoadingState";
+import { ErrorState } from "@shared/ui/Loading/ErrorState";
 import "@/App.css"
 import NavMenu from "@shared/ui/layouts/NavMenu";
 
@@ -19,6 +20,7 @@ const HeatMapView = () => {
   const [baseLayer, setBaseLayer] = useState<L.TileLayer | null>(null);
   const [reportes, setReportes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<any>(null);
   const [markers, setMarkers] = useState<L.CircleMarker[]>([]);
   const [baseMap, setBaseMap] = useState<"original" | "vegetacion" | "topografia">("original");
 
@@ -42,10 +44,12 @@ const HeatMapView = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        setError(null);
         const data = await getReportes();
         setReportes(data || []);
       } catch (error) {
         console.error("Error al cargar reportes:", error);
+        setError(error);
       } finally {
         setLoading(false);
       }
@@ -66,6 +70,12 @@ const HeatMapView = () => {
   };
 
   useEffect(() => {
+    // Solo inicializar el mapa si no estamos en loading y no hay error
+    if (loading || error) return;
+
+    const mapElement = document.getElementById("heatmap");
+    if (!mapElement) return;
+
     const map = L.map("heatmap", {
       scrollWheelZoom: true,
       zoomControl: false,
@@ -90,7 +100,7 @@ const HeatMapView = () => {
     return () => {
       map.remove();
     };
-  }, []);
+  }, [loading, error]);
 
   useEffect(() => {
     if (!mapInstance || !baseLayer) return;
@@ -238,6 +248,50 @@ const HeatMapView = () => {
     setMarkers(newMarkers);
   }, [selectedEventId, mapInstance, loading, pluvData, events]);
 
+  // Manejo de errores
+  if (error) {
+    return (
+      <div className="relative w-full h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-50">
+        <NavMenu />
+        <div className="flex-1 flex items-center justify-center">
+          <ErrorState 
+            error={error}
+            onRetry={() => window.location.reload()}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Estado de carga
+  if (loading) {
+    return (
+      <div className="relative w-full h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-50">
+        <NavMenu />
+        <LoadingSpinner 
+          message="Cargando mapa de calor"
+          submessage="Procesando datos meteorológicos..."
+          size="lg"
+        />
+      </div>
+    );
+  }
+
+  // Estado vacío
+  if (reportes.length === 0) {
+    return (
+      <div className="relative w-full h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-50">
+        <NavMenu />
+        <EmptyState
+          icon={Activity}
+          title="No hay datos de reportes"
+          description="No se encontraron reportes para generar el mapa de calor."
+          suggestion="Asegúrate de que existan reportes cargados en el sistema."
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full h-screen flex flex-col">
       <NavMenu />
@@ -301,21 +355,7 @@ const HeatMapView = () => {
         </div>
       </div>
 
-      {/* Loading */}
-      {loading && (
-        <div className="absolute inset-0 z-[998] flex justify-center items-center bg-gradient-to-br from-slate-900/30 via-blue-900/20 to-slate-900/30 backdrop-blur-md">
-          <div className="backdrop-blur-2xl bg-gradient-to-br from-white/90 to-white/70 border-2 border-white/80 p-12 rounded-3xl shadow-2xl flex flex-col items-center transform hover:scale-105 transition-transform duration-300">
-            <div className="mb-6">
-              <BeatLoader color="#3b82f6" size={18} />
-            </div>
-            <div className="flex items-center gap-3 mt-4">
-              <Activity className="w-6 h-6 text-blue-600 animate-pulse" />
-              <span className="text-slate-800 font-bold tracking-wide text-lg">Cargando datos meteorológicos</span>
-            </div>
-            <span className="mt-3 text-slate-500 font-medium text-sm">Preparando tu mapa de calor...</span>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 };

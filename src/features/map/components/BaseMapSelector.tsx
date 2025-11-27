@@ -44,7 +44,7 @@ export const BaseMapSelector: React.FC<Props> = ({
             },
           ]}
           value={baseMap}
-          onChange={(value) => setBaseMap(String(value))}
+          onChange={(value) => setBaseMap(value as string)}
           placeholder="Seleccione mapa base"
           icon={<MapPin className="w-5 h-5" />}
         />

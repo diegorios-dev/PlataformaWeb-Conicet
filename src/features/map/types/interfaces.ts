@@ -10,6 +10,7 @@ export interface Coord {
 export interface MapHTMLProps {
   position: Coord[];
   loading?: boolean;
+  error?: any;
 }
 
 export interface SiteData {

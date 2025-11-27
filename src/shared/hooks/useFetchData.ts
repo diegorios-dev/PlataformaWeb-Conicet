@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
+import { detectErrorType } from "@shared/ui/Loading/ErrorState";
 
 export const useFetchData = (fetchFunction) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [errorType, setErrorType] = useState(null);
 
   useEffect(() => {
     const getData = async () => {
       try {
+        setLoading(true);
+        setError(null);
+        setErrorType(null);
+        
         const response = await fetchFunction();
         setData(response);
       } catch (err) {
-        setError(err.message || "Error al obtener los datos");
+        const type = detectErrorType(err);
+        setErrorType(type);
+        setError(err);
+        console.error(`[useFetchData - ${type}]`, err);
       } finally {
         setLoading(false);
       }
@@ -20,5 +29,5 @@ export const useFetchData = (fetchFunction) => {
     getData();
   }, [fetchFunction]);
 
-  return { data, loading, error };
+  return { data, loading, error, errorType };
 };

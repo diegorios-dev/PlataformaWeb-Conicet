@@ -1,6 +1,7 @@
-import { FileText, Gauge, Calendar } from "lucide-react";
+import { Gauge, Calendar } from "lucide-react";
 import { months } from "../contants/constants";
 import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
+import { PDFGenerator } from "@shared/ui/Loading/FileGenerators";
 
 export default function HistogramaControls({
   periodo,
@@ -12,6 +13,7 @@ export default function HistogramaControls({
   pdfQuality,
   setPdfQuality,
   generandoPDF,
+  pdfProgress,
   loading,
   data,
   onGeneratePDF
@@ -39,15 +41,13 @@ export default function HistogramaControls({
             />
           </div>
 
-          {/* Botón PDF */}
-          <button
-            onClick={onGeneratePDF}
-            disabled={!data || loading || generandoPDF}
-            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all flex items-center gap-2 disabled:opacity-60"
-          >
-            <FileText size={18} />
-            {generandoPDF ? "Generando..." : "Generar PDF"}
-          </button>
+          {/* Botón PDF mejorado */}
+          <PDFGenerator
+            isGenerating={generandoPDF}
+            onGenerate={onGeneratePDF}
+            disabled={!data || loading}
+            progress={pdfProgress}
+          />
         </div>
       </div>
 

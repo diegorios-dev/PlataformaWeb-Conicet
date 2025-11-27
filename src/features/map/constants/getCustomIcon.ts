@@ -1,6 +1,10 @@
 // src/utils/getCustomIcon.ts
 import L from "leaflet";
 
+/**
+ * Ícono tradicional con imágenes PNG
+ * @deprecated Use getModernMarkerIcon para el diseño moderno con animaciones
+ */
 export const getCustomIcon = (_tipo: string, isHealthy: boolean) => {
   // Minimal icon: puedes reemplazar los paths por tus imágenes
   const iconUrl = isHealthy

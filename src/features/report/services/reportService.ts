@@ -6,8 +6,10 @@ import { invalidateEstadisticasCache } from "@features/Charts/services";
 
 const API_URL_SERVICE = API_URL;
 
-export const getReportes = async () => {
-  const { data } = await axios.get(`${API_URL_SERVICE}/reportes`);
+export const getReportes = async (order: 'asc' | 'desc' = 'asc') => {
+  const { data } = await axios.get(`${API_URL_SERVICE}/reportes`, {
+    params: { order }
+  });
   return data;
 };
 

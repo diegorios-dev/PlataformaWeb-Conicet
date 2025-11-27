@@ -10,9 +10,12 @@ export function useSiteReports(position, siteIds, selectedYear) {
   useEffect(() => {
     const fetchAllReports = async () => {
       if (!position || position.length === 0) {
+        setSiteReports(new Map());
         setLoadingReports(false);
         return;
       }
+      
+      // ✅ OPTIMIZACIÓN: Usar solo siteIds para la key (ya no necesitamos position)
       const queryKey = `${selectedYear ?? 'all'}|${siteIds.join(',')}`;
       if (lastQueryKeyRef.current === queryKey && siteReports.size > 0) {
         setLoadingReports(false);
@@ -54,7 +57,7 @@ export function useSiteReports(position, siteIds, selectedYear) {
       }
     };
     fetchAllReports();
-  }, [position, siteIds, selectedYear]);
+  }, [siteIds, selectedYear]); // ✅ OPTIMIZACIÓN: Removido 'position' de dependencias
 
   return { siteReports, loadingReports };
 }

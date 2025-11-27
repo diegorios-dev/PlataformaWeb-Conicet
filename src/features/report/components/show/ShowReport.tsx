@@ -6,6 +6,7 @@ import { useZonas } from "../../hooks/useZonas";
 import { useAudioPlayer } from "../../hooks/useAudioPlayer";
 import { useImageModal } from "../../hooks/useImageModal";
 import { filterByType, filterByPrecipitation, filterByZona, filterBySearch } from "../../utils/reportFilters";
+import { ArrowUpDown } from "lucide-react";
 
 import {DashboardLayout} from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import { ReportHeader } from "./ReportHeader";
@@ -14,10 +15,11 @@ import { ReportFilters } from "./ReportFiltersProps";
 import { Badge } from "@shared/ui/atoms/Badge";
 import { ReportList } from "./ReportList";
 import { ImageModal } from "./ImageModal";
+import { EmptyReportsState } from "@shared/ui/Loading";
 
 const ShowReport = () => {
   const { go } = useNavigation();
-  const reports = useReports();
+  const reports = useReports({ order: 'desc' });
 
   // Filtros
   const [search, setSearch] = useState("");
@@ -45,6 +47,22 @@ const ShowReport = () => {
     return result;
   }, [reports, search, filterType, filterPrecipitation, filterZona]);
 
+  // Verificar si hay filtros activos
+  const hasActiveFilters = useMemo(() => {
+    return search !== "" || 
+           filterType !== "all" || 
+           filterPrecipitation !== "all" || 
+           filterZona !== "all";
+  }, [search, filterType, filterPrecipitation, filterZona]);
+
+  // Función para limpiar filtros
+  const clearFilters = () => {
+    setSearch("");
+    setFilterType("all");
+    setFilterPrecipitation("all");
+    setFilterZona("all");
+  };
+
   return (
    <DashboardLayout contentClassName="">
       <div className="w-full max-w-7xl mx-auto">
@@ -70,15 +88,23 @@ const ShowReport = () => {
           <Badge count={filtered.length} />
         </div>
 
-        <ReportList
-          reports={filtered}
-          onImageClick={openModal}
-          onAudioPlay={play}
-          onAudioPause={stop}
-          onEdit={handleEditClick}
-          buildImageUrl={buildImageUrl}
-          buildAudioUrl={buildAudioUrl}
-        />
+        {/* Mostrar estado vacío si no hay reportes */}
+        {filtered.length === 0 ? (
+          <EmptyReportsState
+            hasFilters={hasActiveFilters}
+            onClearFilters={hasActiveFilters ? clearFilters : undefined}
+          />
+        ) : (
+          <ReportList
+            reports={filtered}
+            onImageClick={openModal}
+            onAudioPlay={play}
+            onAudioPause={stop}
+            onEdit={handleEditClick}
+            buildImageUrl={buildImageUrl}
+            buildAudioUrl={buildAudioUrl}
+          />
+        )}
       </div>
 
       <ImageModal open={open} image={image} onClose={closeModal} />
