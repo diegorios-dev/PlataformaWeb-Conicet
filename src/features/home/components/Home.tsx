@@ -1,4 +1,4 @@
-import {useState } from "react";
+import { useState } from "react";
 import { LogIn, LogOut, Wrench, CheckCircle, AlertCircle } from "lucide-react";
 
 // Ruta absoluta para assets en /public/
@@ -27,7 +27,7 @@ const Home = () => {
   const { go } = useNavegation();
 
   const showWelcome = useWelcomeMessage(isLogin);
-  const handleLogoutClick = useLogout();
+  const handleLogout = useLogout();
   const OPTION_COMPLEMENTS = getOptionComplements(go);
   const pointsMap = sitios;
 
@@ -118,7 +118,7 @@ const Home = () => {
         <div className="px-6 py-5 border-t border-slate-200/60 bg-slate-50/50">
           {isLogin ? (
             <button
-              onClick={handleLogoutClick}
+              onClick={handleLogout}
               className={`${btnWarn} justify-center shadow-md`}
             >
               <LogOut className="w-5 h-5" />

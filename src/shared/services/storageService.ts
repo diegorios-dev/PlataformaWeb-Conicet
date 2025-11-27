@@ -59,5 +59,28 @@ export const storageService = {
       sessionStorage.removeItem('newLogin');
     } catch (error) {
     }
+  },
+
+  // LOGOUT NOTIFICATION (sessionStorage)
+  getShowLogoutNotif: (): boolean => {
+    try {
+      return sessionStorage.getItem('showLogoutNotif') === 'true';
+    } catch (error) {
+      return false;
+    }
+  },
+
+  setShowLogoutNotif: (): void => {
+    try {
+      sessionStorage.setItem('showLogoutNotif', 'true');
+    } catch (error) {
+    }
+  },
+
+  removeShowLogoutNotif: (): void => {
+    try {
+      sessionStorage.removeItem('showLogoutNotif');
+    } catch (error) {
+    }
   }
 };
