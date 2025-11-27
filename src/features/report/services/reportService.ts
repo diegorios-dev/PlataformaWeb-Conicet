@@ -22,8 +22,6 @@ export const updateReporte = async (id: number, data: any) => {
     
     return response.data;
   } catch (error: any) {
-    console.error("Error en updateReporte:", error);
-    console.error("Respuesta del error:", error.response?.data);
     throw error;
   }
 };
@@ -45,8 +43,6 @@ export const createReporteRotura = async (data: FormData) => {
     
     return response.data;
   } catch (error: any) {
-    console.error("Error en createReporteRotura:", error);
-    console.error("Respuesta del error:", error.response?.data);
     throw error;
   }
 };
@@ -64,8 +60,6 @@ export const resolveReporteRotura = async (id: number) => {
     
     return response.data;
   } catch (error: any) {
-    console.error("Error en resolveReporteRotura:", error);
-    console.error("Respuesta del error:", error.response?.data);
     throw error;
   }
 };
@@ -121,7 +115,6 @@ export async function getHistograma(
   
   // El backend devuelve { success, data: [{ label, value }], metadata }
   if (!json.success || !json.data) {
-    console.warn('Respuesta inesperada del backend:', json);
     return [];
   }
   

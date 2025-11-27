@@ -22,7 +22,6 @@ function useUser() {
         setUser(storedUser);
         validateLogin(storedUser);
       } catch (error) {
-        console.error("Error al cargar usuario desde localStorage:", error);
         storageService.removeUser();
       }
     }
@@ -45,7 +44,6 @@ function useUser() {
     
     try {
       const data = await login(password);
-      console.log(data);
       const fetchedUser = data?.user ?? null;
       setUser(fetchedUser);
       validateLogin(fetchedUser);
@@ -54,7 +52,6 @@ function useUser() {
         storageService.setUser(fetchedUser);
       }
     } catch (err: any) {
-      console.error("Error al validar usuario:", err);
       
       // Determinar el mensaje de error apropiado
       let errorMessage = "Error al iniciar sesión";

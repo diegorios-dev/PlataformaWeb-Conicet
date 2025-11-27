@@ -20,7 +20,6 @@ export const useFetchData = (fetchFunction) => {
         const type = detectErrorType(err);
         setErrorType(type);
         setError(err);
-        console.error(`[useFetchData - ${type}]`, err);
       } finally {
         setLoading(false);
       }

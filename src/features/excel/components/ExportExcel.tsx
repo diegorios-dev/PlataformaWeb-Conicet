@@ -60,7 +60,6 @@ export default function ExportExcel() {
         setUsuarios(usuariosData.users || []);
         setAvailableYears(yearsData.years || []);
       } catch (err) {
-        console.error("Error al cargar datos:", err);
         setZonas([]);
         setUsuarios([]);
         setAvailableYears([new Date().getFullYear()]);

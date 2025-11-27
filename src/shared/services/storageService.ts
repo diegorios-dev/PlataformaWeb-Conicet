@@ -12,7 +12,6 @@ export const storageService = {
       const data = localStorage.getItem('user');
       return data ? JSON.parse(data) : null;
     } catch (error) {
-      console.error('Error parsing user from localStorage:', error);
       return null;
     }
   },
@@ -21,7 +20,6 @@ export const storageService = {
     try {
       localStorage.setItem('user', JSON.stringify(user));
     } catch (error) {
-      console.error('Error saving user to localStorage:', error);
     }
   },
 
@@ -29,7 +27,6 @@ export const storageService = {
     try {
       localStorage.removeItem('user');
     } catch (error) {
-      console.error('Error removing user from localStorage:', error);
     }
   },
 
@@ -38,7 +35,6 @@ export const storageService = {
     try {
       return sessionStorage.getItem('newLogin') === 'true';
     } catch (error) {
-      console.error('Error reading newLogin from sessionStorage:', error);
       return false;
     }
   },
@@ -47,7 +43,6 @@ export const storageService = {
     try {
       sessionStorage.setItem('newLogin', 'true');
     } catch (error) {
-      console.error('Error setting newLogin in sessionStorage:', error);
     }
   },
 
@@ -55,7 +50,6 @@ export const storageService = {
     try {
       sessionStorage.removeItem('newLogin');
     } catch (error) {
-      console.error('Error removing newLogin from sessionStorage:', error);
     }
   },
 
@@ -64,7 +58,6 @@ export const storageService = {
       localStorage.removeItem('user');
       sessionStorage.removeItem('newLogin');
     } catch (error) {
-      console.error('Error clearing storage:', error);
     }
   }
 };

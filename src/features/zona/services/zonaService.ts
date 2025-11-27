@@ -14,14 +14,11 @@ export const postNewZona = async (newZona: { locality: string }) => {
     try {
       zonaExists = await getZonaByLocality(newZona.locality);
     } catch (error) {
-      console.log("No se encontró la zona, se procederá a crearla.");
     }
 
     if (zonaExists != null) {
-      console.log("La zona con esta localidad ya existe.");
       throw new Error("La zona con esta localidad ya existe.");
     } else {
-      console.log("La zona con esta localidad no existe. Procediendo a crearla.");
     }
     
     const { data } = await axios.post(`${API_URL_SERVICE}/zona/register/`, newZona);
@@ -31,7 +28,6 @@ export const postNewZona = async (newZona: { locality: string }) => {
     
     return data;
   } catch (error) {
-    console.error("Error al crear la nueva zona:", error);
     throw error;
   }
 };
@@ -41,7 +37,6 @@ export const getAllZonas = async () => {
     const { data } = await axios.get(`${API_URL_SERVICE}/zonas`);
     return data;
   } catch (error) {
-    console.error("Error al obtener las zonas:", error);
     throw error;
   }
 };
@@ -49,12 +44,9 @@ export const getAllZonas = async () => {
 export const getZonaByLocality = async (zona: string) => {
   try {
     const consulta = API_URL + "/zona/locality/" + encodeURIComponent(zona);
-    console.log(" 2 Consulta a realizar: ", consulta);
     const { data } = await axios.get(`${API_URL_SERVICE}/zona/locality/${encodeURIComponent(zona)}`);
     return data;
   } catch (error) {
-    console.log("Error al obtener la zona por localidad:", error);
-
     throw error;
   }
 };
@@ -99,7 +91,6 @@ export const updateZona = async (id: string, data: { locality: string }) => {
     invalidateEstadisticasCache();
     return response.data;
   } catch (error) {
-    console.error("Error al editar la zona:", error);
     throw error;
   }
 };
@@ -110,7 +101,6 @@ export const deleteZona = async (id: string) => {
     invalidateEstadisticasCache();
     return response.data;
   } catch (error) {
-    console.error("Error al eliminar la zona:", error);
     throw error;
   }
 };

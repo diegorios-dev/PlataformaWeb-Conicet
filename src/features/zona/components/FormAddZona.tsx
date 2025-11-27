@@ -35,7 +35,6 @@ const FormAddZona = () => {
       const zonasData = await getAllZonas();
       setZonas(zonasData);
     } catch (err) {
-      console.error("Error fetching zonas:", err);
       showToast("error", "Error al cargar las zonas");
     } finally {
       setLoadingZonas(false);
@@ -71,7 +70,6 @@ const FormAddZona = () => {
       setFormData({ locality: "", site: { latitude: "", longitude: "" } });
       await fetchZonas();
     } catch (error) {
-      console.error("Error creating zona:", error);
       showToast("error", "Error al crear la zona. Por favor intenta nuevamente.");
     } finally {
       setLoading(false);

@@ -228,7 +228,6 @@ export function useChartsData() {
 
   // Función para refrescar todo limpiando cache
   const refreshAll = useCallback(() => {
-    console.log('🔄 Limpiando cache y recargando datos...');
     invalidateEstadisticasCache();
     fetchData();
     fetchPrecipitacion();

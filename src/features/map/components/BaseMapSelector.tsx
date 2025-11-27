@@ -21,10 +21,6 @@ export const BaseMapSelector: React.FC<Props> = ({
   return (
     <div className={`absolute top-6 ${positionClasses} z-[999] w-60 ${className}`}>
       <div className="bg-white/20 backdrop-blur-lg px-6 py-4 rounded-2xl border border-white/30 shadow-xl">
-        <label className="text-xs font-bold text-slate-800 flex items-center gap-2 mb-3 tracking-wide uppercase">
-          <MapPin className="w-4 h-4 text-blue-600" />
-          Mapa Base
-        </label>
         <CustomSelect
           options={[
             {

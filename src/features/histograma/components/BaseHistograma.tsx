@@ -46,7 +46,6 @@ export default function BaseHistograma({ title, service, unidad, color, filename
         setPdfProgress(0);
       }, 1000);
     } catch (error) {
-      console.error("Error al generar PDF:", error);
       setGenerandoPDF(false);
       setPdfProgress(0);
     }

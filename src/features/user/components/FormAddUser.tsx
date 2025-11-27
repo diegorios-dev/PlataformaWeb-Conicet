@@ -42,7 +42,6 @@ const FormAddUser = () => {
       const data = await getAllSitios();
       setSitios(data);
     } catch (error) {
-      console.error("Error al cargar sitios:", error);
     }
   };
 
@@ -87,7 +86,6 @@ const FormAddUser = () => {
         go.back();
       }, 2000);
     } catch (error) {
-      console.error("Error al crear usuario:", error);
       setToastType("error");
       setToastMessage("Error al crear usuario. Por favor intenta nuevamente.");
       setToastOpen(true);

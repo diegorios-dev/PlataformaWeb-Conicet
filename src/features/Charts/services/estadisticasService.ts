@@ -185,24 +185,18 @@ export const getPrecipitacionCoordenadas = async (periodo?: string, tipoEvento?:
         url += `?${queryString}`;
       }
 
-      console.log('🌐 Llamando a API URL:', url);
       try {
         const response = await axios.get(url);
-        console.log('✅ Respuesta completa de la API:', response);
         
         // Validar la estructura de la respuesta
         if (response.data && Array.isArray(response.data.data)) {
-          console.log('✅ Datos válidos encontrados:', response.data.data);
           return response.data.data;
         } else if (Array.isArray(response.data)) {
-          console.log('✅ Array directo encontrado:', response.data);
           return response.data;
         } else {
-          console.warn('⚠️ Formato de respuesta inesperado:', response.data);
           return [];
         }
       } catch (error) {
-        console.error('❌ Error en llamada a API:', error);
         throw error;
       }
     },
@@ -313,5 +307,4 @@ export const getComparativaAnual = async (anios?: string, tipoEvento?: string, m
 export const invalidateEstadisticasCache = () => {
   cache.invalidatePattern('estadisticas:');
   cache.invalidatePattern('zonas:');
-  console.log('🗑️ Cache de estadísticas y zonas invalidado');
 };

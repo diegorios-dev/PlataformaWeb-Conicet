@@ -103,7 +103,6 @@ export default function ImportarExcel() {
       setResult(response.data);
       setFile(null);
     } catch (err: any) {
-      console.error('Error al importar:', err);
       setError(
         err.response?.data?.message ||
           err.response?.data?.error ||

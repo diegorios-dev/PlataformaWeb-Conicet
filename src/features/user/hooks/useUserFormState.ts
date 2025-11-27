@@ -46,7 +46,6 @@ export const useUserFormState = ({
           if (sitioActual?.zona) setZonaSeleccionada(sitioActual.zona);
         }
       } catch (e) {
-        console.error('Error al cargar sitios:', e);
       }
     };
 
@@ -55,7 +54,6 @@ export const useUserFormState = ({
         const zonasData = await getAllZonas();
         setZonas(zonasData);
       } catch (e) {
-        console.error('Error al cargar zonas:', e);
       }
     };
 
@@ -76,7 +74,6 @@ export const useUserFormState = ({
         const userInst = await getUserInstruments(selectedUser.id);
         setUserInstruments(userInst.instruments || []);
       } catch (e) {
-        console.error('Error al cargar instrumentos:', e);
       }
       setLoadingInstruments(false);
     };

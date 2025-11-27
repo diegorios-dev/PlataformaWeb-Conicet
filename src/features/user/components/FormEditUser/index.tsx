@@ -72,7 +72,6 @@ export const FormEditUser = ({
 
       showModal("success", "Usuario actualizado correctamente");
     } catch (e) {
-      console.error("Error al guardar usuario:", e);
       showModal("error", "Error al actualizar usuario");
     }
     setIsSaving(false);

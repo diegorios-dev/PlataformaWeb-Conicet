@@ -103,12 +103,10 @@ export async function getCachedData<T>(
   // Intentar obtener del cache
   const cached = cache.get<T>(key);
   if (cached !== null) {
-    console.log(`✅ Cache hit: ${key}`);
     return cached;
   }
 
   // Si no está en cache, obtener datos
-  console.log(`🔄 Cache miss: ${key} - Fetching...`);
   const data = await fetchFn();
   
   // Guardar en cache

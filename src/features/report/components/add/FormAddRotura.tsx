@@ -53,7 +53,6 @@ const FormAddRotura = () => {
       setSitios(sitiosData);
       setZonas(zonasData);
     } catch (error) {
-      console.error("Error al cargar datos iniciales:", error);
     }
   };
 
@@ -159,7 +158,6 @@ const FormAddRotura = () => {
       await createReporteRotura(data);
       showModal("success", "Reporte de rotura creado exitosamente");
     } catch (error: any) {
-      console.error("Error al crear reporte de rotura:", error);
       showModal(
         "error",
         error.response?.data?.message || "Error al crear el reporte de rotura"

@@ -210,7 +210,6 @@ export const ErrorState = ({
 export function useErrorHandler() {
   const handleError = (error: any): NetworkErrorType => {
     const errorType = detectErrorType(error);
-    console.error(`[${errorType}]`, error);
     return errorType;
   };
 

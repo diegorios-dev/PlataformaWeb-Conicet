@@ -62,7 +62,6 @@ function useSitio (selectedInstrument : any) {
                 });
                 
             } catch (error: any) {
-                console.error("Error al traer precipitaciones:", error);
                 
                 // Caso 4: Determinar tipo de error
                 let errorMessage = "Error desconocido al cargar los datos";

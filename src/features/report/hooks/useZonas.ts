@@ -10,7 +10,6 @@ export const useZonas = () => {
         const data = await getAllZonas();
         setZonas(data);
       } catch (e) {
-        console.error("Error cargando zonas:", e);
       }
     };
     load();

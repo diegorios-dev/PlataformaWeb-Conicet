@@ -376,7 +376,6 @@ const ShowCharts = () => {
       pdf.save(`estadisticas-precipitacion-${new Date().toISOString().split('T')[0]}.pdf`);
       
     } catch (error) {
-      console.error('Error al generar PDF:', error);
       alert('Ocurrió un error al generar el PDF. Por favor, intenta nuevamente.');
     } finally {
       setIsExportingPDF(false);

@@ -36,7 +36,6 @@ const HeatMapView = () => {
           setSelectedEventId(filteredEvents[0].id);
         }
       } catch (error) {
-        console.error("Error al cargar eventos:", error);
       }
     };
     fetchEvents();
@@ -50,7 +49,6 @@ const HeatMapView = () => {
         const data = await getReportes();
         setReportes(data || []);
       } catch (error) {
-        console.error("Error al cargar reportes:", error);
         setError(error);
       } finally {
         setLoading(false);

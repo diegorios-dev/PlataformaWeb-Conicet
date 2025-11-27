@@ -14,7 +14,6 @@ export const getAllSitios = async () => {
     const { data } = await axios.get(`${API_URL_SERVICE}/sitios`);
     return data;
   } catch (error) {
-    console.error("Error al obtener sitios:", error);
     throw error;
   }
 };
@@ -54,7 +53,6 @@ export const getReportsForSites = async (siteIds: number[], year?: number): Prom
     }
     return [];
   } catch (error: any) {
-    console.warn('Endpoint batch no disponible, fallback a llamadas individuales:', error?.message || error);
     // Fallback: llamadas individuales en paralelo
     const results = await Promise.all(
       siteIds.map(async (id) => {
@@ -62,7 +60,6 @@ export const getReportsForSites = async (siteIds: number[], year?: number): Prom
           const reports = await getReportsForSite(id, year);
           return { siteId: id, reports: reports || [] };
         } catch (e) {
-          console.error('Error obteniendo sitio', id, e);
           return { siteId: id, reports: [] };
         }
       })
@@ -97,7 +94,6 @@ export const getStatusSite = async (siteId: number) => {
       instrumentos_averiados: []
     };
   } catch (error) {
-    console.error(`Error al obtener status del sitio ${siteId}:`, error);
     throw error;
   }
 };
@@ -111,7 +107,6 @@ export const postNewSite = async (newSite: Record<string, any>) => {
     
     return data;
   } catch (error) {
-    console.error("Error al crear sitio:", error);
     throw error;
   }
 };
@@ -122,7 +117,6 @@ export const updateSite = async (id: number, data: Record<string, any>) => {
     invalidateEstadisticasCache();
     return response;
   } catch (error) {
-    console.error("Error al editar sitio:", error);
     throw error;
   }
 };
@@ -133,7 +127,6 @@ export const deleteSite = async (id: number) => {
     invalidateEstadisticasCache();
     return response;
   } catch (error) {
-    console.error("Error al eliminar sitio:", error);
     throw error;
   }
 };

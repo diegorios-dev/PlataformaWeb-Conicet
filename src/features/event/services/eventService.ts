@@ -15,7 +15,6 @@ export const getAllEvents = async (): Promise<Event[]> => {
     const { data } = await axios.get(`${API_URL_SERVICE}/eventos`);
     return data;
   } catch (error) {
-    console.error("Error al obtener eventos:", error);
     throw error;
   }
 };
@@ -25,7 +24,6 @@ export const getEventById = async (id: number): Promise<Event> => {
     const { data } = await axios.get(`${API_URL_SERVICE}/eventos/${id}`);
     return data;
   } catch (error) {
-    console.error(`Error al obtener evento ${id}:`, error);
     throw error;
   }
 };

@@ -17,10 +17,6 @@ export const postNewUser = async (newUser) => {
     const { data } = await axios.post(`${API_URL_SERVICE}/user/register`, payload);
     return data;
   } catch (error) {
-    console.error("Error completo:", error);
-    console.error("Respuesta del servidor:", error.response?.data);
-    console.error("Status:", error.response?.status);
-    console.error("Errores de validación:", error.response?.data?.errors);
     throw error;
   }
 };
@@ -55,7 +51,6 @@ export const saveUser = async (user) => {
     const { data } = await axios.put(`${API_URL_SERVICE}/usuario/${user.id}`, payload);
     return data;
   } catch (error) {
-    console.error("Error al actualizar usuario:", error);
     throw error;
   }
 };
@@ -65,9 +60,6 @@ export const deleteUser = async (userId) => {
     const { data } = await axios.delete(`${API_URL_SERVICE}/usuario/${userId}`);
     return data;
   } catch (error) {
-    console.error("Error al eliminar usuario:", error);
-    console.error("Respuesta del servidor:", error.response?.data);
-    console.error("Status:", error.response?.status);
     throw error;
   }
 };

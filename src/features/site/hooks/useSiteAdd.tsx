@@ -166,14 +166,11 @@ const useSiteAdd = () => {
 
     const fetchZonas = async () => {
         try {
-        const data = await getAllZonas();
-        setZonas(data);
-        } catch (error) {
-        console.error("Error al cargar zonas:", error);
-        }
-    };
-
-    const fetchEvents = async () => {
+      const data = await getAllZonas();
+      setZonas(data);
+    } catch (error) {
+    }
+  };    const fetchEvents = async () => {
         try {
         const data = await getAllEvents();
         setEvents(data);
@@ -182,14 +179,11 @@ const useSiteAdd = () => {
             setFormData(prev => ({
             ...prev,
             event_id: String(data[0].id)
-            }));
-        }
-        } catch (error) {
-        console.error("Error al cargar eventos:", error);
-        }
-    };
-
-    // Helper para obtener el icono según el tipo de evento
+        }));
+      }
+    } catch (error) {
+    }
+  };    // Helper para obtener el icono según el tipo de evento
     const getEventIcon = (eventType: string): JSX.Element => {
         const type = eventType.toLowerCase();
         if (type.includes('nieve')) {
@@ -233,17 +227,14 @@ const useSiteAdd = () => {
         setToastMessage("Sitio creado exitosamente");
         setToastOpen(true);
         setTimeout(() => {
-            go.back();
-        }, 2000);
-        } catch (error) {
-        console.error("Error al crear sitio:", error);
-        setToastType("error");
-        setToastMessage("Error al crear sitio. Por favor intenta nuevamente.");
-        setToastOpen(true);
-        }
-    };
-
-    return {
+        go.back();
+      }, 2000);
+    } catch (error) {
+      setToastType("error");
+      setToastMessage("Error al crear sitio. Por favor intenta nuevamente.");
+      setToastOpen(true);
+    }
+  };    return {
     handleSubmit,
     formData,
     handleChange,

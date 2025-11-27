@@ -11,7 +11,6 @@ export const getAllInstruments = async () => {
     const { data } = await axios.get(`${API_URL_SERVICE}/instrumentos`);
     return data;
   } catch (error) {
-    console.error("Error al obtener instrumentos:", error);
     throw error;
   }
 };
@@ -24,7 +23,6 @@ export const getUserInstruments = async (userId: number) => {
     const { data } = await axios.get(`${API_URL_SERVICE}/usuario/${userId}/instrumentos`);
     return data;
   } catch (error) {
-    console.error("Error al obtener instrumentos del usuario:", error);
     throw error;
   }
 };
@@ -40,8 +38,6 @@ export const assignInstrumentToUser = async (userId: number, instrumentId: numbe
     );
     return data;
   } catch (error: any) {
-    console.error("Error al asignar instrumento:", error);
-    console.error("Respuesta del servidor:", error.response?.data);
     throw error;
   }
 };
@@ -56,8 +52,6 @@ export const removeInstrumentFromUser = async (userId: number, instrumentId: num
     );
     return data;
   } catch (error: any) {
-    console.error("Error al quitar instrumento:", error);
-    console.error("Respuesta del servidor:", error.response?.data);
     throw error;
   }
 };

@@ -41,7 +41,6 @@ export const useResolveRotura = ({
       const response = await resolveRoturaReport(report.breakage_instrument.id);
       showModal("success", response.message);
     } catch (error: any) {
-      console.error("Error al resolver reporte de rotura:", error);
       showModal("error", error.message);
     } finally {
       setLoading(false);

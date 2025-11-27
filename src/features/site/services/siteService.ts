@@ -28,7 +28,6 @@ export const getAllSites = async (): Promise<Site[]> => {
     const data = await response.json();
     return data;
   } catch (error: any) {
-    console.error("Error fetching sitios:", error);
     throw new Error(
       error?.message || "Error al obtener los sitios"
     );
@@ -55,7 +54,6 @@ export const createSite = async (siteData: Site): Promise<SiteResponse> => {
       data,
     };
   } catch (error: any) {
-    console.error("Error creating site:", error);
     throw new Error(
       error?.message || "Error al crear el sitio"
     );
@@ -85,7 +83,6 @@ export const updateSite = async (
       data,
     };
   } catch (error: any) {
-    console.error("Error updating site:", error);
     throw new Error(
       error?.message || "Error al actualizar el sitio"
     );
@@ -110,7 +107,6 @@ export const deleteSite = async (siteId: number): Promise<SiteResponse> => {
       data,
     };
   } catch (error: any) {
-    console.error("Error deleting site:", error);
     throw new Error(
       error?.message || "Error al eliminar el sitio"
     );

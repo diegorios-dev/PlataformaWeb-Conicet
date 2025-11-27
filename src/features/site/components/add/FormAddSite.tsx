@@ -174,7 +174,6 @@ const FormAddSite = () => {
       const data = await getAllZonas();
       setZonas(data);
     } catch (error) {
-      console.error("Error al cargar zonas:", error);
     }
   };
 
@@ -190,7 +189,6 @@ const FormAddSite = () => {
         }));
       }
     } catch (error) {
-      console.error("Error al cargar eventos:", error);
     }
   };
 
@@ -241,7 +239,6 @@ const FormAddSite = () => {
         go.back();
       }, 2000);
     } catch (error) {
-      console.error("Error al crear sitio:", error);
       setToastType("error");
       setToastMessage("Error al crear sitio. Por favor intenta nuevamente.");
       setToastOpen(true);

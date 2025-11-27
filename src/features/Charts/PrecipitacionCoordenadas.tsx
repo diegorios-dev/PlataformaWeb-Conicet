@@ -19,12 +19,10 @@ type Props = {
 };
 
 const PrecipitacionCoordenadas = ({ data }: Props) => {
-  console.log('Datos recibidos:', data);
   
   // Memoizar el procesamiento de puntos para evitar recalcular en cada render
   const puntos = useMemo(() => {
     if (!data?.length) {
-      console.log('No hay datos para mostrar');
       return [];
     }
 
@@ -34,7 +32,6 @@ const PrecipitacionCoordenadas = ({ data }: Props) => {
       const longitud = parseFloat(String(item.longitude));
 
       if (isNaN(latitud) || isNaN(longitud)) {
-        console.warn('Coordenadas inválidas para el sitio:', item.zona);
         return null;
       }
 
