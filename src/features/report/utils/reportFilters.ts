@@ -25,3 +25,14 @@ export const filterBySearch = (reports, search) => {
     r.site?.zona?.locality?.toLowerCase().includes(q)
   );
 };
+
+export const sortByDate = (reports, order: 'asc' | 'desc' = 'asc') => {
+  const sorted = [...reports].sort((a, b) => {
+    const dateA = new Date(a.created_at || a.date || 0).getTime();
+    const dateB = new Date(b.created_at || b.date || 0).getTime();
+    
+    return order === 'asc' ? dateA - dateB : dateB - dateA;
+  });
+  
+  return sorted;
+};

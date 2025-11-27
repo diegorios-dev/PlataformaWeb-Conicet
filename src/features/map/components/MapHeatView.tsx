@@ -28,10 +28,12 @@ const HeatMapView = () => {
     const fetchEvents = async () => {
       try {
         const data = await getAllEvents();
-        setEvents(data);
-        // Seleccionar el primer evento por defecto
-        if (data.length > 0) {
-          setSelectedEventId(data[0].id);
+        // Filtrar caudales
+        const filteredEvents = data.filter((event) => !event.type.toLowerCase().includes("caudal"));
+        setEvents(filteredEvents);
+        // Seleccionar el primer evento por defecto (que no sea caudal)
+        if (filteredEvents.length > 0) {
+          setSelectedEventId(filteredEvents[0].id);
         }
       } catch (error) {
         console.error("Error al cargar eventos:", error);
@@ -300,22 +302,24 @@ const HeatMapView = () => {
       {/* Botones de tipo */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 z-[999]">
         <div className="flex items-center gap-4 bg-white/20 backdrop-blur-lg px-6 py-4 rounded-3xl border border-white/30 shadow-xl">
-          {events.map((event, index) => (
-            <div key={event.id} className="flex items-center gap-4">
-              {index > 0 && <div className="w-px h-8 bg-white/30" />}
-              <button
-                onClick={() => setSelectedEventId(event.id)}
-                className={`flex items-center gap-2.5 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 transform hover:scale-105 ${
-                  selectedEventId === event.id
-                    ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-400/50 scale-105"
-                    : "bg-white/40 backdrop-blur-sm text-slate-700 hover:bg-white/60 hover:text-blue-700 shadow-sm border border-white/20"
-                }`}
-              >
-                {getEventIcon(event.type)}
-                <span>{event.type}</span>
-              </button>
-            </div>
-          ))}
+          {events
+            .filter((event) => !event.type.toLowerCase().includes("caudal"))
+            .map((event, index) => (
+              <div key={event.id} className="flex items-center gap-4">
+                {index > 0 && <div className="w-px h-8 bg-white/30" />}
+                <button
+                  onClick={() => setSelectedEventId(event.id)}
+                  className={`flex items-center gap-2.5 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 transform hover:scale-105 ${
+                    selectedEventId === event.id
+                      ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-400/50 scale-105"
+                      : "bg-white/40 backdrop-blur-sm text-slate-700 hover:bg-white/60 hover:text-blue-700 shadow-sm border border-white/20"
+                  }`}
+                >
+                  {getEventIcon(event.type)}
+                  <span>{event.type}</span>
+                </button>
+              </div>
+            ))}
         </div>
       </div>
 
