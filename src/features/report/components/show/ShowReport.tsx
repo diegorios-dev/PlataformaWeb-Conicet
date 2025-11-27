@@ -5,7 +5,8 @@ import { buildAudioUrl, buildImageUrl } from "@shared/utils/urlBuilder";
 import { useZonas } from "../../hooks/useZonas";
 import { useAudioPlayer } from "../../hooks/useAudioPlayer";
 import { useImageModal } from "../../hooks/useImageModal";
-import { filterByType, filterByPrecipitation, filterByZona, filterBySearch } from "../../utils/reportFilters";
+import { filterByType, filterByPrecipitation, filterByZona, filterBySearch, sortByDate } from "../../utils/reportFilters";
+import { ArrowUpDown } from "lucide-react";
 
 import {DashboardLayout} from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import { ReportHeader } from "./ReportHeader";
@@ -17,13 +18,14 @@ import { ImageModal } from "./ImageModal";
 
 const ShowReport = () => {
   const { go } = useNavigation();
-  const reports = useReports();
+  const reports = useReports({ order: 'desc' });
 
   // Filtros
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterPrecipitation, setFilterPrecipitation] = useState("all");
   const [filterZona, setFilterZona] = useState("all");
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   // Hooks externos
   const zonas = useZonas();
@@ -35,15 +37,16 @@ const ShowReport = () => {
     if (reporte.type === "rotura") go.reports.resolveRotura();
   };
 
-  // 🧠 filtrado optimizado
+  // 🧠 filtrado y ordenamiento optimizado
   const filtered = useMemo(() => {
     let result = [...reports];
     result = filterByType(result, filterType);
     result = filterByPrecipitation(result, filterPrecipitation);
     result = filterByZona(result, filterZona);
     result = filterBySearch(result, search);
+    result = sortByDate(result, sortOrder);
     return result;
-  }, [reports, search, filterType, filterPrecipitation, filterZona]);
+  }, [reports, search, filterType, filterPrecipitation, filterZona, sortOrder]);
 
   return (
    <DashboardLayout contentClassName="">
@@ -67,7 +70,26 @@ const ShowReport = () => {
             zonas={zonas}
           />
 
-          <Badge count={filtered.length} />
+          <div className="flex items-center justify-between mt-7">
+            <Badge count={filtered.length} />
+            
+            <div className="space-y-3.5">
+              <label className="flex items-center gap-2.5 text-[13px] font-bold text-slate-700 uppercase tracking-[0.08em] px-0.5">
+                <div className="p-1.5 bg-blue-50 rounded-lg">
+                  <ArrowUpDown className="w-4 h-4 text-blue-600" />
+                </div>
+                Ordenar por fecha
+              </label>
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+                className="w-full px-5 py-3.5 rounded-[14px] font-semibold text-[15px] transition-all duration-300 shadow-sm active:scale-[0.98] bg-slate-50 text-slate-700 hover:bg-slate-100 hover:shadow-md border border-slate-200/80 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="asc">Más antiguo primero</option>
+                <option value="desc">Más reciente primero</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <ReportList
