@@ -61,6 +61,27 @@ export const createSite = async (siteData: Site): Promise<SiteResponse> => {
 };
 
 /**
+ * Obtiene un sitio por su ID
+ * Nota: El backend no tiene endpoint GET /sitios/{id}, por lo que obtenemos todos y filtramos
+ */
+export const getSiteById = async (siteId: number): Promise<Site> => {
+  try {
+    const allSites = await getAllSites();
+    const site = allSites.find(s => s.id === siteId);
+    
+    if (!site) {
+      throw new Error(`Sitio con ID ${siteId} no encontrado`);
+    }
+    
+    return site;
+  } catch (error: any) {
+    throw new Error(
+      error?.message || "Error al obtener el sitio"
+    );
+  }
+};
+
+/**
  * Actualiza un sitio existente
  */
 export const updateSite = async (

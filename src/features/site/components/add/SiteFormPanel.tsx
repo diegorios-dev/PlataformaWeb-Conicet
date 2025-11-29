@@ -81,7 +81,7 @@ const SiteFormPanel = ({handleSubmit,formData,handleChange,zonas,go,events,getEv
                   className="inline-flex items-center gap-1 text-[10px] text-blue-600 bg-white border border-blue-200 hover:bg-blue-50 px-2 py-1 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition font-bold"
                 >
                   <MapPin className="w-3 h-3" />
-                  Crear Nueva Zona
+                  Registrar Nueva Zona
                 </button>
               </div>
             </div>
@@ -102,7 +102,7 @@ const SiteFormPanel = ({handleSubmit,formData,handleChange,zonas,go,events,getEv
                     onClick={go.zonas.list}
                     className="text-[10px] text-yellow-800 font-bold underline hover:text-yellow-900"
                   >
-                    Ir a crear zona →
+                    Ir a Registrar zona →
                   </button>
                 </div>
               </div>
@@ -172,7 +172,7 @@ const SiteFormPanel = ({handleSubmit,formData,handleChange,zonas,go,events,getEv
                 className="w-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all transform hover:scale-105 shadow-lg shadow-blue-300/50 flex items-center justify-center gap-2"
               >
                 <Save className="w-5 h-5" />
-                Crear Sitio
+                Registrar Sitio
               </button>
             </div>
           </form>

@@ -15,6 +15,7 @@ import HistogramaNieve from "./features/histograma/components/HistogramaNieve";
 import HistogramaCaudalimetro from "./features/histograma/components/HistogramaCaudalimetro";
 import HeatMapView from "./features/map/components/MapHeatView";
 import FormAddSite from "./features/site/components/add/FormAddSite";
+import EditSite from "./features/site/components/edit/EditSite";
 import { ShowCharts } from "./features/Charts";
 import ImportExcel from "./features/excel/components/ImportExcel";
 import { ProtectedRoute } from "@features/auth";
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="/dashboard/administration/user/add" element={<ProtectedRoute><FormAddUser/></ProtectedRoute>} />
           <Route path="/dashboard/Zona/FormAddZona.tsx" element={<ProtectedRoute><FormAddZona /></ProtectedRoute>} />
           <Route path="/dashboard/site/add" element={<ProtectedRoute><FormAddSite /></ProtectedRoute>} />
+          <Route path="/dashboard/site/edit/:id" element={<ProtectedRoute><EditSite /></ProtectedRoute>} />
           <Route path="/dashboard/import/excel" element={<ProtectedRoute><ImportExcel /></ProtectedRoute>} />
           <Route path="/dashboard/export/excel" element={<ProtectedRoute><ExportExcel /></ProtectedRoute>} />
           <Route path="/dashboard/site" element={<ProtectedRoute><AdminSitios /></ProtectedRoute>} />

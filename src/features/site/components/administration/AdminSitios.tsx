@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSites } from "../../hooks/useSites";
 import { useSiteFilters } from "../../hooks/useSiteFilters";
 import  useSiteForm  from "../../hooks/useSiteForm";
@@ -13,11 +13,15 @@ import { SiteDeleteModal } from "./SiteDeleteModal";
 import { SiteEmptyState } from "./SiteEmptyState";
 import { SiteInfoBanner } from "./SiteInfoBanner";
 import { useNavegation as useNavigation } from "@shared/hooks";
+import { getAllZonas } from "@features/zona/services";
+import { getAllEvents, type Event } from "@features/event/services";
 
 const AdminSitios = () => {
   const [toastOpen, setToastOpen] = useState(false);
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [toastMessage, setToastMessage] = useState("");
+  const [zonas, setZonas] = useState<Array<{id: number; locality: string}>>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const { go } = useNavigation();
 
   const showToast = (type: "success" | "error", message: string) => {
@@ -25,6 +29,23 @@ const AdminSitios = () => {
     setToastMessage(message);
     setToastOpen(true);
   };
+  
+  // Cargar zonas y eventos al montar
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [zonasData, eventsData] = await Promise.all([
+          getAllZonas(),
+          getAllEvents()
+        ]);
+        setZonas(zonasData);
+        setEvents(eventsData);
+      } catch (error) {
+        console.error('Error al cargar zonas y eventos:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   // Hook para obtener sitios
   const { sites, error, refetch } = useSites();
@@ -77,7 +98,6 @@ const AdminSitios = () => {
         ) : (
           <SiteTable
             sites={filteredSites}
-            onEdit={siteForm.openForm}
             onDelete={siteDelete.openDeleteModal}
             deleting={siteDelete.loading}
             deletingId={siteDelete.selectedSite?.id}
@@ -87,15 +107,18 @@ const AdminSitios = () => {
         <SiteInfoBanner />
       </div>
 
-      {/* Modales */}
+      {/* Modal solo para crear */}
       <SiteFormModal
-        isOpen={siteForm.isOpen}
-        editMode={siteForm.editMode}
+        isOpen={siteForm.isOpen && !siteForm.editMode}
+        editMode={false}
         formData={siteForm.formData}
         loading={siteForm.loading}
         onClose={siteForm.closeForm}
         onChange={siteForm.handleChange}
         onSubmit={siteForm.handleSubmit}
+        zonas={zonas}
+        events={events}
+        onCreateZona={go.zonas.list}
       />
 
       <SiteDeleteModal

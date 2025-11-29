@@ -18,6 +18,7 @@ const useNavigation = () => {
       sites: {
         list: () => go("/dashboard/site"),
         add: () => go("/dashboard/site/add"),
+        edit: (id: number) => go(`/dashboard/site/edit/${id}`),
       },
 
       zonas: {
@@ -74,6 +75,9 @@ const useNavigation = () => {
 
         if (current.includes("/estadisticas"))
           return go("/dashboard");
+
+        if (current.includes("/dashboard/site/edit"))
+          return go("/dashboard/site");
 
         if (current.includes("/dashboard/site/add"))
           return go("/dashboard");

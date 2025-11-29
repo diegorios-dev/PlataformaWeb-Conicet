@@ -1,5 +1,6 @@
-import { X, Save, MapPin } from "lucide-react";
+import { X, Save, MapPin, CloudRain, Snowflake, Activity, Mountain, AlertCircle } from "lucide-react";
 import type { Site } from "../../services/siteService";
+import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 
 interface SiteFormModalProps {
   isOpen: boolean;
@@ -9,6 +10,9 @@ interface SiteFormModalProps {
   onClose: () => void;
   onChange: (field: keyof Site, value: any) => void;
   onSubmit: (e: React.FormEvent) => void;
+  zonas?: Array<{id: number | string; locality: string}>;
+  events?: Array<{id: number | string; type: string}>;
+  onCreateZona?: () => void;
 }
 
 export const SiteFormModal = ({
@@ -19,7 +23,22 @@ export const SiteFormModal = ({
   onClose,
   onChange,
   onSubmit,
+  zonas = [],
+  events = [],
+  onCreateZona,
 }: SiteFormModalProps) => {
+  
+  // Helper para obtener el icono según el tipo de evento
+  const getEventIcon = (eventType: string) => {
+    const type = eventType.toLowerCase();
+    if (type.includes('nieve')) {
+      return <Snowflake className="w-4 h-4" />;
+    } else if (type.includes('caudal')) {
+      return <Activity className="w-4 h-4" />;
+    } else {
+      return <CloudRain className="w-4 h-4" />;
+    }
+  };
   if (!isOpen) return null;
 
   return (
@@ -67,7 +86,7 @@ export const SiteFormModal = ({
                 onChange={(e) => onChange("nombre", e.target.value)}
                 required
                 disabled={loading}
-                className="w-full py-2 px-3 rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium text-sm"
+                className="w-full py-2 px-3 rounded-lg border-2 border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium text-sm"
               />
             </div>
 
@@ -88,7 +107,7 @@ export const SiteFormModal = ({
                   onChange={(e) => onChange("latitude", parseFloat(e.target.value))}
                   required
                   disabled={loading}
-                  className="w-full py-2 px-3 rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium text-sm"
+                  className="w-full py-2 px-3 rounded-lg border-2 border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium text-sm"
                 />
               </div>
               <div>
@@ -107,7 +126,7 @@ export const SiteFormModal = ({
                   onChange={(e) => onChange("longitude", parseFloat(e.target.value))}
                   required
                   disabled={loading}
-                  className="w-full py-2 px-3 rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium text-sm"
+                  className="w-full py-2 px-3 rounded-lg border-2 border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium text-sm"
                 />
               </div>
             </div>
@@ -115,38 +134,78 @@ export const SiteFormModal = ({
             <div>
               <label
                 className="text-gray-700 text-xs font-bold mb-1.5 flex items-center gap-2"
-                htmlFor="zona_id"
               >
+                <MapPin className="w-4 h-4 text-blue-500" />
                 Zona
               </label>
-              <input
-                id="zona_id"
-                type="text"
-                placeholder="ID de zona"
-                value={formData.zona_id || ""}
-                onChange={(e) => onChange("zona_id", e.target.value)}
-                required
-                disabled={loading}
-                className="w-full py-2 px-3 rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium text-sm"
+              <CustomSelect
+                options={zonas.map(zona => ({
+                  value: String(zona.id),
+                  label: zona.locality,
+                  icon: <MapPin className="w-4 h-4" />
+                }))}
+                value={String(formData.zona_id || "")}
+                onChange={(value) => onChange("zona_id", value)}
+                placeholder="Seleccione una zona"
+                icon={<MapPin className="w-4 h-4" />}
+                disabled={loading || zonas.length === 0}
               />
+              
+              {/* Helper para crear zona */}
+              {onCreateZona && (
+                <div className="mt-2 flex items-center justify-between bg-blue-50/50 px-3 py-2 rounded-lg">
+                  <span className="text-[10px] text-gray-600 font-medium">
+                    ¿No encuentras la zona?
+                  </span>
+                  <button
+                    type="button"
+                    onClick={onCreateZona}
+                    className="inline-flex items-center gap-1 text-[10px] text-blue-600 bg-white border border-blue-200 hover:bg-blue-50 px-2 py-1 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition font-bold"
+                  >
+                    <MapPin className="w-3 h-3" />
+                    Registrar Nueva Zona
+                  </button>
+                </div>
+              )}
+              
+              {/* Alert si no hay zonas */}
+              {zonas.length === 0 && (
+                <div className="mt-2 bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-300 rounded-lg p-2 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-yellow-900 font-bold">
+                      No hay zonas disponibles
+                    </p>
+                    <p className="text-[10px] text-yellow-800">
+                      Primero debes crear una zona para poder {editMode ? 'editar' : 'agregar'} sitios.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>
               <label
                 className="text-gray-700 text-xs font-bold mb-1.5 flex items-center gap-2"
-                htmlFor="event_id"
               >
-                Evento
+                {events.length > 0 && formData.event_id ? (
+                  getEventIcon(events.find(e => String(e.id) === String(formData.event_id))?.type || '')
+                ) : (
+                  <CloudRain className="w-4 h-4 text-blue-500" />
+                )}
+                Tipo de Evento
               </label>
-              <input
-                id="event_id"
-                type="text"
-                placeholder="ID de evento"
-                value={formData.event_id || ""}
-                onChange={(e) => onChange("event_id", e.target.value)}
-                required
-                disabled={loading}
-                className="w-full py-2 px-3 rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium text-sm"
+              <CustomSelect
+                options={events.length === 0 ? [] : events.map(event => ({
+                  value: String(event.id),
+                  label: event.type,
+                  icon: getEventIcon(event.type)
+                }))}
+                value={String(formData.event_id || "")}
+                onChange={(value) => onChange("event_id", value)}
+                placeholder={events.length === 0 ? "Cargando eventos..." : "Seleccione un tipo de evento"}
+                icon={<CloudRain className="w-4 h-4" />}
+                disabled={loading || events.length === 0}
               />
             </div>
 
@@ -155,6 +214,7 @@ export const SiteFormModal = ({
                 className="text-gray-700 text-xs font-bold mb-1.5 flex items-center gap-2"
                 htmlFor="cota"
               >
+                <Mountain className="w-4 h-4 text-blue-500" />
                 Cota (msnm)
               </label>
               <input
@@ -164,7 +224,7 @@ export const SiteFormModal = ({
                 value={formData.cota || ""}
                 onChange={(e) => onChange("cota", e.target.value)}
                 disabled={loading}
-                className="w-full py-2 px-3 rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium text-sm"
+                className="w-full py-2 px-3 rounded-lg border-2 border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition font-medium text-sm"
               />
             </div>
 

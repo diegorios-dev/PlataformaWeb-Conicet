@@ -1,5 +1,6 @@
-import { MapPin } from "lucide-react";
+import { MapPin, Locate } from "lucide-react";
 import type { UserType, Zona, Site } from "../../types";
+import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 
 interface UserSiteSelectorProps {
   user: UserType;
@@ -38,26 +39,26 @@ export const UserSiteSelector = ({
     <section className="bg-white rounded-lg shadow-sm p-4 border border-green-50">
       <div className="flex items-center gap-2 mb-3">
         <MapPin className="text-green-500" size={16} />
-        <h3 className="font-semibold text-green-700 text-base">Ubicación y Sitio</h3>
+        <h3 className="font-semibold text-base">Ubicación y Sitio</h3>
       </div>
       <div className="grid grid-cols-1 gap-3">
         <div>
           <label className="font-semibold text-xs mb-1 block text-gray-600">
             Sitio
           </label>
-          <select
-            className="w-full px-3 py-2 bg-white border border-green-100 rounded-lg text-gray-900 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 transition-all duration-200 font-sans text-sm cursor-pointer"
-            value={user.site_id || ""}
-            onChange={(e) => handleSiteChange(parseInt(e.target.value))}
+          <CustomSelect
+            options={sitios.map((s) => ({
+              value: String(s.id),
+              label: s.nombre || "Sin nombre",
+              subtitle: `${s.zona?.locality || "Sin zona"} - Lat: ${s.latitude}, Lon: ${s.longitude}`,
+              icon: <MapPin className="w-4 h-4" />
+            }))}
+            value={String(user.site_id || "")}
+            onChange={(value) => handleSiteChange(parseInt(String(value)))}
+            placeholder="Seleccionar sitio"
+            icon={<Locate className="w-5 h-5" />}
             disabled={disabled}
-          >
-            <option value="">Seleccionar sitio</option>
-            {sitios.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.zona?.locality} — {s.latitude}
-              </option>
-            ))}
-          </select>
+          />
         </div>
         <div>
           <label className="font-semibold text-xs mb-1 block text-gray-600">

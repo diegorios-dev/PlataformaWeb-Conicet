@@ -6,7 +6,8 @@ import { useZonas } from "../../hooks/useZonas";
 import { useAudioPlayer } from "../../hooks/useAudioPlayer";
 import { useImageModal } from "../../hooks/useImageModal";
 import { filterByType, filterByPrecipitation, filterByZona, filterBySearch, sortByDate } from "../../utils/reportFilters";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, ArrowDown, ArrowUp } from "lucide-react";
+import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 
 import {DashboardLayout} from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import { ReportHeader } from "./ReportHeader";
@@ -38,7 +39,7 @@ const ShowReport = () => {
     if (reporte.type === "rotura") go.reports.resolveRotura();
   };
 
-  // 🧠 filtrado y ordenamiento optimizado
+  // filtrado y ordenamiento optimizado
   const filtered = useMemo(() => {
     let result = [...reports];
     result = filterByType(result, filterType);
@@ -70,13 +71,17 @@ const ShowReport = () => {
       <div className="w-full max-w-7xl mx-auto">
         <ReportHeader count={filtered.length} />
 
-        <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-[24px] shadow-2xl shadow-slate-900/5 p-6 md:p-8 mb-6 transition-all duration-300 hover:shadow-slate-900/10 relative">
-          <SearchBar 
-            value={search} 
-            onChange={setSearch} 
-            placeholder="Buscar por ID, nota o zona..."
-          />
+        <div className="bg-white border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-900/5 p-5 md:p-6 mb-6 space-y-5">
+          {/* Barra de búsqueda */}
+          <div>
+            <SearchBar 
+              value={search} 
+              onChange={setSearch} 
+              placeholder="Buscar por ID, nota o zona..."
+            />
+          </div>
           
+          {/* Filtros */}
           <ReportFilters
             filterType={filterType}
             setFilterType={setFilterType}
@@ -87,24 +92,35 @@ const ShowReport = () => {
             zonas={zonas}
           />
 
-          <div className="flex items-center justify-between mt-7">
+          {/* Resultados y ordenamiento */}
+          <div className="flex items-center justify-between pt-3 border-t border-slate-100">
             <Badge count={filtered.length} />
             
-            <div className="space-y-3.5">
-              <label className="flex items-center gap-2.5 text-[13px] font-bold text-slate-700 uppercase tracking-[0.08em] px-0.5">
-                <div className="p-1.5 bg-blue-50 rounded-lg">
-                  <ArrowUpDown className="w-4 h-4 text-blue-600" />
+            <div className="space-y-2 min-w-[240px] relative z-50">
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                <div className="p-1 bg-blue-50 rounded-lg">
+                  <ArrowUpDown className="w-3.5 h-3.5 text-blue-600" />
                 </div>
                 Ordenar por fecha
               </label>
-              <select
+              <CustomSelect
+                options={[
+                  { 
+                    value: "desc", 
+                    label: "Más reciente primero", 
+                    icon: <ArrowDown className="w-4 h-4" /> 
+                  },
+                  { 
+                    value: "asc", 
+                    label: "Más antiguo primero", 
+                    icon: <ArrowUp className="w-4 h-4" /> 
+                  }
+                ]}
                 value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
-                className="w-full px-5 py-3.5 rounded-[14px] font-semibold text-[15px] transition-all duration-300 shadow-sm active:scale-[0.98] bg-slate-50 text-slate-700 hover:bg-slate-100 hover:shadow-md border border-slate-200/80 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="asc">Más antiguo primero</option>
-                <option value="desc">Más reciente primero</option>
-              </select>
+                onChange={(value) => setSortOrder(value as 'asc' | 'desc')}
+                placeholder="Ordenar por fecha"
+                icon={<ArrowUpDown className="w-5 h-5" />}
+              />
             </div>
           </div>
         </div>

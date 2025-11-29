@@ -70,7 +70,7 @@ const FormAddZona = () => {
       setFormData({ locality: "", site: { latitude: "", longitude: "" } });
       await fetchZonas();
     } catch (error) {
-      showToast("error", "Error al crear la zona. Por favor intenta nuevamente.");
+      showToast("error", "Error al registrar la zona. Por favor intenta nuevamente.");
     } finally {
       setLoading(false);
     }

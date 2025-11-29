@@ -1,4 +1,4 @@
-import { FileText, Droplet, Snowflake, AlertTriangle, MapPin, Waves } from "lucide-react";
+import { FileText, Droplet, Snowflake, AlertTriangle, MapPin, Waves, Filter } from "lucide-react";
 import { FilterDropdown } from "@shared/ui/molecules/FilterDropdown";
 
 interface ReportFiltersProps {
@@ -21,8 +21,17 @@ export const ReportFilters = ({
   zonas,
 }: ReportFiltersProps) => {
   return (
-    <div className="space-y-7">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="space-y-4">
+      {/* Header de filtros */}
+      <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+        <div className="p-1.5 bg-blue-50 rounded-lg">
+          <Filter className="w-4 h-4 text-blue-600" />
+        </div>
+        <h3 className="text-sm font-semibold text-slate-700">Filtros</h3>
+      </div>
+
+      {/* Grid de filtros */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {/* Filtro: Tipo de Reporte */}
         <FilterDropdown
           label="Tipo de Reporte"
@@ -48,7 +57,6 @@ export const ReportFilters = ({
             { value: "nieve", label: "Nieve", icon: <Snowflake className="w-4 h-4" /> },
             { value: "caudal", label: "Caudal", icon: <Waves className="w-4 h-4" /> },
           ]}
-          zIndex={20}
         />
 
         {/* Filtro: Zona */}

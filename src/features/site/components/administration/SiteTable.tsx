@@ -1,9 +1,10 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { SearchCheck , Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { Site } from "../../services/siteService";
 
 interface SiteTableProps {
   sites: Site[];
-  onEdit: (site: Site) => void;
+  onEdit?: (site: Site) => void;
   onDelete: (site: Site) => void;
   deleting: boolean;
   deletingId?: number;
@@ -16,6 +17,12 @@ export const SiteTable = ({
   deleting,
   deletingId,
 }: SiteTableProps) => {
+  const navigate = useNavigate();
+
+  const handleEditClick = (site: Site) => {
+    navigate(`/dashboard/site/edit/${site.id}`);
+  };
+
   return (
     <div className="bg-white/90 backdrop-blur-md border-2 border-slate-200 rounded-3xl shadow-xl overflow-hidden">
       <div className="overflow-x-auto">
@@ -76,7 +83,7 @@ export const SiteTable = ({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-50 text-purple-700 text-xs font-semibold border border-purple-200">
-                    {sitio.zona_id}
+                    {sitio.zona?.locality || `Zona #${sitio.zona_id}`}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -92,14 +99,15 @@ export const SiteTable = ({
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center justify-center gap-2">
                     <button
-                      onClick={() => onEdit(sitio)}
-                      className="group flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg text-xs font-semibold border border-amber-200 transition-all duration-200"
+                      onClick={() => handleEditClick(sitio)}
+                      className="group flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg text-xs font-semibold border border-amber-200 transition-all duration-200"
+                      title="Ver en el mapa"
                     >
-                      <Pencil
+                      <SearchCheck
                         size={14}
                         className="transition-transform group-hover:rotate-12"
                       />
-                      Editar
+                      Ver en el mapa
                     </button>
                     <button
                       onClick={() => onDelete(sitio)}

@@ -1,5 +1,6 @@
-import { User } from "lucide-react";
+import { User, Shield, UserCog } from "lucide-react";
 import type { UserType } from "../../types";
+import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 
 interface UserBasicInfoFormProps {
   user: UserType;
@@ -15,8 +16,8 @@ export const UserBasicInfoForm = ({
   return (
     <section className="bg-white rounded-lg shadow-sm p-4 border border-blue-50">
       <div className="flex items-center gap-2 mb-3">
-        <User className="text-blue-500" size={16} />
-        <h3 className="font-semibold text-blue-700 text-base">Información Personal</h3>
+        <User className="text-blue-600" size={16} />
+        <h3 className="font-semibold  text-base">Información Personal</h3>
       </div>
       <div className="grid grid-cols-1 gap-3">
         <div>
@@ -47,16 +48,17 @@ export const UserBasicInfoForm = ({
           <label className="font-semibold text-xs mb-1 block text-gray-600">
             Rol
           </label>
-          <select
-            className="w-full px-3 py-2 bg-white border border-blue-100 rounded-lg text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200 font-sans text-sm cursor-pointer"
+          <CustomSelect
+            options={[
+              { value: "admin", label: "Administrador", icon: <Shield className="w-4 h-4" /> },
+              { value: "user", label: "Usuario", icon: <UserCog className="w-4 h-4" /> }
+            ]}
             value={user.rol}
-            onChange={(e) => onUserChange({ ...user, rol: e.target.value })}
+            onChange={(value) => onUserChange({ ...user, rol: String(value) })}
+            placeholder="Seleccionar rol"
+            icon={<Shield className="w-5 h-5" />}
             disabled={disabled}
-          >
-            <option value="">Seleccionar rol</option>
-            <option value="admin">Administrador</option>
-            <option value="user">Usuario</option>
-          </select>
+          />
         </div>
       </div>
     </section>

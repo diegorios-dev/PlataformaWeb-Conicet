@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   getUsersByWord,
   saveUser,
   getAllUsers,
   deleteUser,
 } from "@features/user/services";
+import type { UserType } from "@features/user/types/user.types";
 import FormEditUser from "./FormEditUser";
 import SearchUser from "./searchUser";
 import { useNavegation } from "@shared/hooks";
-import BackButton from "@shared/ui/buttons/BackButton";
 import { DashboardLayout } from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import {
   UserPlus,
@@ -24,17 +24,202 @@ import {
   X,
   CheckCircle2,
   AlertTriangle,
+  Eye,
+  EyeOff,
+  Map,
 } from "lucide-react";
-import Dashboard from "@/features/dashboard/components/Dashboard";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 type ModalType = "success" | "error" | "confirm" | null;
 
+// Componente Modal para mostrar el mapa con Leaflet
+const MapModal = ({ 
+  isOpen, 
+  onClose, 
+  latitude, 
+  longitude, 
+  siteName 
+}: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  latitude: number | string; 
+  longitude: number | string; 
+  siteName: string;
+}) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+
+  useEffect(() => {
+    if (!isOpen || !mapRef.current || mapInstanceRef.current) return;
+
+    const lat = typeof latitude === 'string' ? parseFloat(latitude) : latitude;
+    const lng = typeof longitude === 'string' ? parseFloat(longitude) : longitude;
+
+    // Pequeño delay para asegurar que el DOM está listo
+    setTimeout(() => {
+      if (!mapRef.current || mapInstanceRef.current) return;
+
+      // Inicializar mapa
+      const map = L.map(mapRef.current, {
+        center: [lat, lng],
+        zoom: 14,
+        zoomControl: true,
+        scrollWheelZoom: true
+      });
+
+      // Agregar capa de OpenStreetMap
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Agregar marcador personalizado
+      const customIcon = L.divIcon({
+        className: '',
+        html: `
+          <div style="
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            border: 5px solid white;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
+            <div style="
+              width: 16px;
+              height: 16px;
+              background-color: white;
+              border-radius: 50%;
+              transform: rotate(45deg);
+            "></div>
+          </div>
+        `,
+        iconSize: [48, 48],
+        iconAnchor: [24, 48]
+      });
+
+      L.marker([lat, lng], { icon: customIcon })
+        .addTo(map)
+        
+        .openPopup();
+
+      mapInstanceRef.current = map;
+    }, 100);
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [isOpen, latitude, longitude, siteName]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      {/* Backdrop blureado */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900/60 via-blue-900/40 to-slate-900/60 backdrop-blur-md" />
+      
+      {/* Modal */}
+      <div 
+        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden transform transition-all duration-300 animate-in slide-in-from-bottom-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header con diseño mejorado */}
+        <div className="relative bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 px-8 py-6 overflow-hidden">
+          {/* Decoración de fondo */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32 blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/20 rounded-full translate-y-24 -translate-x-24 blur-2xl" />
+          
+          <div className="relative flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4 flex-1">
+              {/* Ícono principal con animación */}
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-2xl shadow-lg shadow-blue-900/30 border border-white/30">
+                <MapPin className="w-7 h-7 text-white" strokeWidth={2.5} />
+              </div>
+              
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="text-2xl font-bold text-white tracking-tight">{siteName}</h3>
+                  <span className="px-2.5 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-xs font-semibold text-white border border-white/30">
+                    Ubicación
+                  </span>
+                </div>
+                
+                {/* Grid de información */}
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  {/* Latitud */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl px-3 py-2 border border-white/20">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-1.5 h-1.5 bg-green-400 rounded-full" />
+                      <span className="text-xs font-medium text-blue-100 uppercase tracking-wide">Latitud</span>
+                    </div>
+                    <p className="text-base font-bold text-white font-mono">{typeof latitude === 'string' ? parseFloat(latitude).toFixed(6) : latitude.toFixed(6)}</p>
+                  </div>
+                  
+                  {/* Longitud */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl px-3 py-2 border border-white/20">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-1.5 h-1.5 bg-orange-400 rounded-full" />
+                      <span className="text-xs font-medium text-blue-100 uppercase tracking-wide">Longitud</span>
+                    </div>
+                    <p className="text-base font-bold text-white font-mono">{typeof longitude === 'string' ? parseFloat(longitude).toFixed(6) : longitude.toFixed(6)}</p>
+                  </div>
+                </div>
+
+              
+               
+              </div>
+            </div>
+            
+            {/* Botón cerrar mejorado */}
+            <button
+              onClick={onClose}
+              className="relative bg-white/10 hover:bg-white/20 backdrop-blur-sm p-2.5 rounded-xl transition-all duration-200 hover:scale-110 border border-white/20 group"
+              title="Cerrar"
+            >
+              <X className="w-5 h-5 text-white group-hover:rotate-90 transition-transform duration-300" />
+            </button>
+          </div>
+        </div>
+
+        {/* Contenedor del mapa */}
+        <div className="relative">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500 z-10" />
+          <div ref={mapRef} style={{ height: '550px', width: '100%' }} className="relative z-0" />
+        </div>
+
+  
+      
+
+            
+         
+      </div>
+    </div>
+  );
+};
+
 const ViewManagementUsers = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<UserType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [visiblePasswords, setVisiblePasswords] = useState<Record<number, boolean>>({});
+  const [mapModalOpen, setMapModalOpen] = useState(false);
+  const [selectedMapLocation, setSelectedMapLocation] = useState<{
+    latitude: string;
+    longitude: string;
+    siteName: string;
+  } | null>(null);
 
   // Estados para modales
   const [modalOpen, setModalOpen] = useState(false);
@@ -87,12 +272,12 @@ const ViewManagementUsers = () => {
     closeModal();
   };
 
-  const handleOptionUser = async (option, user) => {
+  const handleOptionUser = async (option: string, user: UserType) => {
     if (option === "editar") {
       setSelectedUser({
         ...user,
-        site: user.site ? { ...user.site } : null,
-        zona: user.zona ? { ...user.zona } : null,
+        site: user.site ? { ...user.site } : undefined,
+        zona: user.zona ? { ...user.zona } : undefined,
       });
       setShowEditModal(true);
     }
@@ -118,7 +303,7 @@ const ViewManagementUsers = () => {
     }
   };
 
-  const search = async (word) => {
+  const search = async (word: string) => {
     setLoading(true);
     try {
       if (!word.trim()) return await fetchUsers();
@@ -129,6 +314,23 @@ const ViewManagementUsers = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const togglePasswordVisibility = (userId: number) => {
+    setVisiblePasswords(prev => ({
+      ...prev,
+      [userId]: !prev[userId]
+    }));
+  };
+
+  const openMapModal = (latitude: string, longitude: string, siteName: string) => {
+    setSelectedMapLocation({ latitude, longitude, siteName });
+    setMapModalOpen(true);
+  };
+
+  const closeMapModal = () => {
+    setMapModalOpen(false);
+    setSelectedMapLocation(null);
   };
 
   const isEmpty = !users || users.length === 0;
@@ -278,20 +480,48 @@ const ViewManagementUsers = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-mono border border-slate-200">
-                          <Key size={12} />
-                          {user.password}
-                        </span>
+                        <div className="relative group inline-flex items-center gap-2">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-mono border border-slate-200 min-w-[120px]">
+                            <Key size={12} />
+                            {visiblePasswords[user.id] ? user.password : '••••••••'}
+                          </span>
+                          <button
+                            onClick={() => togglePasswordVisibility(user.id)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1.5 hover:bg-slate-200 rounded-lg flex-shrink-0"
+                            title={visiblePasswords[user.id] ? "Ocultar contraseña" : "Mostrar contraseña"}
+                          >
+                            {visiblePasswords[user.id] ? (
+                              <EyeOff size={14} className="text-slate-600" />
+                            ) : (
+                              <Eye size={14} className="text-slate-600" />
+                            )}
+                          </button>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex flex-col gap-1">
-                          <span className="text-xs font-mono text-slate-600 bg-slate-50 px-2 py-1 rounded border border-slate-200">
-                            Lat: {user.site?.latitude || 'N/A'}
-                          </span>
-                          <span className="text-xs font-mono text-slate-600 bg-slate-50 px-2 py-1 rounded border border-slate-200">
-                            Lng: {user.site?.longitude || 'N/A'}
-                          </span>
-                        </div>
+                        {user.site?.latitude && user.site?.longitude ? (
+                          <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-mono text-slate-700 font-semibold">
+                               Lon: {parseFloat(user.site.longitude).toFixed(2)}, Lat: {parseFloat(user.site.latitude).toFixed(2)}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => user.site && openMapModal(
+                                user.site.latitude, 
+                                user.site.longitude,
+                                user.site.nombre || "Ubicación"
+                              )}
+                              className="flex items-center justify-center gap-1.5 px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-xs font-semibold border border-blue-200 transition-all duration-200"
+                              title="Ver ubicación en el mapa"
+                            >
+                              <Map size={12} />
+                              Ver en mapa
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-400 italic">Sin ubicación</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-50 text-purple-700 text-xs font-semibold border border-purple-200">
@@ -433,13 +663,24 @@ const ViewManagementUsers = () => {
         </div>
       )}
 
-      {showEditModal && (
+      {showEditModal && selectedUser && (
         <FormEditUser
           selectedUser={selectedUser}
           setSelectedUser={setSelectedUser}
           setShowEditModal={setShowEditModal}
           saveUser={saveUser}
           onSave={fetchUsers}
+        />
+      )}
+
+      {/* Modal del mapa */}
+      {selectedMapLocation && (
+        <MapModal
+          isOpen={mapModalOpen}
+          onClose={closeMapModal}
+          latitude={selectedMapLocation.latitude}
+          longitude={selectedMapLocation.longitude}
+          siteName={selectedMapLocation.siteName}
         />
       )}
     </DashboardLayout>

@@ -660,7 +660,7 @@ const ShowCharts = () => {
               <div>
                 <p className="text-slate-800 font-semibold text-sm flex items-center gap-2">
                   <Globe className="w-4 h-4" />
-                  Conectado al Backend Laravel
+                  Conectado al servidor de datos
                 </p>
               </div>
             </div>

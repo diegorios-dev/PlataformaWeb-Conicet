@@ -13,8 +13,8 @@ export default function ShowHistograma() {
       <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] pointer-events-none"></div>
       
       {/* Contenido principal */}
-      <div className="flex flex-1 items-center justify-center">
-        <div className="w-full max-w-5xl">
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="w-full max-w-5xl px-4 mb-8">
 
           {/* Tarjeta principal con glassmorphism */}
           <div className="backdrop-blur-xl bg-white/70 border border-white/80 rounded-3xl shadow-xl p-6 md:p-8">
@@ -139,6 +139,132 @@ export default function ShowHistograma() {
 
           </div>
 
+        </div>
+
+        {/* Footer Profesional - Ancho completo */}
+        <div className="w-full backdrop-blur-xl   overflow-hidden">
+          {/* Borde superior decorativo */}
+          <div className="h-1 " />
+            
+            <div className="p-8">
+              {/* Título del footer */}
+              <div className="text-center mb-6">
+              
+                <p className="text-sm italic text-slate-600">
+                  Proyecto desarrollado en colaboración con
+                </p>
+              </div>
+
+              {/* Logos */}
+              <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+                
+
+               
+
+                {/* Logo CONICET */}
+                <a 
+                  href="https://www.conicet.gov.ar/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center group"
+                >
+                  <div className="relative p-4 transition-all duration-300 hover:scale-105">
+                    <img 
+                      src="/assets/logo-CONICET_opt.png" 
+                      alt="CONICET" 
+                      className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                    />
+                  </div>
+                </a>
+
+                {/* Separador vertical */}
+                <div className="hidden md:block w-px h-16 bg-gradient-to-b from-transparent via-slate-300 to-transparent" />
+
+                {/* Logo FAI */}
+                <a 
+                  href="https://www.fi.uncoma.edu.ar/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center group"
+                >
+                  <div className="relative p-4 transition-all duration-300 hover:scale-105">
+                    <img 
+                      src="/assets/fai.png" 
+                      alt="FAI" 
+                      className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                    />
+                  </div>
+                </a>
+
+                {/* Separador vertical */}
+                <div className="hidden md:block w-px h-16 bg-gradient-to-b from-transparent via-slate-300 to-transparent" />
+
+                {/* Logo INTA */}
+                <a 
+                  href="https://www.argentina.gob.ar/inta" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center group"
+                >
+                  <div className="relative p-4 transition-all duration-300 hover:scale-105">
+                    <img 
+                      src="/assets/Logo_INTA.svg.png" 
+                      alt="INTA" 
+                      className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                    />
+                  </div>
+                </a>
+
+                {/* Separador vertical */}
+                <div className="hidden md:block w-px h-16 bg-gradient-to-b from-transparent via-slate-300 to-transparent" />
+
+                {/* Logo UNCo */}
+                <a 
+                  href="https://www.uncoma.edu.ar/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center group"
+                >
+                  <div className="relative p-4 transition-all duration-300 hover:scale-105">
+                    <img 
+                      src="/assets/unco.png" 
+                      alt="Universidad Nacional del Comahue" 
+                      className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                    />
+                  </div>
+                </a>
+                 {/* Separador vertical */}
+                <div className="hidden md:block w-px h-16 bg-gradient-to-b from-transparent via-slate-300 to-transparent" />
+                {/* Logo UNCo Bariloche */}
+                <a 
+                  href="https://app.crub.uncoma.edu.ar/inicio/novedades" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center group"
+                >
+                  <div className="relative p-4    transition-all duration-300 hover:scale-105">
+                    <img 
+                      src="/assets/logo-unco-bariloche-horizontal-gris.png" 
+                      alt="UNCo Bariloche" 
+                      className="h-14 md:h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                    />
+                  </div>
+                </a>
+              </div>
+
+              {/* Línea divisoria */}
+              <div className="my-6 border-t border-slate-200/60" />
+
+              {/* Información adicional */}
+              <div className="text-center">
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Sistema de Monitoreo y Análisis de Datos Hidrológicos
+                </p>
+                <p className="text-xs text-slate-400 mt-1">
+                  © {new Date().getFullYear()} - Todos los derechos reservados
+                </p>
+              </div>
+            </div>
         </div>
       </div>
     </>

@@ -4,8 +4,8 @@ import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 
 import { FileText, Users, MapPin, LogOut , TrendingUp, Upload, MapPinned} from "lucide-react";
 import { FileSpreadsheet } from "lucide-react";
-import conicet from '../../../../public/assets/logo-CONICET_opt.png';
-import unco from '../../../../public/assets/unco.png';
+import conicet from '/assets/logo-CONICET_opt.png';
+import unco from '/assets/unco.png';
 
 import DashboardButton from "./DashboardButton";
 
@@ -36,10 +36,11 @@ const Dashboard = () => {
             <div className="backdrop-blur-xl bg-white/80 border border-white/70 rounded-3xl p-4 md:p-8 mb-4">
               <div className="flex items-center justify-center gap-6">
                 <img src={conicet} alt="CONICET Logo" className="h-12 md:h-16 w-16 object-contain" />
-                <img src={unco} alt="UNCO Logo" className="h-12 md:h-16 w-auto object-contain" />
+                
                 <h2 className="text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">
                   Panel de Administración
                 </h2>
+                <img src={unco} alt="UNCO Logo" className="h-12 md:h-16 w-auto object-contain" />
               </div>
             </div>
 

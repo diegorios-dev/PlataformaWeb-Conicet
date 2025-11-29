@@ -9,6 +9,7 @@ export interface Zona {
 
 export interface Site {
   id: number;
+  nombre?: string;
   latitude: string;
   longitude: string;
   zona_id: number;
