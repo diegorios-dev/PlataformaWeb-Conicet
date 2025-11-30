@@ -8,8 +8,9 @@ import { MarkerSite } from "./MarkerSite";
 import { useAvailableYears } from "@/features/menu/components/hooks/useAvailableYears";
 import { useSiteStatus } from "@/features/menu/components/hooks/useSiteStatus";
 import { useSiteReports } from "@/features/menu/components/hooks/useSiteReports";
-import { LoadingSpinner, EmptyMapState } from "@shared/ui/Loading/LoadingState";
+import { LoadingSpinner, EmptyMapState , LoadingMapConicet } from "@shared/ui/Loading/LoadingState";
 import type { MapHTMLProps } from "../types/interfaces";
+
 
 export default function MapHTML({ position, loading: externalLoading }: MapHTMLProps) {
   
@@ -23,13 +24,14 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
   const ids = useMemo(() => position.map((p) => p.idSitio), [position]);
   const { siteReports, loadingReports } = useSiteReports(position, ids, selectedYear);
 
+  console.log(siteReports)
+
   // Estado de carga inicial
   if (externalLoading) {
     return (
-      <LoadingSpinner 
-        message="Cargando sitios..." 
-        submessage={`Inicializando mapa...`}
-        size="lg" 
+      <LoadingMapConicet 
+        message="Conicet"
+        size="lg"
       />
     );
   }
@@ -47,10 +49,9 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
   const isStatusReady = position.every((coord) => siteStatus.has(coord.idSitio));
   if (loadingReports || !isStatusReady) {
     return (
-      <LoadingSpinner 
-        message="Cargando datos del mapa" 
-        submessage={`Procesando ${position?.length || 0} sitios...`}
-        size="lg" 
+      <LoadingMapConicet 
+        message="Conicet" 
+        size="lg"
       />
     );
   }
@@ -65,6 +66,7 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
         onYearChange={setSelectedYear}
         className="absolute top-5 right-5 z-[1000]"
       />
+
       <BaseMapSelector 
         baseMap={baseMap} 
         setBaseMap={(value) => setBaseMap(value as 'original' | 'vegetacion' | 'topografia')} 

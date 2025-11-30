@@ -9,11 +9,11 @@ const LoadingPage = () => {
       <div className="flex items-center gap-3 mb-6">
         <img
           src={img}
-          alt="CONICET"
+          alt="Conicet"
           className="w-16 h-auto"
         />
-        <span className="text-2xl font-semibold text-blue-900 tracking-wide">
-          CONICET
+        <span className="text-2xl italic text-blue-900 tracking-wide">
+          Conicet
         </span>
       </div>
 

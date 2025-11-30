@@ -1,5 +1,6 @@
 import { Loader2, MapPin, BarChart3, FileText, Database } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import img from "../../../../public/assets/conicetMapa.png";
 
 
 /**
@@ -38,6 +39,53 @@ export const LoadingSpinner = ({
         {submessage && (
           <p className="text-slate-500 text-sm">{submessage}</p>
         )}
+      </div>
+    </div>
+  );
+};
+
+
+/**
+ * Spinner de carga genérico
+ * Usa animación de spin suave con mensaje personalizable
+ */
+interface LoadingSpinnerProps {
+  message?: string;
+  size?: "sm" | "md" | "lg";
+  submessage?: string;
+  fullScreen?: boolean;
+}
+
+export const LoadingMapConicet = ({ 
+  message,
+  size = "md",
+  fullScreen = true,
+}: LoadingSpinnerProps) => {
+
+  const sizeClasses = {
+    sm: "w-8 h-8",
+    md: "w-12 h-12",
+    lg: "w-16 h-16"
+  };
+
+  const containerClass = fullScreen 
+    ? "flex items-center justify-center min-h-screen w-full relative"
+    : "flex items-center justify-center w-full py-20 relative";
+
+  return (
+    <div className={containerClass}>
+      {/* Imagen de fondo */}
+      <img 
+        src="../../../public/assets/conicetMapa.png"
+        alt="Background"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+      />
+      {/* overlay muy leve */}
+      <div className="absolute inset-0 bg-white/30 pointer-events-none"></div>
+      {/* Contenido */}
+      <div className="text-center p-10 relative z-10">
+        <p className="text-white italic text-7xl mb-1 font-light">{message}</p>
+        <Loader2 className={`${sizeClasses[size]} text-blue-600 animate-spin mx-auto mb-4`} />
       </div>
     </div>
   );

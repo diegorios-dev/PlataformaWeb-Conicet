@@ -123,8 +123,10 @@ const Login = () => {
           className="bg-white p-10 rounded-2xl shadow-2xl w-96 flex flex-col space-y-6 animate-slide-up-fade"
         >
           <h2 className="text-3xl font-semibold text-center text-gray-800 mb-2">
-            Login
+            Acceso Administrativo
           </h2>
+
+          <p className="text-center text-gray-600 text-xs">Esta sección está destinada únicamente al personal autorizado del CONICET.</p>
 
           {/* Mensaje de error profesional */}
           {error && (

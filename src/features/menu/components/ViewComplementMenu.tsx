@@ -1,10 +1,9 @@
-import { BarChart3, MapPin, ChevronRight, TrendingUp } from "lucide-react";
+import { BarChart3, MapPin, ChevronRight } from "lucide-react";
 import { memo } from "react";
 
 const icons = {
   "Ver Histograma": <BarChart3 className="w-5 h-5" />,
-  "Ver Mapa de Calor": <MapPin className="w-5 h-5" />,
-  "Ver Estadísticas": <TrendingUp className="w-5 h-5" />,
+  "Ver Mapa de Calor": <MapPin className="w-5 h-5" />
 };
 
 // ⚡ Memorizar componente - Diseño modernizado
