@@ -15,6 +15,7 @@ import { SiteInfoBanner } from "./SiteInfoBanner";
 import { useNavegation as useNavigation } from "@shared/hooks";
 import { getAllZonas } from "@features/zona/services";
 import { getAllEvents, type Event } from "@features/event/services";
+import { devLog } from "@shared/utils/errorHandler";
 
 const AdminSitios = () => {
   const [toastOpen, setToastOpen] = useState(false);
@@ -41,7 +42,7 @@ const AdminSitios = () => {
         setZonas(zonasData);
         setEvents(eventsData);
       } catch (error) {
-        console.error('Error al cargar zonas y eventos:', error);
+        devLog.error('Error al cargar zonas y eventos', error);
       }
     };
     fetchData();

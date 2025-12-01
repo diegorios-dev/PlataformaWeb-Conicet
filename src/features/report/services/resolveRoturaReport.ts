@@ -26,15 +26,16 @@ export const resolveRoturaReport = async ( breakageInstrumentId: number): Promis
       message: data?.message || "Reporte de rotura resuelto exitosamente",
       data: data,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as {response?: {data?: {message?: string}, status?: number}, message?: string};
     const errorMessage =
-      error.response?.data?.message ||
-      error.message ||
+      err.response?.data?.message ||
+      err.message ||
       "Error al resolver el reporte de rotura";
     
     throw {
       message: errorMessage,
-      status: error.response?.status,
+      status: err.response?.status,
     } as ResolveRoturaError;
   }
 };

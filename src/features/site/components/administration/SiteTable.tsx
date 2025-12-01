@@ -83,7 +83,7 @@ export const SiteTable = ({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-50 text-purple-700 text-xs font-semibold border border-purple-200">
-                    {sitio.zona?.locality || `Zona #${sitio.zona_id}`}
+                    {sitio.zona?.locality || `-`}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -107,7 +107,7 @@ export const SiteTable = ({
                         size={14}
                         className="transition-transform group-hover:rotate-12"
                       />
-                      Ver en el mapa
+                      Editar
                     </button>
                     <button
                       onClick={() => onDelete(sitio)}

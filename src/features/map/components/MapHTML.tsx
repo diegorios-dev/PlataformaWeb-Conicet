@@ -8,7 +8,9 @@ import { MarkerSite } from "./MarkerSite";
 import { useAvailableYears } from "@/features/menu/components/hooks/useAvailableYears";
 import { useSiteStatus } from "@/features/menu/components/hooks/useSiteStatus";
 import { useSiteReports } from "@/features/menu/components/hooks/useSiteReports";
-import { LoadingSpinner, EmptyMapState , LoadingMapConicet } from "@shared/ui/Loading/LoadingState";
+import { EmptyMapState , LoadingMapConicet } from "@shared/ui/Loading/LoadingState";
+import { devLog } from "@shared/utils/errorHandler";
+import { isValidCoordinate } from "@shared/utils/coordinateValidation";
 import type { MapHTMLProps } from "../types/interfaces";
 
 
@@ -24,7 +26,13 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
   const ids = useMemo(() => position.map((p) => p.idSitio), [position]);
   const { siteReports, loadingReports } = useSiteReports(position, ids, selectedYear);
 
-  console.log(siteReports)
+  // Filtrar solo posiciones con coordenadas válidas
+  const validPositions = useMemo(() => 
+    position.filter(p => isValidCoordinate(p.coordenadas)),
+    [position]
+  );
+
+  devLog.info('Site reports loaded', siteReports);
 
   // Estado de carga inicial
   if (externalLoading) {
@@ -56,7 +64,10 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
     );
   }
 
-  const center: [number, number] = position[0].coordenadas;
+  // Usar primera posición válida o coordenada por defecto
+  const center: [number, number] = validPositions.length > 0 
+    ? validPositions[0].coordenadas 
+    : [-38.95, -68.06]; // Neuquén, Argentina
 
   return (
     <div className="relative w-full h-full">
@@ -90,7 +101,7 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
           noWrap={true}
         />
 
-        {position.map((site, index) => (
+        {validPositions.map((site, index) => (
           <MarkerSite
             key={`${site.idSitio}-${site.tipo}-${index}`}
             site={site}

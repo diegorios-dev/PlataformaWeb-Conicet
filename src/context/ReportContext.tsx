@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
+import type { Report } from '@features/report/types';
 
 interface ReportContextType {
-  report: any;
-  handleSelectReport: (report: any) => void;
+  report: Report | null;
+  handleSelectReport: (report: Report) => void;
 }
 
 const ReportContext = createContext<ReportContextType | undefined>(undefined);
@@ -13,9 +14,9 @@ interface ReportProviderProps {
 }
 
 export const ReportProvider = ({ children }: ReportProviderProps) => {
-  const [report, setReport] = useState<any | null>(null);
+  const [report, setReport] = useState<Report | null>(null);
 
-  const handleSelectReport = useCallback((newReport: any) => {
+  const handleSelectReport = useCallback((newReport: Report) => {
     setReport(newReport);
   }, []);
 

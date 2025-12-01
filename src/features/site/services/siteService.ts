@@ -1,4 +1,11 @@
 import { API_URL } from "@config/api";
+import { devLog, getErrorMessage } from "@shared/utils/errorHandler";
+import { 
+  validateLatitude, 
+  validateLongitude, 
+  validatePositiveId,
+  validateText 
+} from "@shared/utils/validators";
 
 
 export interface Site {
@@ -22,15 +29,22 @@ export interface SiteResponse {
 export const getAllSites = async (): Promise<Site[]> => {
   try {
     const response = await fetch(`${API_URL}/sitios`);
+    
     if (!response.ok) {
-      throw new Error("Error HTTP: " + response.status);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
+    
     const data = await response.json();
+    
+    if (!Array.isArray(data)) {
+      devLog.warn('Datos de sitios inválidos', data);
+      return [];
+    }
+    
     return data;
-  } catch (error: any) {
-    throw new Error(
-      error?.message || "Error al obtener los sitios"
-    );
+  } catch (error) {
+    devLog.error('Error obteniendo sitios', error);
+    throw new Error(getErrorMessage(error));
   }
 };
 
@@ -44,19 +58,21 @@ export const createSite = async (siteData: Site): Promise<SiteResponse> => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(siteData),
     });
+    
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData?.message || "Error al crear el sitio");
+      throw new Error(errorData?.message || `HTTP ${response.status}`);
     }
+    
     const data = await response.json();
+    
     return {
       message: data?.message || "Sitio creado exitosamente",
       data,
     };
-  } catch (error: any) {
-    throw new Error(
-      error?.message || "Error al crear el sitio"
-    );
+  } catch (error) {
+    devLog.error('Error creando sitio', error);
+    throw new Error(getErrorMessage(error));
   }
 };
 
@@ -74,10 +90,9 @@ export const getSiteById = async (siteId: number): Promise<Site> => {
     }
     
     return site;
-  } catch (error: any) {
-    throw new Error(
-      error?.message || "Error al obtener el sitio"
-    );
+  } catch (error) {
+    devLog.error(`Error obteniendo sitio ${siteId}`, error);
+    throw new Error(getErrorMessage(error));
   }
 };
 
@@ -94,19 +109,21 @@ export const updateSite = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(siteData),
     });
+    
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData?.message || "Error al actualizar el sitio");
+      throw new Error(errorData?.message || `HTTP ${response.status}`);
     }
+    
     const data = await response.json();
+    
     return {
       message: data?.message || "Sitio actualizado exitosamente",
       data,
     };
-  } catch (error: any) {
-    throw new Error(
-      error?.message || "Error al actualizar el sitio"
-    );
+  } catch (error) {
+    devLog.error(`Error actualizando sitio ${siteId}`, error);
+    throw new Error(getErrorMessage(error));
   }
 };
 
@@ -118,19 +135,21 @@ export const deleteSite = async (siteId: number): Promise<SiteResponse> => {
     const response = await fetch(`${API_URL}/site/${siteId}`, {
       method: "DELETE",
     });
+    
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData?.message || "Error al eliminar el sitio");
+      throw new Error(errorData?.message || `HTTP ${response.status}`);
     }
+    
     const data = await response.json();
+    
     return {
       message: data?.message || "Sitio eliminado exitosamente",
       data,
     };
-  } catch (error: any) {
-    throw new Error(
-      error?.message || "Error al eliminar el sitio"
-    );
+  } catch (error) {
+    devLog.error(`Error eliminando sitio ${siteId}`, error);
+    throw new Error(getErrorMessage(error));
   }
 };
 
@@ -138,21 +157,37 @@ export const deleteSite = async (siteId: number): Promise<SiteResponse> => {
  * Valida los datos de un sitio
  */
 export const validateSiteData = (siteData: Partial<Site>): string | null => {
-  if (!siteData.nombre || siteData.nombre.trim() === "") {
-    return "El nombre del sitio es requerido";
+  // Validar nombre usando la función de validators
+  const nombreError = validateText(siteData.nombre || '', 3, 100, 'El nombre del sitio');
+  if (nombreError) return nombreError;
+  
+  // Validar latitud
+  const latError = validateLatitude(siteData.latitude);
+  if (latError) return latError;
+  
+  // Validar longitud
+  const lngError = validateLongitude(siteData.longitude);
+  if (lngError) return lngError;
+  
+  // Validar zona
+  const zonaError = validatePositiveId(siteData.zona_id, 'La zona');
+  if (zonaError) return zonaError;
+  
+  // Validar evento
+  const eventoError = validatePositiveId(siteData.event_id, 'El evento');
+  if (eventoError) return eventoError;
+  
+  // Validar cota si existe (es opcional)
+  if (siteData.cota !== undefined && siteData.cota !== null && siteData.cota !== '') {
+    const cota = Number(siteData.cota);
+    if (isNaN(cota)) {
+      return 'La cota debe ser un número válido';
+    }
+    if (cota < -500 || cota > 10000) {
+      return 'La cota debe estar entre -500 y 10000 metros';
+    }
   }
-  if (!siteData.latitude || isNaN(Number(siteData.latitude))) {
-    return "La latitud debe ser un número válido";
-  }
-  if (!siteData.longitude || isNaN(Number(siteData.longitude))) {
-    return "La longitud debe ser un número válido";
-  }
-  if (!siteData.zona_id) {
-    return "La zona es requerida";
-  }
-  if (!siteData.event_id) {
-    return "El evento es requerido";
-  }
+  
   return null;
 };
 

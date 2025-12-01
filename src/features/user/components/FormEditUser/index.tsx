@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { User, Save, X, CheckCircle2, AlertTriangle } from "lucide-react";
+import { User, Save, X } from "lucide-react";
 import type { FormEditUserProps } from "../../types";
 import { useUserFormState } from "../../hooks";
+import Toast from "@shared/ui/Loading/Toast";
 import {
   assignInstrumentToUser,
   removeInstrumentFromUser
@@ -21,9 +22,9 @@ export const FormEditUser = ({
   const [pendingRemoveInstruments, setPendingRemoveInstruments] = useState<number[]>([]);
   const [selectedInstrumentId, setSelectedInstrumentId] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<"success" | "error">("success");
-  const [modalMessage, setModalMessage] = useState<string>("");
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [toastMessage, setToastMessage] = useState<string>("");
 
   const {
     sitios,
@@ -35,13 +36,13 @@ export const FormEditUser = ({
     loadingInstruments
   } = useUserFormState({ selectedUser });
 
-  const showModal = (type: "success" | "error", message: string) => {
-    setModalType(type);
-    setModalMessage(message);
-    setModalOpen(true);
+  const showToast = (type: "success" | "error", message: string) => {
+    setToastType(type);
+    setToastMessage(message);
+    setToastOpen(true);
 
     setTimeout(() => {
-      setModalOpen(false);
+      setToastOpen(false);
       if (type === "success") {
         setShowEditModal(false);
         onSave?.();
@@ -70,9 +71,9 @@ export const FormEditUser = ({
       setPendingAddInstruments([]);
       setPendingRemoveInstruments([]);
 
-      showModal("success", "Usuario actualizado correctamente");
+      showToast("success", "Usuario actualizado correctamente");
     } catch (e) {
-      showModal("error", "Error al actualizar usuario");
+      showToast("error", "Error al actualizar el usuario.");
     }
     setIsSaving(false);
   };
@@ -96,7 +97,7 @@ export const FormEditUser = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-slate-900/25 backdrop-blur-md z-50">
-      <div className="bg-white rounded-xl border border-blue-100 shadow-2xl max-w-4xl w-full p-0 overflow-hidden animate-fade-in-scale">
+      <div className="bg-white rounded-xl border border-blue-100 shadow-2xl max-w-6xl w-full p-0 overflow-hidden animate-fade-in-scale">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-400 px-6 py-4 flex items-center gap-3">
           <div className="bg-white/30 rounded-full p-2">
@@ -118,11 +119,6 @@ export const FormEditUser = ({
         <div className="px-6 py-6 font-sans grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Columna 1: Info personal y ubicación */}
           <div className="space-y-6">
-            <UserBasicInfoForm
-              user={selectedUser}
-              onUserChange={setSelectedUser}
-              disabled={isSaving}
-            />
 
             <UserSiteSelector
               user={selectedUser}
@@ -132,6 +128,13 @@ export const FormEditUser = ({
               onUserChange={setSelectedUser}
               disabled={isSaving}
             />
+            
+            <UserBasicInfoForm
+              user={selectedUser}
+              onUserChange={setSelectedUser}
+              disabled={isSaving}
+            />
+
           </div>
 
           {/* Columna 2: Instrumentos y acciones */}
@@ -175,23 +178,13 @@ export const FormEditUser = ({
           </div>
         )}
 
-        {/* Modal de éxito/error */}
-        {modalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-[100]">
-            <div className="bg-white rounded-xl p-4 text-center max-w-xs shadow-xl">
-              <div
-                className={`w-12 h-12 mx-auto mb-3 rounded-lg flex items-center justify-center ${modalType === "success" ? "bg-green-100" : "bg-red-100"}`}
-              >
-                {modalType === "success" ? (
-                  <CheckCircle2 className="w-8 h-8 text-green-600" />
-                ) : (
-                  <AlertTriangle className="w-8 h-8 text-red-600" />
-                )}
-              </div>
-              <p className="text-base font-semibold">{modalMessage}</p>
-            </div>
-          </div>
-        )}
+        {/* Toast para notificaciones */}
+        <Toast
+          isOpen={toastOpen}
+          type={toastType}
+          message={toastMessage}
+          onClose={() => setToastOpen(false)}
+        />
       </div>
     </div>
   );

@@ -55,8 +55,9 @@ const useSiteForm = ({ onSuccess, onError, onClose }: UseSiteFormParams = {}) =>
         if (onSuccess) onSuccess(response.message || "Sitio creado correctamente");
       }
       closeForm();
-    } catch (error: any) {
-      if (onError) onError(error.message);
+    } catch (error: unknown) {
+      const err = error as {message?: string};
+      if (onError) onError(err.message || 'Error al guardar sitio');
     } finally {
       setLoading(false);
     }

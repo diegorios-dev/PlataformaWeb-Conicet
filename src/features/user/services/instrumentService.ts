@@ -37,7 +37,7 @@ export const assignInstrumentToUser = async (userId: number, instrumentId: numbe
       { instrument_id: instrumentId }
     );
     return data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw error;
   }
 };
@@ -51,7 +51,7 @@ export const removeInstrumentFromUser = async (userId: number, instrumentId: num
       `${API_URL_SERVICE}/usuario/${userId}/instrumentos/${instrumentId}`
     );
     return data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw error;
   }
 };

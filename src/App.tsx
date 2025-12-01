@@ -3,6 +3,7 @@ import Home from "./features/home/components/Home";
 import { Routes, Route} from "react-router-dom";
 import { Login, AuthProvider } from "@features/auth";
 import { ReportProvider } from "@context/ReportContext";
+import { ErrorBoundary } from "@shared/ui/ErrorBoundary";
 import Dashboard from "./features/dashboard/components/Dashboard";
 import ShowReport from "./features/report/components/show/ShowReport";
 import ViewManagementUsers from "./features/user/components/ViewManagementUsers";
@@ -26,7 +27,7 @@ import AdminSitios from "./features/site/components/administration/AdminSitios";
 
 export default function App() {
   return (
-    <div>
+    <ErrorBoundary>
       <AuthProvider>
         <ReportProvider>
           <Routes>
@@ -58,6 +59,6 @@ export default function App() {
           </Routes>
         </ReportProvider>
       </AuthProvider>
-    </div>
+    </ErrorBoundary>
   );
 }

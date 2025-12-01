@@ -2,6 +2,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import html2canvas from "html2canvas";
 import { months } from "../contants/constants";
+import { devLog } from "@shared/utils/errorHandler";
 
 export async function generatePDF({
   title,
@@ -61,7 +62,7 @@ export async function generatePDF({
     // Agregar logo UNCO (derecha)
     pdf.addImage(uncoLogo, 'PNG', 262, 5, 25, 15);
   } catch (error) {
-    console.warn('No se pudieron cargar los logos:', error);
+    devLog.warn('No se pudieron cargar los logos', error);
   }
 
   pdf.setFontSize(18);

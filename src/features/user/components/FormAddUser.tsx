@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { postNewUser } from "@features/user/services";
 import { getAllSitios } from "@features/site/services";
 import { useNavegation } from "@shared/hooks";
+import { validateUserData } from "@shared/utils/validators";
 import { DashboardLayout } from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 import Toast from "@shared/ui/Loading/Toast";
@@ -12,7 +13,8 @@ import {
   Shield,
   MapPin,
   Locate,
-  UserCog
+  UserCog,
+  AlertCircle
 } from "lucide-react";
 
 const FormAddUser = () => {
@@ -29,6 +31,7 @@ const FormAddUser = () => {
   const [toastOpen, setToastOpen] = useState(false);
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [toastMessage, setToastMessage] = useState("");
+  const [validationError, setValidationError] = useState<string | null>(null);
   
   const { go } = useNavegation();
 
@@ -70,6 +73,27 @@ const FormAddUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Limpiar error previo
+    setValidationError(null);
+    
+    // Validar datos del formulario
+    const validationError = validateUserData({
+      name: formData.name,
+      password: formData.password,
+      rol: formData.rol,
+      site_id: formData.site_id,
+      zona_id: formData.zona_id
+    });
+    
+    if (validationError) {
+      setValidationError(validationError);
+      setToastType("error");
+      setToastMessage(validationError);
+      setToastOpen(true);
+      return;
+    }
+    
     try {
       const payload = {
         name: formData.name,
@@ -86,8 +110,10 @@ const FormAddUser = () => {
         go.back();
       }, 2000);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Error al crear usuario";
+      setValidationError(errorMessage);
       setToastType("error");
-      setToastMessage("Error al crear usuario. Por favor intenta nuevamente.");
+      setToastMessage(errorMessage);
       setToastOpen(true);
     }
   };
@@ -105,6 +131,17 @@ const FormAddUser = () => {
           </div>
         </div>
         <div className="bg-white/80 backdrop-blur-xl shadow-2xl rounded-3xl px-12 pt-10 pb-12 border-2 border-white/60">
+          {/* Mostrar error de validación */}
+          {validationError && (
+            <div className="mb-6 bg-red-50 border-2 border-red-200 rounded-2xl p-4 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-red-900 font-bold text-sm mb-1">Error de validación</h4>
+                <p className="text-red-700 text-sm">{validationError}</p>
+              </div>
+            </div>
+          )}
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Columna 1 */}
             <div>
@@ -189,7 +226,7 @@ const FormAddUser = () => {
                 <CustomSelect
                   options={sitios.map(sitio => ({
                     value: sitio.id.toString(),
-                    label: sitio.zona?.locality || "Sin localidad",
+                    label: sitio.zona?.locality || "Sin zona asignada",
                     subtitle: `Lat: ${sitio.latitude}, Lon: ${sitio.longitude}${sitio.event ? ` (${sitio.event.type})` : ""}`,
                     icon: <MapPin className="w-4 h-4" />
                   }))}

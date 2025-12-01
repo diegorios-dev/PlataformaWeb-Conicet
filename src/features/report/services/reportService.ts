@@ -3,6 +3,7 @@
 import axios from "axios";
 import { API_URL } from "@config/api";
 import { invalidateEstadisticasCache } from "@features/Charts/services";
+import { devLog } from "@shared/utils/errorHandler";
 
 const API_URL_SERVICE = API_URL;
 
@@ -21,7 +22,7 @@ export const updateReporte = async (id: number, data: any) => {
     invalidateEstadisticasCache();
     
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw error;
   }
 };
@@ -42,7 +43,7 @@ export const createReporteRotura = async (data: FormData) => {
     invalidateEstadisticasCache();
     
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw error;
   }
 };
@@ -59,7 +60,7 @@ export const resolveReporteRotura = async (id: number) => {
     invalidateEstadisticasCache();
     
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw error;
   }
 };
@@ -80,46 +81,56 @@ export async function getHistograma(
   year: number | null = null, 
   month: number | null = null
 ) {
-  // Mapeo de nombres frontend → backend
-  const periodoMap: Record<string, string> = {
-    'dia': 'dia',
-    'mes': 'mes',
-    'año': 'año',
-    'year': 'año' // alias
-  };
-  
-  const periodo = periodoMap[groupBy] || 'mes';
-  
-  // Construir query params
-  const params = new URLSearchParams();
-  params.append('periodo', periodo);
-  params.append('tipo_evento', 'Lluvia'); // Puedes hacer esto configurable
-  
-  if (year) {
-    params.append('year', year.toString());
-  }
-  
-  if (month && periodo === 'dia') {
-    params.append('month', month.toString());
-  }
-  
-  const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
-  
-  const res = await fetch(url);
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error || "Error al traer datos de lluvia");
-  }
+  try {
+    // Mapeo de nombres frontend → backend
+    const periodoMap: Record<string, string> = {
+      'dia': 'dia',
+      'mes': 'mes',
+      'año': 'año',
+      'year': 'año'
+    };
+    
+    const periodo = periodoMap[groupBy] || 'mes';
+    
+    // Construir query params
+    const params = new URLSearchParams();
+    params.append('periodo', periodo);
+    params.append('tipo_evento', 'Lluvia');
+    
+    if (year) {
+      params.append('year', year.toString());
+    }
+    
+    if (month && periodo === 'dia') {
+      params.append('month', month.toString());
+    }
+    
+    const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
+    const res = await fetch(url);
+    
+    if (!res.ok) {
+      throw new Error(`Error al obtener histograma: ${res.status}`);
+    }
 
-  const json = await res.json();
-  
-  // El backend devuelve { success, data: [{ label, value }], metadata }
-  if (!json.success || !json.data) {
-    return [];
+    const json = await res.json();
+    
+    // Validar que tenga la estructura esperada
+    if (!json.success || !json.data) {
+      devLog.warn('Respuesta sin datos válidos', json);
+      return [];
+    }
+    
+    // Validar que data sea un array
+    if (!Array.isArray(json.data)) {
+      devLog.warn('json.data no es un array', json.data);
+      return [];
+    }
+    
+    return json.data;
+  } catch (error) {
+    devLog.error('Error en getHistograma', error);
+    throw error;
   }
-  
-  // Ya viene en el formato correcto [{ label, value }]
-  return json.data;
 }
 
 /**
@@ -130,38 +141,47 @@ export async function getHistogramaNieve(
   year: number | null = null, 
   month: number | null = null
 ) {
-  const periodoMap: Record<string, string> = {
-    'dia': 'dia',
-    'mes': 'mes',
-    'año': 'año',
-    'year': 'año'
-  };
-  
-  const periodo = periodoMap[groupBy] || 'mes';
-  
-  const params = new URLSearchParams();
-  params.append('periodo', periodo);
-  params.append('tipo_evento', 'Nieve');
-  
-  if (year) params.append('year', year.toString());
-  if (month && periodo === 'dia') params.append('month', month.toString());
-  
-  const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
-  
-  const res = await fetch(url);
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error || "Error al traer datos de nieve");
-  }
+  try {
+    const periodoMap: Record<string, string> = {
+      'dia': 'dia',
+      'mes': 'mes',
+      'año': 'año',
+      'year': 'año'
+    };
+    
+    const periodo = periodoMap[groupBy] || 'mes';
+    
+    const params = new URLSearchParams();
+    params.append('periodo', periodo);
+    params.append('tipo_evento', 'Nieve');
+    
+    if (year) params.append('year', year.toString());
+    if (month && periodo === 'dia') params.append('month', month.toString());
+    
+    const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
+    const res = await fetch(url);
+    
+    if (!res.ok) {
+      throw new Error(`Error al obtener histograma de nieve: ${res.status}`);
+    }
 
-  const json = await res.json();
-  
-  if (!json.success || !json.data) {
-    console.warn('Respuesta inesperada del backend:', json);
-    return [];
+    const json = await res.json();
+    
+    if (!json.success || !json.data) {
+      devLog.warn('Respuesta sin datos válidos para nieve', json);
+      return [];
+    }
+    
+    if (!Array.isArray(json.data)) {
+      devLog.warn('json.data no es un array', json.data);
+      return [];
+    }
+    
+    return json.data;
+  } catch (error) {
+    devLog.error('Error en getHistogramaNieve', error);
+    throw error;
   }
-  
-  return json.data;
 }
 
 /**
@@ -172,36 +192,45 @@ export async function getHistogramaCaudalimetro(
   year: number | null = null, 
   month: number | null = null
 ){
-  const periodoMap: Record<string, string> = {
-    'dia': 'dia',
-    'mes': 'mes',
-    'año': 'año',
-    'year': 'año'
-  };
-  
-  const periodo = periodoMap[groupBy] || 'mes';
-  
-  const params = new URLSearchParams();
-  params.append('periodo', periodo);
-  params.append('tipo_evento', 'Caudal');
-  
-  if (year) params.append('year', year.toString());
-  if (month && periodo === 'dia') params.append('month', month.toString());
-  
-  const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
-  
-  const res = await fetch(url);
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error || "Error al traer datos de caudalímetro");
-  }
+  try {
+    const periodoMap: Record<string, string> = {
+      'dia': 'dia',
+      'mes': 'mes',
+      'año': 'año',
+      'year': 'año'
+    };
+    
+    const periodo = periodoMap[groupBy] || 'mes';
+    
+    const params = new URLSearchParams();
+    params.append('periodo', periodo);
+    params.append('tipo_evento', 'Caudal');
+    
+    if (year) params.append('year', year.toString());
+    if (month && periodo === 'dia') params.append('month', month.toString());
+    
+    const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
+    const res = await fetch(url);
+    
+    if (!res.ok) {
+      throw new Error(`Error al obtener histograma de caudal: ${res.status}`);
+    }
 
-  const json = await res.json();
-  
-  if (!json.success || !json.data) {
-    console.warn('Respuesta inesperada del backend:', json);
-    return [];
+    const json = await res.json();
+    
+    if (!json.success || !json.data) {
+      devLog.warn('Respuesta sin datos válidos para caudal', json);
+      return [];
+    }
+    
+    if (!Array.isArray(json.data)) {
+      devLog.warn('json.data no es un array', json.data);
+      return [];
+    }
+    
+    return json.data;
+  } catch (error) {
+    devLog.error('Error en getHistogramaCaudalimetro', error);
+    throw error;
   }
-  
-  return json.data;
 }

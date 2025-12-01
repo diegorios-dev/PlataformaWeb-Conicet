@@ -10,6 +10,8 @@ import FormEditUser from "./FormEditUser";
 import SearchUser from "./searchUser";
 import { useNavegation } from "@shared/hooks";
 import { DashboardLayout } from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
+import { devLog } from "@shared/utils/errorHandler";
+import Toast from "@shared/ui/Loading/Toast";
 import {
   UserPlus,
   Pencil,
@@ -22,16 +24,16 @@ import {
   Key,
   AlertCircle,
   X,
-  CheckCircle2,
   AlertTriangle,
   Eye,
   EyeOff,
   Map,
 } from "lucide-react";
+
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-type ModalType = "success" | "error" | "confirm" | null;
+type ModalType = "confirm" | null;
 
 // Componente Modal para mostrar el mapa con Leaflet
 const MapModal = ({ 
@@ -197,17 +199,13 @@ const MapModal = ({
           <div ref={mapRef} style={{ height: '550px', width: '100%' }} className="relative z-0" />
         </div>
 
-  
-      
-
-            
-         
       </div>
     </div>
   );
 };
 
 const ViewManagementUsers = () => {
+
   const [users, setUsers] = useState<UserType[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
@@ -215,17 +213,18 @@ const ViewManagementUsers = () => {
   const [deleting, setDeleting] = useState(false);
   const [visiblePasswords, setVisiblePasswords] = useState<Record<number, boolean>>({});
   const [mapModalOpen, setMapModalOpen] = useState(false);
-  const [selectedMapLocation, setSelectedMapLocation] = useState<{
-    latitude: string;
-    longitude: string;
-    siteName: string;
-  } | null>(null);
+  const [selectedMapLocation, setSelectedMapLocation] = useState<{latitude: string;longitude: string;siteName: string} | null>(null);
 
-  // Estados para modales
+  // Estados para modal de confirmación
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<ModalType>(null);
   const [modalMessage, setModalMessage] = useState("");
   const [modalTitle, setModalTitle] = useState("");
+  
+  // Estados para Toast (success/error)
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [toastMessage, setToastMessage] = useState("");
   const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
 
   const { go } = useNavegation();
@@ -238,8 +237,11 @@ const ViewManagementUsers = () => {
     setLoading(true);
     try {
       const data = await getAllUsers();
-      setUsers(Array.isArray(data.users) ? data.users : data);
-    } catch {
+      // El backend retorna {users: [...]}
+      const usersList = (data && typeof data === 'object' && 'users' in data) ? data.users : data;
+      setUsers(Array.isArray(usersList) ? usersList : []);
+    } catch (error) {
+      devLog.error('Error cargando usuarios', error);
       setUsers([]);
     } finally {
       setLoading(false);
@@ -257,9 +259,12 @@ const ViewManagementUsers = () => {
     setModalMessage(message);
     setModalOpen(true);
     if (onConfirm) setConfirmAction(() => onConfirm);
-    if (type !== "confirm") {
-      setTimeout(() => setModalOpen(false), 2800);
-    }
+  };
+
+  const showToast = (type: "success" | "error", message: string) => {
+    setToastType(type);
+    setToastMessage(message);
+    setToastOpen(true);
   };
 
   const closeModal = () => {
@@ -291,10 +296,10 @@ const ViewManagementUsers = () => {
           setDeleting(true);
           try {
             await deleteUser(user.id);
-            showModal("success", "Usuario eliminado", `Usuario ${user.name} eliminado exitosamente`);
+            showToast("success", `Usuario ${user.name} eliminado exitosamente`);
             await fetchUsers();
           } catch {
-            showModal("error", "Error al eliminar", "No se pudo eliminar el usuario. Por favor intenta nuevamente.");
+            showToast("error", "No se pudo eliminar el usuario. Por favor intenta nuevamente.");
           } finally {
             setDeleting(false);
           }
@@ -306,10 +311,16 @@ const ViewManagementUsers = () => {
   const search = async (word: string) => {
     setLoading(true);
     try {
-      if (!word.trim()) return await fetchUsers();
+      if (!word.trim()) {
+        await fetchUsers();
+        return;
+      }
       const data = await getUsersByWord(word);
-      setUsers(Array.isArray(data.users) ? data.users : data);
-    } catch {
+      // El backend retorna {users: [...]}
+      const usersList = (data && typeof data === 'object' && 'users' in data) ? data.users : data;
+      setUsers(Array.isArray(usersList) ? usersList : []);
+    } catch (error) {
+      devLog.error('Error buscando usuarios', error);
       setUsers([]);
     } finally {
       setLoading(false);
@@ -577,86 +588,38 @@ const ViewManagementUsers = () => {
         </div>
       </div>
 
-      {/* Modal mejorado */}
-      {modalOpen && (
+      {/* Modal de confirmación para eliminar */}
+      {modalOpen && modalType === 'confirm' && (
         <div 
           className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={modalType !== 'confirm' ? closeModal : undefined}
         >
           <div className="relative bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full transform transition-all duration-300">
-            {modalType !== 'confirm' && (
-              <button
-                onClick={closeModal}
-                className="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 text-slate-600 p-2 rounded-xl transition-all duration-200 hover:scale-110"
-              >
-                <X size={20} />
-              </button>
-            )}
             
             <div className="flex flex-col items-center text-center">
-              <div className={`p-4 rounded-2xl mb-4 ${
-                modalType === 'success' 
-                  ? 'bg-green-100' 
-                  : modalType === 'error'
-                  ? 'bg-red-100'
-                  : 'bg-amber-100'
-              }`}>
-                {modalType === 'success' ? (
-                  <CheckCircle2 className="w-12 h-12 text-green-600" />
-                ) : modalType === 'error' ? (
-                  <AlertCircle className="w-12 h-12 text-red-600" />
-                ) : (
-                  <AlertTriangle className="w-12 h-12 text-amber-600" />
-                )}
+              <div className="p-4 rounded-2xl mb-4 bg-amber-100">
+                <AlertTriangle className="w-12 h-12 text-amber-600" />
               </div>
               
-              <h3 className={`text-2xl font-bold mb-2 ${
-                modalType === 'success' 
-                  ? 'text-green-900' 
-                  : modalType === 'error'
-                  ? 'text-red-900'
-                  : 'text-amber-900'
-              }`}>
+              <h3 className="text-2xl font-bold mb-2 text-amber-900">
                 {modalTitle}
               </h3>
-              <p className={`text-base mb-6 ${
-                modalType === 'success' 
-                  ? 'text-green-700' 
-                  : modalType === 'error'
-                  ? 'text-red-700'
-                  : 'text-amber-700'
-              }`}>
+              <p className="text-base mb-6 text-amber-700">
                 {modalMessage}
               </p>
               
               <div className="flex justify-center gap-3 w-full">
-                {modalType === 'confirm' ? (
-                  <>
-                    <button
-                      onClick={closeModal}
-                      className="flex-1 px-6 py-3 rounded-xl font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all duration-200 hover:scale-105"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      onClick={handleConfirm}
-                      className="flex-1 px-6 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 shadow-lg shadow-red-600/30 transition-all duration-200 hover:scale-105"
-                    >
-                      Eliminar
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={closeModal}
-                    className={`px-8 py-3 rounded-xl font-bold text-white transition-all duration-200 hover:scale-105 shadow-lg ${
-                      modalType === 'success'
-                        ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-green-600/30'
-                        : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 shadow-red-600/30'
-                    }`}
-                  >
-                    OK
-                  </button>
-                )}
+                <button
+                  onClick={closeModal}
+                  className="flex-1 px-6 py-3 rounded-xl font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all duration-200 hover:scale-105"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirm}
+                  className="flex-1 px-6 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 shadow-lg shadow-red-600/30 transition-all duration-200 hover:scale-105"
+                >
+                  Eliminar
+                </button>
               </div>
             </div>
           </div>
@@ -683,6 +646,14 @@ const ViewManagementUsers = () => {
           siteName={selectedMapLocation.siteName}
         />
       )}
+
+      {/* Toast para notificaciones */}
+      <Toast
+        isOpen={toastOpen}
+        type={toastType}
+        message={toastMessage}
+        onClose={() => setToastOpen(false)}
+      />
     </DashboardLayout>
   );
 };

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { postNewZona ,getAllZonas, updateZona, deleteZona} from "@features/zona/services";
+import { validateZonaData } from "@shared/utils/validators";
 import Toast from "@shared/ui/Loading/Toast";
 import { Plus, MapPin, Loader2, MapPinned, AlertCircle, Pencil, Trash2, X } from "lucide-react";
 import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
@@ -22,6 +23,7 @@ const FormAddZona = () => {
   });
   const [loading, setLoading] = useState(false);
   const [loadingZonas, setLoadingZonas] = useState(true);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const [toastOpen, setToastOpen] = useState(false);
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [toastMessage, setToastMessage] = useState("");
@@ -58,8 +60,14 @@ const FormAddZona = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.locality.trim()) {
-      showToast("error", "Por favor ingresa una localidad");
+    // Limpiar error previo
+    setValidationError(null);
+
+    // Validar datos
+    const validationError = validateZonaData({ locality: formData.locality });
+    if (validationError) {
+      setValidationError(validationError);
+      showToast("error", validationError);
       return;
     }
 
@@ -68,9 +76,12 @@ const FormAddZona = () => {
       await postNewZona(formData);
       showToast("success", "¡Zona agregada exitosamente!");
       setFormData({ locality: "", site: { latitude: "", longitude: "" } });
+      setValidationError(null);
       await fetchZonas();
     } catch (error) {
-      showToast("error", "Error al registrar la zona. Por favor intenta nuevamente.");
+      const errorMessage = error instanceof Error ? error.message : "Error al registrar la zona";
+      setValidationError(errorMessage);
+      showToast("error", errorMessage);
     } finally {
       setLoading(false);
     }
@@ -91,13 +102,22 @@ const FormAddZona = () => {
               <form
                 onSubmit={async (e) => {
                   e.preventDefault();
+                  
+                  // Validar antes de actualizar
+                  const validationError = validateZonaData({ locality: editLocality });
+                  if (validationError) {
+                    showToast("error", validationError);
+                    return;
+                  }
+                  
                   try {
                     await updateZona(zonaToEdit.id, { locality: editLocality });
                     setEditModalOpen(false);
                     showToast("success", "Zona modificada correctamente");
                     await fetchZonas();
                   } catch (err) {
-                    showToast("error", "Error al modificar la zona");
+                    const errorMessage = err instanceof Error ? err.message : "Error al modificar la zona";
+                    showToast("error", errorMessage);
                   }
                 }}
                 className="space-y-6"
@@ -176,6 +196,17 @@ const FormAddZona = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Mostrar error de validación */}
+            {validationError && (
+              <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-4 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-red-900 font-bold text-sm mb-1">Error de validación</h4>
+                  <p className="text-red-700 text-sm">{validationError}</p>
+                </div>
+              </div>
+            )}
+            
             <div>
               <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">
                 <MapPin size={18} className="text-blue-600" />

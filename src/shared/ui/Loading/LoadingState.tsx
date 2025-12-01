@@ -1,6 +1,5 @@
 import { Loader2, MapPin, BarChart3, FileText, Database } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import img from "../../../../public/assets/conicetMapa.png";
 
 
 /**
