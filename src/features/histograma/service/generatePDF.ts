@@ -32,6 +32,38 @@ export async function generatePDF({
     keywords: "histograma, precipitacion, pdf"
   });
 
+  // Cargar y agregar logos
+  const loadImage = (src: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = src;
+    });
+  };
+
+  try {
+    // Cargar logos
+    const conicetLogo = await loadImage('/assets/logo-CONICET_opt.png');
+    const uncoLogo = await loadImage('/assets/unco.png');
+
+    // Agregar logo CONICET (izquierda)
+    pdf.addImage(conicetLogo, 'PNG', 10, 5, 25, 15);
+    
+    // Agregar logo UNCO (derecha)
+    pdf.addImage(uncoLogo, 'PNG', 262, 5, 25, 15);
+  } catch (error) {
+    console.warn('No se pudieron cargar los logos:', error);
+  }
+
   pdf.setFontSize(18);
   pdf.text(title, 148, 15, { align: "center" });
 
