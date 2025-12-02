@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { getAllZonas } from "@features/zona/services";
+import type { Zona } from "@features/zona/types";
 
 export const useZonas = () => {
-  const [zonas, setZonas] = useState<any[]>([]);
+  const [zonas, setZonas] = useState<Zona[]>([]);
 
   useEffect(() => {
     const load = async () => {

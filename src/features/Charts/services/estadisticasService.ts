@@ -1,6 +1,7 @@
 import axios from "axios";
 import { API_URL } from "@config/api";
 import { getCachedData, cache } from "@shared/utils/simpleCache";
+import { devLog, getErrorMessage } from "@shared/utils/errorHandler";
 
 const API_URL_SERVICE = API_URL;
 
@@ -12,8 +13,19 @@ export const getPrecipitacionPorZona = async () => {
   return getCachedData(
     'estadisticas:precipitacion-zona',
     async () => {
-      const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/precipitacion-por-zona`);
-      return data;
+      try {
+        const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/precipitacion-por-zona`);
+        
+        if (!data || !Array.isArray(data)) {
+          devLog.warn('Datos de precipitación por zona inválidos', data);
+          return [];
+        }
+        
+        return data;
+      } catch (error) {
+        devLog.error('Error obteniendo precipitación por zona', error);
+        throw new Error(getErrorMessage(error));
+      }
     },
     DEFAULT_TTL
   );
@@ -24,8 +36,20 @@ export const getReportesPorInstrumento = async () => {
   return getCachedData(
     'estadisticas:reportes-instrumento',
     async () => {
-      const { data } = await axios.get(`${API_URL_SERVICE}/reportes/por-instrumento`);
-      return data.data || data;
+      try {
+        const { data } = await axios.get(`${API_URL_SERVICE}/reportes/por-instrumento`);
+        const result = data.data || data;
+        
+        if (!Array.isArray(result)) {
+          devLog.warn('Datos de reportes por instrumento inválidos', result);
+          return [];
+        }
+        
+        return result;
+      } catch (error) {
+        devLog.error('Error obteniendo reportes por instrumento', error);
+        throw new Error(getErrorMessage(error));
+      }
     },
     DEFAULT_TTL
   );
@@ -194,10 +218,12 @@ export const getPrecipitacionCoordenadas = async (periodo?: string, tipoEvento?:
         } else if (Array.isArray(response.data)) {
           return response.data;
         } else {
+          devLog.warn('Datos de precipitación por coordenadas inválidos', response.data);
           return [];
         }
       } catch (error) {
-        throw error;
+        devLog.error('Error obteniendo precipitación por coordenadas', error);
+        throw new Error(getErrorMessage(error));
       }
     },
     DEFAULT_TTL

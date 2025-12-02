@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { getSitio } from "@features/site/services";
+import { devLog } from "@shared/utils/errorHandler";
+import type { Coord } from "@features/map/types/interfaces";
 
 interface SitioState {
-    sitios: any[];
+    sitios: Coord[];
     loading: boolean;
     error: string | null;
 }
 
-function useSitio (selectedInstrument : any) {
+function useSitio (selectedInstrument : number | string | null) {
 
     const [state, setState] = useState<SitioState>({
         sitios: [],
@@ -43,17 +45,34 @@ function useSitio (selectedInstrument : any) {
                     return;
                 }
 
-                // Caso 3: Respuesta con datos
-                const objSitio = data.map((item: any) => ({
-                    coordenadas: [
-                        parseFloat(item.report.site.latitude),
-                        parseFloat(item.report.site.longitude),
-                    ],
-                    cantidad: parseFloat(item.amount),
-                    idSitio: item.report.site.id,
-                    nombreSitio: item.report.site.nombre || null,
-                    tipo: item.united_measure.abbreviation,
-                }));
+                // Caso 3: Respuesta con datos - validar antes de mapear
+                const objSitio: Coord[] = data
+                    .filter((item: unknown) => {
+                        const record = item as Record<string, unknown>;
+                        const report = record?.report as Record<string, unknown> | undefined;
+                        const site = report?.site as Record<string, unknown> | undefined;
+                        return site?.latitude && 
+                               site?.longitude &&
+                               !isNaN(parseFloat(String(site.latitude))) &&
+                               !isNaN(parseFloat(String(site.longitude)));
+                    })
+                    .map((item: unknown) => {
+                        const record = item as Record<string, unknown>;
+                        const report = record?.report as Record<string, unknown>;
+                        const site = report?.site as Record<string, unknown>;
+                        const unitedMeasure = record?.united_measure as Record<string, unknown> | undefined;
+                        
+                        return {
+                            coordenadas: [
+                                parseFloat(String(site.latitude)),
+                                parseFloat(String(site.longitude)),
+                            ] as [number, number],
+                            cantidad: parseFloat(String(record.amount)) || 0,
+                            idSitio: Number(site.id),
+                            nombreSitio: String(site.nombre || ''),
+                            tipo: String(unitedMeasure?.abbreviation || 'mm'),
+                        };
+                    });
 
                 setState({
                     sitios: objSitio,
@@ -61,28 +80,32 @@ function useSitio (selectedInstrument : any) {
                     error: null
                 });
                 
-            } catch (error: any) {
+            } catch (error: unknown) {
+                
+                devLog.error('Error en useSitio', error);
                 
                 // Caso 4: Determinar tipo de error
                 let errorMessage = "Error desconocido al cargar los datos";
                 
-                if (error.response) {
+                const err = error as {response?: {status: number}, request?: unknown, message?: string};
+                
+                if (err.response) {
                     // Error de respuesta del servidor
-                    if (error.response.status === 404) {
+                    if (err.response.status === 404) {
                         errorMessage = "No se encontraron datos para este instrumento";
-                    } else if (error.response.status === 500) {
+                    } else if (err.response.status === 500) {
                         errorMessage = "Error en el servidor. Intenta más tarde";
-                    } else if (error.response.status === 401 || error.response.status === 403) {
+                    } else if (err.response.status === 401 || err.response.status === 403) {
                         errorMessage = "No tienes permisos para acceder a estos datos";
                     } else {
-                        errorMessage = `Error del servidor (${error.response.status})`;
+                        errorMessage = `Error del servidor (${err.response.status})`;
                     }
-                } else if (error.request) {
+                } else if (err.request) {
                     // La petición se hizo pero no hubo respuesta
                     errorMessage = "No se pudo conectar con el servidor. Verifica tu conexión";
                 } else {
                     // Error al configurar la petición
-                    errorMessage = error.message || "Error al procesar la solicitud";
+                    errorMessage = err.message || "Error al procesar la solicitud";
                 }
                 
                 setState({

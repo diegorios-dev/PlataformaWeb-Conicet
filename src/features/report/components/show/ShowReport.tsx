@@ -8,6 +8,7 @@ import { useImageModal } from "../../hooks/useImageModal";
 import { filterByType, filterByPrecipitation, filterByZona, filterBySearch, sortByDate } from "../../utils/reportFilters";
 import { ArrowUpDown, ArrowDown, ArrowUp } from "lucide-react";
 import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
+import type { Report } from "@features/report/types";
 
 import {DashboardLayout} from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import { ReportHeader } from "./ReportHeader";
@@ -17,10 +18,11 @@ import { Badge } from "@shared/ui/atoms/Badge";
 import { ReportList } from "./ReportList";
 import { ImageModal } from "./ImageModal";
 import { EmptyReportsState } from "@shared/ui/Loading";
+import { LoadingSpinner, ErrorState } from "@shared/ui/Loading/index";
 
 const ShowReport = () => {
   const { go } = useNavigation();
-  const reports = useReports(); // Sin orden inicial, se ordena en frontend
+  const { reports, loading, error } = useReports(); // Sin orden inicial, se ordena en frontend
 
   // Filtros
   const [search, setSearch] = useState("");
@@ -34,7 +36,7 @@ const ShowReport = () => {
   const { play, stop } = useAudioPlayer();
   const { openModal, open, closeModal, image } = useImageModal();
 
-  const handleEditClick = (reporte: any) => {
+  const handleEditClick = (reporte: Report) => {
     go.reports.edit(reporte);
     if (reporte.type === "rotura") go.reports.resolveRotura();
   };
@@ -53,9 +55,9 @@ const ShowReport = () => {
   // Verificar si hay filtros activos
   const hasActiveFilters = useMemo(() => {
     return search !== "" || 
-           filterType !== "all" || 
-           filterPrecipitation !== "all" || 
-           filterZona !== "all";
+       filterType !== "all" || 
+       filterPrecipitation !== "all" || 
+       filterZona !== "all";
   }, [search, filterType, filterPrecipitation, filterZona]);
 
   // Función para limpiar filtros
@@ -68,8 +70,20 @@ const ShowReport = () => {
 
   return (
    <DashboardLayout contentClassName="">
-      <div className="w-full max-w-7xl mx-auto">
-        <ReportHeader count={filtered.length} />
+      {/* Mostrar loading al cargar */}
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <LoadingSpinner />
+        </div>
+      ) : error ? (
+        <ErrorState 
+          error={{ message: error }}
+          title="Error al cargar reportes"
+          onRetry={() => window.location.reload()}
+        />
+      ) : (
+        <div className="w-full max-w-7xl mx-auto">
+          <ReportHeader count={filtered.length} />
 
         <div className="bg-white border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-900/5 p-5 md:p-6 mb-6 space-y-5">
           {/* Barra de búsqueda */}
@@ -142,9 +156,10 @@ const ShowReport = () => {
             buildAudioUrl={buildAudioUrl}
           />
         )}
-      </div>
 
-      <ImageModal open={open} image={image} onClose={closeModal} />
+        <ImageModal open={open} image={image} onClose={closeModal} />
+        </div>
+      )}
     </DashboardLayout>
   );
 };

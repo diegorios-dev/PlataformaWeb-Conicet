@@ -9,6 +9,8 @@ import { createHeatmapTooltipContent } from "./HeatmapTooltip";
 import { Droplet, Snowflake, Activity, TrendingUp, TrendingDown } from "lucide-react";
 import { LoadingSpinner, EmptyState } from "@shared/ui/Loading/LoadingState";
 import { ErrorState } from "@shared/ui/Loading/ErrorState";
+import { ErrorBoundary } from "@shared/ui/ErrorBoundary";
+import { devLog } from "@shared/utils/errorHandler";
 import "@/App.css"
 import NavMenu from "@shared/ui/layouts/NavMenu";
 
@@ -36,6 +38,8 @@ const HeatMapView = () => {
           setSelectedEventId(filteredEvents[0].id);
         }
       } catch (error) {
+        devLog.error('Error al cargar eventos', error);
+        setError(error);
       }
     };
     fetchEvents();
@@ -49,6 +53,7 @@ const HeatMapView = () => {
         const data = await getReportes();
         setReportes(data || []);
       } catch (error) {
+        devLog.error('Error al cargar reportes', error);
         setError(error);
       } finally {
         setLoading(false);
@@ -123,6 +128,13 @@ const HeatMapView = () => {
 
     const newLayer = L.tileLayer(tileUrl, { attribution, maxZoom: 14 }).addTo(mapInstance);
     setBaseLayer(newLayer);
+    
+    // Cleanup: remover layer cuando cambie baseMap o se desmonte
+    return () => {
+      if (newLayer && mapInstance) {
+        mapInstance.removeLayer(newLayer);
+      }
+    };
   }, [baseMap, mapInstance]);
 
   const pluvData = useMemo(() => {
@@ -160,8 +172,17 @@ const HeatMapView = () => {
   useEffect(() => {
     if (!mapInstance || loading || !selectedEventId) return;
 
-    if (heatLayer) mapInstance.removeLayer(heatLayer);
-    markers.forEach((m) => mapInstance.removeLayer(m));
+    // Limpiar heatLayer anterior
+    if (heatLayer) {
+      mapInstance.removeLayer(heatLayer);
+      // No hay método .remove() en heatLayer, solo removeLayer es suficiente
+    }
+    
+    // Limpiar markers anteriores
+    markers.forEach((m) => {
+      mapInstance.removeLayer(m);
+      // Los markers de Leaflet se limpian automáticamente con removeLayer
+    });
     setMarkers([]);
 
     const filtered = pluvData.filter((d) => d.event_id === selectedEventId);
@@ -173,8 +194,8 @@ const HeatMapView = () => {
 
     // Calcular el valor máximo para normalizar
     const valores = filtered.map((d) => d.valor);
-    const maxValor = Math.max(...valores);
-    const minValor = Math.min(...valores);
+    const maxValor = valores.length > 0 ? Math.max(...valores) : 0;
+    const minValor = valores.length > 0 ? Math.min(...valores) : 0;
 
     // Normalizar los datos para mejor distribución de colores
     const heatData = filtered.map((d) => {
@@ -224,15 +245,13 @@ const HeatMapView = () => {
         fillOpacity: 0,
       });
 
-      const currentEvent = events.find((e) => e.id === selectedEventId);
-      const eventType = currentEvent?.type || "Precipitación";
-
       const tooltipContent = createHeatmapTooltipContent({
         nombre: d.nombre,
         valor: d.valor,
         unidad: d.unidad,
         fecha: d.fecha,
-        eventType: eventType,
+        lat: d.lat,
+        lng: d.lng,
       });
 
       marker.bindTooltip(tooltipContent, {
@@ -246,6 +265,21 @@ const HeatMapView = () => {
     });
 
     setMarkers(newMarkers);
+    
+    // Cleanup function: limpiar al desmontar o cuando cambien las dependencias
+    return () => {
+      // Limpiar heatLayer
+      if (heatLayer && mapInstance) {
+        mapInstance.removeLayer(heatLayer);
+      }
+      
+      // Limpiar markers
+      newMarkers.forEach((m) => {
+        if (mapInstance) {
+          mapInstance.removeLayer(m);
+        }
+      });
+    };
   }, [selectedEventId, mapInstance, loading, pluvData, events]);
 
   // Manejo de errores
@@ -362,4 +396,10 @@ const HeatMapView = () => {
   );
 };
 
-export default HeatMapView;
+const HeatMapViewWithErrorBoundary = () => (
+  <ErrorBoundary>
+    <HeatMapView />
+  </ErrorBoundary>
+);
+
+export default HeatMapViewWithErrorBoundary;

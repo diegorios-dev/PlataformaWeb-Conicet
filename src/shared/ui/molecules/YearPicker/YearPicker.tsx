@@ -23,7 +23,7 @@ export const YearPicker = ({
   return (
     <div className={className}>
       <div className="bg-white/20 backdrop-blur-lg px-6 py-4 rounded-2xl border border-white/30 shadow-xl w-60">
-        <label htmlFor="year-filter" className="text-xs font-bold text-slate-800 flex items-center gap-2 mb-3 tracking-wide uppercase">
+        <label htmlFor="year-filter" className="text-xs font-bold text-white flex items-center gap-2 mb-3 tracking-wide uppercase">
           <CalendarDays className="w-4 h-4 text-blue-600" />
           {label}
         </label>

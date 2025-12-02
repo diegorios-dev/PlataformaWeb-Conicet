@@ -36,3 +36,6 @@ export type { DashboardLayoutProps } from './layouts/DashboardLayout';
 // --------------- LOADING STATES ---------------
 export { default as Toast } from './Loading/Toast';
 export { LoadingSpinner, LoadingMap, EmptyState } from './Loading/LoadingState';
+
+// --------------- ERROR HANDLING ---------------
+export { ErrorBoundary } from './ErrorBoundary';

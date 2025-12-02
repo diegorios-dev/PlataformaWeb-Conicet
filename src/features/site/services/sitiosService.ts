@@ -52,7 +52,7 @@ export const getReportsForSites = async (siteIds: number[], year?: number): Prom
       return Object.entries(data).map(([key, value]: [string, any]) => ({ siteId: Number(key), reports: Array.isArray(value) ? value : (value?.reports || []) }));
     }
     return [];
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Fallback: llamadas individuales en paralelo
     const results = await Promise.all(
       siteIds.map(async (id) => {

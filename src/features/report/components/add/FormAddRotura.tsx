@@ -157,10 +157,11 @@ const FormAddRotura = () => {
 
       await createReporteRotura(data);
       showModal("success", "Reporte de rotura creado exitosamente");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as {response?: {data?: {message?: string}}};
       showModal(
         "error",
-        error.response?.data?.message || "Error al crear el reporte de rotura"
+        err.response?.data?.message || "Error al crear el reporte de rotura"
       );
     } finally {
       setLoading(false);

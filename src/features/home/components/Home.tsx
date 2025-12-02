@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { LogIn, LogOut, Wrench, CheckCircle, AlertCircle } from "lucide-react";
+import { Lock, LogOut, Wrench, CheckCircle, AlertCircle } from "lucide-react";
 
 // Ruta absoluta para assets en /public/
 const conicet = "/assets/logo-CONICET_opt.png";
 const unco = "/assets/unco.png";
+const uncobariloche = "/assets/logo-unco-bariloche-azul-gris.png";
 
 import { useSitio } from "@features/site/hooks";
 import MapHTML from "@features/map/components/MapHTML";
@@ -67,7 +68,7 @@ const Home = () => {
         <div className="px-6 py-6 border-b border-slate-200/60">
           <div className="flex items-center justify-center mb-2">
             <img src={conicet} alt="Logo CONICET" className="h-14 w-16 object-contain drop-shadow-sm" />
-             <img src={unco} alt="Logo UNCO" className="h-14 w-16 object-contain drop-shadow-sm" />
+            <img src={uncobariloche} alt="Logo UNCO" className="h-14 w-28 object-contain drop-shadow-sm" />
           </div>
           <h1 className="text-center text-sm font-semibold text-slate-600 tracking-tight">
             Sistema de Monitoreo
@@ -129,8 +130,8 @@ const Home = () => {
               onClick={go.login}
               className={`${btnPrimary} justify-center shadow-md`}
             >
-              <LogIn className="w-5 h-5" />
-              <span>Iniciar Sesión</span>
+              <Lock className="w-5 h-5" />
+              <span>Acceso Administrativo</span>
             </button>
           )}
         </div>

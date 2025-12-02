@@ -18,8 +18,8 @@ const ViewOptionMenu = memo(({ instruments, selectedInstrument, onSelectInstrume
           className={`group relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 overflow-hidden
             ${
               selectedInstrument === item.event
-                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md scale-[1.02]"
-                : "bg-white/80 text-slate-700 hover:bg-white border border-slate-200 hover:border-amber-300 hover:shadow-sm active:scale-[0.98]"
+                ? "bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg scale-[1.02]"
+                : "bg-white text-slate-800 hover:bg-white border border-slate-300 hover:border-amber-400 hover:shadow-md active:scale-[0.98]"
             }`}
         >
           {/* Efecto de brillo en selección */}
@@ -28,7 +28,7 @@ const ViewOptionMenu = memo(({ instruments, selectedInstrument, onSelectInstrume
           )}
           
           <span className="relative z-10 flex items-center gap-3">
-            <span className={`${selectedInstrument === item.event ? 'text-white' : 'text-amber-600'}`}>
+            <span className={`${selectedInstrument === item.event ? 'text-white' : 'text-amber-700'}`}>
               {icons[item.event] || icons.Lluvia}
             </span>
             <span>{item.instrumento}</span>

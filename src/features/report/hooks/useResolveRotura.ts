@@ -40,8 +40,9 @@ export const useResolveRotura = ({
     try {
       const response = await resolveRoturaReport(report.breakage_instrument.id);
       showModal("success", response.message);
-    } catch (error: any) {
-      showModal("error", error.message);
+    } catch (error: unknown) {
+      const err = error as {message?: string};
+      showModal("error", err.message || "Error al resolver la rotura");
     } finally {
       setLoading(false);
     }

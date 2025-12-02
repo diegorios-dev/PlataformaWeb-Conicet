@@ -1,13 +1,14 @@
 import { Search } from "lucide-react";
 import { EmptyState } from "@shared/ui/Loading/LoadingState";
 import { ReportCard } from "./ReportCard";
+import type { Report } from "@features/report/types";
 
 interface ReportListProps {
-  reports: any[];
+  reports: Report[];
   onImageClick: (url: string) => void;
   onAudioPlay: (id: number) => void;
   onAudioPause: () => void;
-  onEdit: (reporte: any) => void;
+  onEdit: (reporte: Report) => void;
   buildImageUrl: (path: string) => string;
   buildAudioUrl: (path: string) => string;
 }

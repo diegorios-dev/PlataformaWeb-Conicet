@@ -11,12 +11,10 @@ import {
   CloudRain,
   Snowflake,
   Activity,
-  ArrowRight,
   Loader2,
 } from "lucide-react";
 import EditSiteFormPanel from "./EditSiteFormPanel";
 import EditSiteMapPanel from "./EditSiteMapPanel";
-import ResumenCambios from "./ResumenCambios";
 
 const EditSite = () => {
   const { id } = useParams<{ id: string }>();
@@ -90,9 +88,10 @@ const EditSite = () => {
 
         setZonas(zonasData);
         setEvents(eventsData);
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const err = error as {message?: string};
         setToastType("error");
-        setToastMessage(error.message || "Error al cargar el sitio");
+        setToastMessage(err.message || "Error al cargar el sitio");
         setToastOpen(true);
         setTimeout(() => navigate("/dashboard/site"), 2000);
       } finally {
@@ -408,9 +407,10 @@ const EditSite = () => {
       setTimeout(() => {
         navigate("/dashboard/site");
       }, 2000);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as {message?: string};
       setToastType("error");
-      setToastMessage(error.message || "Error al actualizar el sitio");
+      setToastMessage(err.message || "Error al actualizar el sitio");
       setToastOpen(true);
     } finally {
       setSubmitting(false);

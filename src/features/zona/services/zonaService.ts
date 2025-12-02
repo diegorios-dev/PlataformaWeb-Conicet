@@ -2,6 +2,8 @@ import axios from "axios";
 import { API_URL } from "@config/api";
 import { invalidateEstadisticasCache } from "@features/Charts/services";
 import { getCachedData } from "@shared/utils/simpleCache";
+import { validateZonaData } from "@shared/utils/validators";
+import { devLog, getErrorMessage } from "@shared/utils/errorHandler";
 
 const API_URL_SERVICE = API_URL;
 const DEFAULT_TTL = 5 * 60 * 1000; // 5 minutos
@@ -9,19 +11,29 @@ const DEFAULT_TTL = 5 * 60 * 1000; // 5 minutos
 
 export const postNewZona = async (newZona: { locality: string }) => {
   try {
+    // Validar datos antes de enviar
+    const validationError = validateZonaData(newZona);
+    if (validationError) {
+      throw new Error(validationError);
+    }
 
+    // Verificar si ya existe
     let zonaExists = null;
     try {
-      zonaExists = await getZonaByLocality(newZona.locality);
+      zonaExists = await getZonaByLocality(newZona.locality.trim());
     } catch (error) {
+      // Si no existe, continuamos
     }
 
     if (zonaExists != null) {
-      throw new Error("La zona con esta localidad ya existe.");
-    } else {
+      throw new Error("La zona con esta localidad ya existe");
     }
     
-    const { data } = await axios.post(`${API_URL_SERVICE}/zona/register/`, newZona);
+    const payload = {
+      locality: newZona.locality.trim()
+    };
+    
+    const { data } = await axios.post(`${API_URL_SERVICE}/zona/register/`, payload);
     
     // Invalidar cache cuando se crea una nueva zona
     invalidateEstadisticasCache();
@@ -85,13 +97,24 @@ export const getTopZonasPorRegistro = async (periodo = "anio", limit = 8) => {
   );
 };
 
-export const updateZona = async (id: string, data: { locality: string }) => {
+export const updateZona = async (id: string | number, zonaData: { locality: string }) => {
   try {
-    const response = await axios.put(`${API_URL_SERVICE}/zonas/${id}`, data);
+    // Validar datos antes de actualizar
+    const validationError = validateZonaData(zonaData);
+    if (validationError) {
+      throw new Error(validationError);
+    }
+
+    const payload = {
+      locality: zonaData.locality.trim()
+    };
+
+    const response = await axios.put(`${API_URL_SERVICE}/zonas/${id}`, payload);
     invalidateEstadisticasCache();
     return response.data;
   } catch (error) {
-    throw error;
+    devLog.error(`Error actualizando zona ${id}`, error);
+    throw new Error(getErrorMessage(error));
   }
 };
 

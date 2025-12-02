@@ -5,14 +5,15 @@ import { ReportCardAudio } from "./ReportCardAudio";
 import { ReportCardSamples } from "./ReportCardSamples";
 import { ReportCardLocation } from "./ReportCardLocation";
 import { ReportCardActions } from "./ReportCardActions";
+import type { Report } from "@features/report/types";
 import { ReportCardUser } from "./ReportCardUser";
 
 interface ReportCardProps {
-  reporte: any;
+  reporte: Report;
   onImageClick: (url: string) => void;
   onAudioPlay: (id: number) => void;
   onAudioPause: () => void;
-  onEdit: (reporte: any) => void;
+  onEdit: (reporte: Report) => void;
   buildImageUrl: (path: string) => string;
   buildAudioUrl: (path: string) => string;
 }
@@ -68,7 +69,7 @@ export const ReportCard = ({
 
         <ReportCardLocation
           siteName={reporte.site.nombre}
-          locality={reporte.site.zona.locality}
+          locality={reporte.site.zona?.locality}
           latitude={reporte.site.latitude}
           longitude={reporte.site.longitude}
         />

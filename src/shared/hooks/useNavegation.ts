@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useReportSelection } from "@context/ReportContext";
+import type { Report } from "@features/report/types";
 
 const useNavigation = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const useNavigation = () => {
         list: () => go("/dashboard/administration/report"),
         addRotura: () => go("/dashboard/administration/report/rotura/add"),
         resolveRotura: () => go("/dashboard/administration/report/rotura/resolve"),
-        edit: (report: any) => {
+        edit: (report: Report) => {
           handleSelectReport(report);
           go("/dashboard/administration/report/edit");
         }

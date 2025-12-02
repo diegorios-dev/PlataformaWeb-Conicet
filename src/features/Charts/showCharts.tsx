@@ -19,6 +19,7 @@ import {
 import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 import { Card } from "@shared/ui/molecules/Card";
+import { ErrorBoundary } from "@shared/ui/ErrorBoundary";
 import PrecipitacionPorZona from "./PrecipitacionPorZona";
 import ReportesPorInstrumento from "./ReportesPorInstrumento";
 import TopZonasPorRegistro from "./TopZonasPorRegistro";
@@ -707,5 +708,11 @@ const ShowCharts = () => {
   );
 };
 
-export default ShowCharts;
+const ShowChartsWithErrorBoundary = () => (
+  <ErrorBoundary>
+    <ShowCharts />
+  </ErrorBoundary>
+);
+
+export default ShowChartsWithErrorBoundary;
 

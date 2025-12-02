@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { detectErrorType } from "@shared/ui/Loading/ErrorState";
+import { devLog } from "@shared/utils/errorHandler";
 
 export const useFetchData = (fetchFunction) => {
   const [data, setData] = useState([]);
@@ -17,6 +18,7 @@ export const useFetchData = (fetchFunction) => {
         const response = await fetchFunction();
         setData(response);
       } catch (err) {
+        devLog.error('Error en useFetchData', err);
         const type = detectErrorType(err);
         setErrorType(type);
         setError(err);
