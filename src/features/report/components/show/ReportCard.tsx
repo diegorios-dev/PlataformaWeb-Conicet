@@ -5,6 +5,7 @@ import { ReportCardAudio } from "./ReportCardAudio";
 import { ReportCardSamples } from "./ReportCardSamples";
 import { ReportCardLocation } from "./ReportCardLocation";
 import { ReportCardActions } from "./ReportCardActions";
+import { ReportCardUser } from "./ReportCardUser";
 
 interface ReportCardProps {
   reporte: any;
@@ -34,6 +35,8 @@ export const ReportCard = ({
       />
 
       <div className="p-6 flex flex-col flex-1 gap-4">
+     
+        
         <div className="flex gap-4">
           <ReportCardInfo
             date={reporte.date}
@@ -69,6 +72,7 @@ export const ReportCard = ({
           latitude={reporte.site.latitude}
           longitude={reporte.site.longitude}
         />
+        <ReportCardUser userName={reporte.user?.name} />
 
         <ReportCardActions
           type={reporte.type}

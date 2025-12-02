@@ -59,7 +59,7 @@ export const createHeatmapTooltipContent = (props: HeatmapTooltipProps): string 
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
       border: 2px solid rgba(255, 255, 255, 0.8);
     ">
-      <!-- Header con ubicación -->
+     
       <div style="
         display: flex;
         align-items: center;
@@ -90,7 +90,7 @@ export const createHeatmapTooltipContent = (props: HeatmapTooltipProps): string 
         </div>
       </div>
 
-      <!-- Valor principal -->
+      
       <div style="
         background: linear-gradient(135deg, ${config.bgColor} 0%, ${config.color}15 100%);
         border-radius: 10px;
@@ -119,7 +119,6 @@ export const createHeatmapTooltipContent = (props: HeatmapTooltipProps): string 
         </div>
       </div>
 
-      <!-- Fecha -->
       <div style="
         display: flex;
         align-items: center;

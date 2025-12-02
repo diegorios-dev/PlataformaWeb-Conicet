@@ -1,25 +1,20 @@
 import { useEffect , useState} from "react";
 import { getReportes } from "@features/report/services";
 
-interface UseReportsOptions {
-  order?: 'asc' | 'desc';
-}
-
-const useReports = (options: UseReportsOptions = {}) => {
-    const { order = 'asc' } = options;
+const useReports = () => {
     const [reports, setReports] = useState<any[]>([]);
 
     useEffect(() => {
-        
         const fetchData = async () => {
-            const data = await getReportes(order);
+            // Obtener sin orden, se ordenará en el frontend
+            const data = await getReportes('asc');
             setReports(data);
         };
     
-    fetchData();
-    }, [order]);
+        fetchData();
+    }, []);
       
-    return(reports)
+    return reports;
 }
 
 export default useReports

@@ -19,7 +19,7 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
   // Hook para obtener el estado de los sitios
   const siteStatus = useSiteStatus(position);
 
-  // ✅ OPTIMIZACIÓN: Memoizar el array de IDs para evitar recrearlo en cada render
+  //  OPTIMIZACIÓN: Memoizar el array de IDs para evitar recrearlo en cada render
   const ids = useMemo(() => position.map((p) => p.idSitio), [position]);
   const { siteReports, loadingReports } = useSiteReports(position, ids, selectedYear);
 

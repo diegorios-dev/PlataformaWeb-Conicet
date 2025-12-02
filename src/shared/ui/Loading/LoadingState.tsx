@@ -1,4 +1,4 @@
-import { Loader2, MapPin, BarChart3, FileText, Database } from "lucide-react";
+import { Loader2, MapPin, BarChart3, FileText, Database, Lightbulb } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 
@@ -146,7 +146,7 @@ export const EmptyState = ({
       
       {suggestion && (
         <div className="text-sm text-slate-600 bg-blue-50/80 backdrop-blur-sm rounded-xl p-4 max-w-md mx-4 border border-blue-200/50">
-          <span className="font-semibold">💡 Sugerencia:</span> {suggestion}
+          <span className="font-semibold"> <Lightbulb className="w-3.5 h-3.5 text-amber-500 inline-block" /> Sugerencia:</span> {suggestion}
         </div>
       )}
 

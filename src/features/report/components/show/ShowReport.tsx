@@ -20,7 +20,7 @@ import { EmptyReportsState } from "@shared/ui/Loading";
 
 const ShowReport = () => {
   const { go } = useNavigation();
-  const reports = useReports({ order: 'desc' });
+  const reports = useReports(); // Sin orden inicial, se ordena en frontend
 
   // Filtros
   const [search, setSearch] = useState("");
