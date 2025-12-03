@@ -422,7 +422,7 @@ const ViewManagementUsers = () => {
               <table className="min-w-full divide-y divide-slate-200">
                 <thead>
                   <tr className="bg-gradient-to-r from-slate-50 to-blue-50">
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th className="px-4 py-4 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider w-16">
                       ID
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
@@ -431,28 +431,25 @@ const ViewManagementUsers = () => {
                         Usuario
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                      <div className="flex items-center gap-2">
+                    <th className="px-4 py-4 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider w-24">
+                      <div className="flex items-center justify-center gap-2">
                         <Shield size={14} />
                         Rol
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider w-48">
                       <div className="flex items-center gap-2">
                         <Key size={14} />
                         Contraseña
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                      <div className="flex items-center gap-2">
+                    <th className="px-4 py-4 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider w-32">
+                      <div className="flex items-center justify-center gap-2">
                         <MapPin size={14} />
-                        Ubicación
+                        Zona
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                      Zona
-                    </th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider w-44">
                       Acciones
                     </th>
                   </tr>
@@ -461,90 +458,88 @@ const ViewManagementUsers = () => {
                   {users.map((user) => (
                     <tr
                       key={user.id}
-                      className="hover:bg-blue-50/50 transition-colors duration-150"
+                      className="hover:bg-slate-50/70 transition-colors duration-150"
                     >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm font-medium text-slate-900">
-                          #{user.id}
+                      <td className="px-4 py-5 whitespace-nowrap text-center">
+                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-slate-100 text-slate-700 text-sm font-semibold border border-slate-200">
+                          {user.id}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-5 whitespace-nowrap">
                         <div className="flex items-center gap-3">
-                          <div className="bg-blue-100 p-2 rounded-lg">
-                            <User size={16} className="text-blue-600" />
+                          <div className="bg-blue-100 p-2.5 rounded-lg border border-blue-200">
+                            <User size={18} className="text-blue-700" />
                           </div>
-                          <span className="text-sm font-semibold text-slate-900">
-                            {user.name}
-                          </span>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold text-slate-900">
+                              {user.name}
+                            </span>
+                            {user.site?.nombre && (
+                              <span className="text-xs text-slate-500 font-medium">
+                                {user.site.nombre}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-5 whitespace-nowrap text-center">
                         <span
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold ${
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${
                             user.rol === "admin"
-                              ? "bg-red-100 text-red-700 border border-red-200"
-                              : "bg-green-100 text-green-700 border border-green-200"
+                              ? "bg-red-50 text-red-700 border-red-200"
+                              : "bg-green-50 text-green-700 border-green-200"
                           }`}
                         >
-                          <Shield size={12} />
+                          <Shield size={13} />
                           {user.rol}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-5 whitespace-nowrap">
                         <div className="relative group inline-flex items-center gap-2">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-mono border border-slate-200 min-w-[120px]">
-                            <Key size={12} />
+                          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-50 text-slate-700 text-xs font-mono border border-slate-200 min-w-[140px]">
+                            <Key size={13} className="text-slate-400" />
                             {visiblePasswords[user.id] ? user.password : '••••••••'}
                           </span>
                           <button
                             onClick={() => togglePasswordVisibility(user.id)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1.5 hover:bg-slate-200 rounded-lg flex-shrink-0"
+                            className="opacity-0 group-hover:opacity-100 transition-all duration-200 p-2 hover:bg-slate-100 rounded-lg flex-shrink-0 border border-transparent hover:border-slate-200"
                             title={visiblePasswords[user.id] ? "Ocultar contraseña" : "Mostrar contraseña"}
                           >
                             {visiblePasswords[user.id] ? (
-                              <EyeOff size={14} className="text-slate-600" />
+                              <EyeOff size={15} className="text-slate-600" />
                             ) : (
-                              <Eye size={14} className="text-slate-600" />
+                              <Eye size={15} className="text-slate-600" />
                             )}
                           </button>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        {user.site?.latitude && user.site?.longitude ? (
-                          <div className="flex flex-col gap-2">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-mono text-slate-700 font-semibold">
-                               Lon: {parseFloat(user.site.longitude).toFixed(2)}, Lat: {parseFloat(user.site.latitude).toFixed(2)}
-                              </span>
-                            </div>
+                      <td className="px-4 py-5 whitespace-nowrap text-center">
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-50 text-purple-700 text-xs font-semibold border border-purple-200">
+                            <MapPin size={13} />
+                            {user.zona?.locality || 'N/A'}
+                          </span>
+                          {user.site?.latitude && user.site?.longitude && (
                             <button
                               onClick={() => user.site && openMapModal(
                                 user.site.latitude, 
                                 user.site.longitude,
                                 user.site.nombre || "Ubicación"
                               )}
-                              className="flex items-center justify-center gap-1.5 px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-xs font-semibold border border-blue-200 transition-all duration-200"
+                              className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold hover:scale-105 transition-all duration-200"
                               title="Ver ubicación en el mapa"
                             >
                               <Map size={12} />
-                              Ver en mapa
+                              Mapa
                             </button>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-slate-400 italic">Sin ubicación</span>
-                        )}
+                          )}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-50 text-purple-700 text-xs font-semibold border border-purple-200">
-                          <MapPin size={12} />
-                          {user.zona?.locality || 'N/A'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-5 whitespace-nowrap">
                         <div className="flex items-center justify-center gap-2">
                           <button
                             onClick={() => handleOptionUser("editar", user)}
-                            className="group flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg text-xs font-semibold border border-amber-200 transition-all duration-200"
+                            className="group flex items-center gap-1.5 px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg text-xs font-semibold border border-amber-200 hover:border-amber-300 transition-all duration-200"
                           >
                             <Pencil size={14} className="transition-transform group-hover:rotate-12" />
                             Editar
@@ -552,7 +547,7 @@ const ViewManagementUsers = () => {
                           <button
                             onClick={() => handleOptionUser("eliminar", user)}
                             disabled={deleting}
-                            className="group flex items-center gap-1.5 px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-xs font-semibold border border-red-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="group flex items-center gap-1.5 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-lg text-xs font-semibold border border-red-200 hover:border-red-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {deleting ? (
                               <Loader2 size={14} className="animate-spin" />
