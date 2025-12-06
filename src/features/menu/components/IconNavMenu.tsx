@@ -8,12 +8,9 @@ import {
   TrendingUp,
   FileSpreadsheet,
   Home,
-  ChevronLeft,
-  ChevronRight,
   LogOut,
   BarChart3,
   MapPinned,
-  Sparkles,
 } from "lucide-react";
 import { useNavegation } from "@shared/hooks";
 
@@ -165,7 +162,10 @@ const IconNavMenu: React.FC = () => {
         </AnimatePresence>
 
         <motion.div
-          className="flex-1 backdrop-blur-2xl bg-white/50 border-r border-white/70 shadow-2xl pt-10 pb-4 flex flex-col relative overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, #26B4F0 0%, #045BA9 50%, #021D6B 100%)'
+          }}
+          className="flex-1 backdrop-blur-2xl border-r border-white/70 shadow-2xl pt-10 pb-4 flex flex-col relative overflow-hidden"
         >
           {/* Efecto de brillo sutil que recorre el sidebar */}
           <motion.div
@@ -224,24 +224,29 @@ const IconNavMenu: React.FC = () => {
                   whileTap={{ scale: 0.95 }}
                   className={cn(
                     "group relative w-full flex items-center",
-                    "rounded-xl border backdrop-blur-xl",
+                    "rounded-xl border backdrop-blur-xl transition-all duration-300",
                     active
-                      ? "bg-gradient-to-r from-indigo-500/20 to-blue-500/20 border-indigo-400/40 shadow-lg shadow-indigo-500/20"
-                      : "bg-white/40 border-white/60 hover:bg-white/70 hover:shadow-md"
+                      ? "bg-white/40 border-white shadow-2xl shadow-white/30 ring-2 ring-white/50"
+                      : "bg-white/15 border-white/30 hover:bg-white/25 hover:border-white/50 hover:shadow-lg"
                   )}
                 >
                   {/* Icon con micro-animaciones */}
                   <motion.div 
-                    className="p-3 flex items-center justify-center"
+                    className={cn(
+                      "p-3 flex items-center justify-center rounded-lg",
+                      active && "bg-white/20"
+                    )}
                     whileHover={{ 
-                      rotate: [0, -10, 10, -10, 0],
-                      transition: { duration: 0.5 }
+                      rotate: [0, -8, 8, 0],
+                      transition: { duration: 0.4 }
                     }}
                   >
                     <ActiveIcon
                       className={cn(
-                        "w-5 h-5",
-                        active ? item.color || "text-indigo-700" : item.color || "text-slate-600"
+                        "w-6 h-6 transition-all duration-200",
+                        active 
+                          ? "text-white drop-shadow-md" 
+                          : "text-white/80 group-hover:text-white group-hover:scale-110"
                       )}
                     />
                   </motion.div>
@@ -255,8 +260,10 @@ const IconNavMenu: React.FC = () => {
                         exit={{ opacity: 0, x: -10 }}
                         transition={{ duration: 0.2 }}
                         className={cn(
-                          "pr-4 text-sm font-semibold text-slate-700 truncate",
-                          active && "text-indigo-800"
+                          "pr-4 text-sm font-bold truncate transition-colors duration-200",
+                          active 
+                            ? "text-white drop-shadow-lg" 
+                            : "text-white/80 group-hover:text-white"
                         )}
                       >
                         {item.label}
@@ -285,8 +292,17 @@ const IconNavMenu: React.FC = () => {
                   {active && (
                     <motion.div
                       layoutId="activeIndicator"
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-indigo-500 to-blue-500 rounded-r-full"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-white rounded-r-full shadow-lg shadow-white/50"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  
+                  {/* Glow effect para item activo */}
+                  {active && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 rounded-xl pointer-events-none"
                     />
                   )}
                 </motion.button>
@@ -314,7 +330,7 @@ const IconNavMenu: React.FC = () => {
                 whileHover={{ rotate: 180 }}
                 transition={{ duration: 0.3 }}
               >
-                <LogOut className="w-5 h-5 text-slate-600 group-hover:text-red-700" />
+                <LogOut className="w-5 h-5 text-white group-hover:text-red-700" />
               </motion.div>
               <AnimatePresence>
                 {hovered && (
@@ -322,7 +338,7 @@ const IconNavMenu: React.FC = () => {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
-                    className="text-sm font-semibold text-slate-700 group-hover:text-red-700 pr-4"
+                    className="text-sm font-semibold text-white group-hover:text-red-700 pr-4"
                   >
                     Cerrar / Volver
                   </motion.span>
@@ -355,7 +371,7 @@ const IconNavMenu: React.FC = () => {
                 }}
                 transition={{ duration: 0.5 }}
               >
-                <BarChart3 className="w-5 h-5 text-slate-600 group-hover:text-emerald-700" />
+                <BarChart3 className="w-5 h-5 text-white group-hover:text-emerald-700" />
               </motion.div>
               <AnimatePresence>
                 {hovered && (
@@ -363,7 +379,7 @@ const IconNavMenu: React.FC = () => {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
-                    className="text-sm font-semibold text-slate-700 group-hover:text-emerald-700 pr-4"
+                    className="text-sm font-semibold text-white group-hover:text-emerald-700 pr-4"
                   >
                     Inicio
                   </motion.span>

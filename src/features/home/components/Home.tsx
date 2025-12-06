@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Lock, LogOut, Wrench, CheckCircle, AlertCircle } from "lucide-react";
+import { Lock, LogOut, Wrench, CheckCircle, AlertCircle, ChevronLeft, ChevronRight, Droplet, Snowflake, BarChart3, MapPin } from "lucide-react";
 
 // Ruta absoluta para assets en /public/
 const conicet = "/assets/logo-CONICET_opt.png";
-const unco = "/assets/unco.png";
 const uncobariloche = "/assets/logo-unco-bariloche-azul-gris.png";
 
 import { useSitio } from "@features/site/hooks";
@@ -23,6 +22,7 @@ import { useLogout } from "../hooks/useLogout";
 const Home = () => {
   
   const [selectOptionMenu, setSelectOptionMenu] = useState("Lluvia");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { sitios, loading, error } = useSitio(selectOptionMenu);
   const { isLogin, getUsername } = useAuth();
   const { go } = useNavegation();
@@ -62,77 +62,182 @@ const Home = () => {
       )}
 
       {/* Sidebar modernizado estilo Google Cloud */}
-      <aside className="w-80 bg-white/95 backdrop-blur-xl border-r border-slate-200/60  flex flex-col">
+      <aside className={`relative bg-white/95 backdrop-blur-xl border-r border-slate-200/60 flex flex-col transition-all duration-300 ${
+        sidebarCollapsed ? 'w-16' : 'w-80'
+      }`}>
+        
+        {/* Botón de colapsar/expandir */}
+        <button
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          className={`absolute top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-full bg-white border-2 border-slate-200 shadow-lg hover:shadow-xl hover:border-blue-400 transition-all duration-200 group ${
+            sidebarCollapsed ? '-right-3' : '-right-3'
+          }`}
+          aria-label={sidebarCollapsed ? "Expandir sidebar" : "Colapsar sidebar"}
+        >
+          {sidebarCollapsed ? (
+            <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-blue-600" />
+          ) : (
+            <ChevronLeft className="w-4 h-4 text-slate-600 group-hover:text-blue-600" />
+          )}
+        </button>
         
         {/* Header del sidebar con logo */}
-        <div className="px-6 py-6 border-b border-slate-200/60">
-          <div className="flex items-center justify-center mb-2">
-            <img src={conicet} alt="Logo CONICET" className="h-14 w-16 object-contain drop-shadow-sm" />
-            <img src={uncobariloche} alt="Logo UNCO" className="h-14 w-28 object-contain drop-shadow-sm" />
-          </div>
-          <h1 className="text-center text-sm font-semibold text-slate-600 tracking-tight">
-            Sistema de Monitoreo
-          </h1>
+        <div className={`px-6 py-6 border-b border-slate-200/60 transition-all duration-300 ${
+          sidebarCollapsed ? 'px-2' : 'px-6'
+        }`}>
+          {!sidebarCollapsed ? (
+            <>
+              <div className="flex items-center justify-center mb-2">
+                <img src={conicet} alt="Logo CONICET" className="h-14 w-16 object-contain drop-shadow-sm" />
+                <img src={uncobariloche} alt="Logo UNCO" className="h-14 w-28 object-contain drop-shadow-sm" />
+              </div>
+              <h1 className="text-center text-xl font-semibold text-slate-600 tracking-tight">
+                Sistema de Monitoreo
+              </h1>
+            </>
+          ) : (
+            <div className="flex justify-center">
+              <img src={conicet} alt="Logo" className="h-10 w-10 object-contain drop-shadow-sm" />
+            </div>
+          )}
         </div>
 
         {/* Contenido scrolleable */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-8">
+        <div className={`flex-1 overflow-y-auto py-6 space-y-8 transition-all duration-300 ${sidebarCollapsed ? 'px-2' : 'px-6'}`}>
           
           {/* Sección Admin (si está logueado) */}
           {isLogin && (
             <div className="space-y-3">
-              <button
-                onClick={go.dashboard}
-                className={`${btnPrimary} justify-start shadow-md`}
-              >
-                <Wrench className="w-5 h-5" />
-                <span>Panel de Administración</span>
-              </button>
+              {!sidebarCollapsed ? (
+                <button
+                  onClick={go.dashboard}
+                  className={`${btnPrimary} justify-start shadow-md`}
+                >
+                  <Wrench className="w-5 h-5" />
+                  <span>Panel de Administración</span>
+                </button>
+              ) : (
+                <button
+                  onClick={go.dashboard}
+                  className="w-full p-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
+                  title="Panel de Administración"
+                >
+                  <Wrench className="w-5 h-5" />
+                </button>
+              )}
             </div>
           )}
 
           {/* Sección Análisis */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-bold text-slate-500 mb-3 tracking-wider uppercase px-1">
-              Tipo de Evento
-            </h3>
-            <ViewOptionMenu
-              instruments={OPTION_INSTRUMENTS}
-              selectedInstrument={selectOptionMenu}
-              onSelectInstrument={setSelectOptionMenu}
-            />
-          </div>
+          {!sidebarCollapsed ? (
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-slate-500 mb-3 tracking-wider uppercase px-1">
+                Tipo de Evento
+              </h3>
+              <ViewOptionMenu
+                instruments={OPTION_INSTRUMENTS}
+                selectedInstrument={selectOptionMenu}
+                onSelectInstrument={setSelectOptionMenu}
+              />
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <button
+                onClick={() => setSelectOptionMenu("Lluvia")}
+                className={`w-full p-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center ${
+                  selectOptionMenu === "Lluvia" 
+                    ? "bg-gradient-to-r from-amber-600 to-orange-600 text-white" 
+                    : "bg-white text-amber-700 hover:bg-amber-50"
+                }`}
+                title="Ver Pluviometros"
+              >
+                <Droplet className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setSelectOptionMenu("Nieve")}
+                className={`w-full p-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center ${
+                  selectOptionMenu === "Nieve" 
+                    ? "bg-gradient-to-r from-amber-600 to-orange-600 text-white" 
+                    : "bg-white text-amber-700 hover:bg-amber-50"
+                }`}
+                title="Ver Reglas"
+              >
+                <Snowflake className="w-5 h-5" />
+              </button>
+            </div>
+          )}
 
           {/* Divider sutil */}
-          <div className="border-t border-slate-200/60"></div>
+          {!sidebarCollapsed && <div className="border-t border-slate-200/60"></div>}
 
           {/* Sección Visualización */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-bold text-slate-500 mb-3 tracking-wider uppercase px-1">
-              Herramientas
-            </h3>
-            <ViewComplementMenu complements={OPTION_COMPLEMENTS} />
-          </div>
+          {!sidebarCollapsed ? (
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-slate-500 mb-3 tracking-wider uppercase px-1">
+                Herramientas
+              </h3>
+              <ViewComplementMenu complements={OPTION_COMPLEMENTS} />
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <button
+                onClick={go.histograma.list}
+                className="w-full p-3 rounded-xl bg-white text-blue-600 hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-700 hover:text-white transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
+                title="Ver Histograma"
+              >
+                <BarChart3 className="w-5 h-5" />
+              </button>
+              <button
+                onClick={go.heatmap}
+                className="w-full p-3 rounded-xl bg-white text-blue-600 hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-700 hover:text-white transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
+                title="Ver Mapa de Calor"
+              >
+                <MapPin className="w-5 h-5" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Footer del sidebar - Botón de sesión */}
-        <div className="px-6 py-5 border-t border-slate-200/60 bg-slate-50/50">
+        <div className={`py-5 border-t border-slate-200/60 bg-slate-50/50 transition-all duration-300 ${
+          sidebarCollapsed ? 'px-2' : 'px-6'
+        }`}>
           {isLogin ? (
-            <button
-              onClick={handleLogout}
-              className={`${btnWarn} justify-center shadow-md`}
-            >
-              <LogOut className="w-5 h-5" />
-              <span>Cerrar Sesión</span>
-            </button>
+            !sidebarCollapsed ? (
+              <button
+                onClick={handleLogout}
+                className={`${btnWarn} justify-center shadow-md`}
+              >
+                <LogOut className="w-5 h-5" />
+                <span>Cerrar Sesión</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="w-full p-3 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
+                title="Cerrar Sesión"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            )
           ) : (
-            <button
-              onClick={go.login}
-              className={`${btnPrimary} justify-center shadow-md`}
-            >
-              <Lock className="w-5 h-5" />
-              <span>Acceso Administrativo</span>
-            </button>
+            !sidebarCollapsed ? (
+              <button
+                onClick={go.login}
+                className={`${btnPrimary} justify-center shadow-md`}
+              >
+                <Lock className="w-5 h-5" />
+                <span>Acceso Administrativo</span>
+              </button>
+            ) : (
+              <button
+                onClick={go.login}
+                className="w-full p-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
+                title="Acceso Administrativo"
+              >
+                <Lock className="w-5 h-5" />
+              </button>
+            )
           )}
         </div>
       </aside>
@@ -160,7 +265,7 @@ const Home = () => {
             </div>
           </div>
         ) : (
-          <div className="w-full h-full rounded-2xl overflow-hidden border border-slate-200/60 bg-white">
+          <div className="w-full h-full rounded-2xl overflow-hidden shadow-xl border border-slate-200/60">
             <MapHTML position={pointsMap} loading={loading} />
           </div>
         )}

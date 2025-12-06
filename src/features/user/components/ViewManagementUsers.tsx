@@ -373,7 +373,7 @@ const ViewManagementUsers = () => {
           <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between mb-6">
             <button
               onClick={go.users.add}
-              className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-2xl font-bold shadow-lg shadow-green-600/30 hover:shadow-xl hover:scale-105 transition-all duration-200 text-base group"
+              className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white rounded-2xl font-bold shadow-lg shadow-sky-600/30 hover:shadow-xl hover:scale-105 transition-all duration-200 text-base group"
             >
               <UserPlus size={20} className="transition-transform group-hover:rotate-6" />
               Nuevo Usuario

@@ -83,7 +83,7 @@ export const LoadingMapConicet = ({
       <div className="absolute inset-0 bg-white/30 pointer-events-none"></div>
       {/* Contenido */}
       <div className="text-center p-10 relative z-10">
-        <p className="text-white italic text-7xl mb-1 font-light">{message}</p>
+        <p className="text-gray-200 italic text-7xl mb-1 font-bold">{message}</p>
         <Loader2 className={`${sizeClasses[size]} text-blue-600 animate-spin mx-auto mb-4`} />
       </div>
     </div>

@@ -411,7 +411,7 @@ const ShowCharts = () => {
               <button
                 onClick={exportToPDF}
                 disabled={isExportingPDF || loading}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-600 text-white rounded-xl font-semibold hover:from-red-700 hover:to-red-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
                 <FileDown className={`w-5 h-5 ${isExportingPDF ? 'animate-bounce' : ''}`} />
                 {isExportingPDF ? 'Generando PDF...' : 'Exportar PDF'}
@@ -426,7 +426,7 @@ const ShowCharts = () => {
                 {loading ? 'Actualizando...' : 'Actualizar'}
               </button>
             </div>
-          </div>
+          </div> 
         </div>
       </div>
 

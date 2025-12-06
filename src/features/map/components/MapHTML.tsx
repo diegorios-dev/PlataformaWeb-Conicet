@@ -38,7 +38,7 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
   if (externalLoading) {
     return (
       <LoadingMapConicet 
-        message="Conicet"
+        message="CONICET"
         size="lg"
       />
     );
@@ -58,7 +58,7 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
   if (loadingReports || !isStatusReady) {
     return (
       <LoadingMapConicet 
-        message="Conicet" 
+        message="CONICET" 
         size="lg"
       />
     );

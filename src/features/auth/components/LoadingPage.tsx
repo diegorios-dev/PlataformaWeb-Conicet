@@ -12,7 +12,7 @@ const LoadingPage = () => {
           alt="CONICET"
           className="w-16 h-auto"
         />
-        <span className="text-2xl font-semibold text-blue-900 tracking-wide">
+        <span className="text-2xl font-bold text-blue-900 tracking-wide">
           CONICET
         </span>
       </div>

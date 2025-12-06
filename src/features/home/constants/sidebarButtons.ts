@@ -6,4 +6,4 @@ export const btnPrimary =
   `${btnBase} bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 focus:ring-blue-500 shadow-sm hover:shadow-md active:scale-[0.98]`;
 
 export const btnWarn =
-  `${btnBase} bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 focus:ring-amber-500 shadow-sm hover:shadow-md active:scale-[0.98]`;
+  `${btnBase} bg-gradient-to-r from-red-500 to-red-900 text-white hover:from-red-600 hover:to-red-700 focus:ring-red-500 shadow-sm hover:shadow-md active:scale-[0.98]`;

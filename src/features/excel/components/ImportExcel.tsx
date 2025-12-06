@@ -146,14 +146,14 @@ export default function ImportarExcel() {
           <div className="mb-8">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-1">Descargar plantilla</h2>
+                <h2 className="text-2xl font-bold text-blue-800 mb-1">Descargar plantilla</h2>
                 <p className="text-sm text-slate-600">
                   Bajá la plantilla Excel con la estructura correcta y ejemplos.
                 </p>
               </div>
               <button
                 onClick={descargarPlantilla}
-                className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-2xl font-bold shadow-lg shadow-green-600/30 hover:shadow-xl transition-all"
+                className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white rounded-2xl font-bold shadow-lg shadow-green-600/30 hover:shadow-xl transition-all"
               >
                 <Download size={18} />
                 Descargar Plantilla ejemplo
