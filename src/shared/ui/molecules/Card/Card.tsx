@@ -1,9 +1,7 @@
 import { useState, memo } from "react";
 import type { ReactNode } from "react";
 import { HelpCircle, ChevronDown, Check, Database, CalendarDays, CalendarClock, CalendarRange, TrendingUp as TrendingUpIcon } from "lucide-react";
-
-// Ruta absoluta para assets en /public/
-const img = "/assets/logo-CONICET_opt.png";
+import { logoConicet } from "../../../../assets";
 
 interface CardProps {
   title: string;
@@ -28,7 +26,7 @@ const Card = memo(({
   children, 
   isLoading = false,
   showPeriodSelector = false,
-  selectedPeriod = "todos",
+  selectedPeriod = "trimestre",
   onPeriodChange,
   className = "",
   showWatermark = true

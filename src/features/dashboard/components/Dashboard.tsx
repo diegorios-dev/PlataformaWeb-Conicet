@@ -1,19 +1,14 @@
-import { useState } from "react";
 import { useNavegation } from "@shared/hooks";
 import { DashboardLayout } from '@shared/ui/layouts/DashboardLayout';
 import { motion } from "framer-motion";
 
 import { FileText, Users, MapPin, LogOut , TrendingUp, Upload, MapPinned} from "lucide-react";
 import { FileSpreadsheet } from "lucide-react";
-import conicet from '/assets/logo-CONICET_opt.png';
-import unco from '/assets/unco.png';
+import { logoConicet, logoUnco } from '../../../assets';
 
 import DashboardButton from "./DashboardButton";
 
 const Dashboard = () => {
-  
-  const [currentView, setCurrentView] = useState<"menu" | "instrumentos">("menu");
-
   const { go } = useNavegation();
 
   return (
@@ -41,8 +36,7 @@ const Dashboard = () => {
 
 
           {/* Grid de tarjetas modernizado */}
-          {currentView === "menu" && (
-            <div className="backdrop-blur-xl bg-white/70 border border-white/80 rounded-3xl shadow-xl p-6 md:p-8">
+          <div className="backdrop-blur-xl bg-white/70 border border-white/80 rounded-3xl shadow-xl p-6 md:p-8">
               
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
@@ -118,7 +112,7 @@ const Dashboard = () => {
                 />
 
                 <DashboardButton
-                  onClick={go.zonas.list}
+                  onClick={go.zonas.add}
                   icon={MapPin}
                   title="Administrar Zonas"
                   description="Configura nuevas ubicaciones"
@@ -187,8 +181,7 @@ const Dashboard = () => {
                 </motion.button>
               </motion.div>
             </div>
-          )}
-
+          
         </motion.div>
       </div>
     </DashboardLayout>

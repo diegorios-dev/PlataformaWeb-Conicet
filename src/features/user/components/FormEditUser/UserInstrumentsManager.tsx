@@ -54,7 +54,7 @@ export const UserInstrumentsManager = ({
                     disabled={disabled}
                     title="Quitar instrumento"
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={18} className="text-black-500" />
                   </button>
                 </div>
               ))}

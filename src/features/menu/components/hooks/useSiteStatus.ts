@@ -1,6 +1,6 @@
 // src/hooks/useSiteStatus.ts
 import { useEffect, useState, useRef } from "react";
-import { getAllSitios } from "@features/site/services";
+import { getAllSites } from "@features/site/services";
 import type { Coord, SiteStatus } from "../types/interfaces";
 
 export function useSiteStatus(position: Coord[]) {
@@ -22,8 +22,8 @@ export function useSiteStatus(position: Coord[]) {
 
     const fetchStatus = async () => {
       try {
-        // ✅ OPTIMIZACIÓN: Llamar getAllSitios UNA SOLA VEZ en lugar de N veces
-        const allSites = await getAllSitios();
+        // ✅ OPTIMIZACIÓN: Llamar getAllSites UNA SOLA VEZ en lugar de N veces
+        const allSites = await getAllSites();
         
         // Crear mapa de estados desde todos los sitios
         const statusMap = new Map<number, SiteStatus>();

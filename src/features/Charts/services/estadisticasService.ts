@@ -1,9 +1,6 @@
-import axios from "axios";
-import { API_URL } from "@config/api";
+import { httpGet } from "@shared/services";
 import { getCachedData, cache } from "@shared/utils/simpleCache";
 import { devLog, getErrorMessage } from "@shared/utils/errorHandler";
-
-const API_URL_SERVICE = API_URL;
 
 // TTL por defecto: 5 minutos (pueden ser estadísticas más estables)
 const DEFAULT_TTL = 5 * 60 * 1000;
@@ -14,7 +11,7 @@ export const getPrecipitacionPorZona = async () => {
     'estadisticas:precipitacion-zona',
     async () => {
       try {
-        const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/precipitacion-por-zona`);
+        const data = await httpGet(`/estadisticas/precipitacion-por-zona`);
         
         if (!data || !Array.isArray(data)) {
           devLog.warn('Datos de precipitación por zona inválidos', data);
@@ -37,7 +34,7 @@ export const getReportesPorInstrumento = async () => {
     'estadisticas:reportes-instrumento',
     async () => {
       try {
-        const { data } = await axios.get(`${API_URL_SERVICE}/reportes/por-instrumento`);
+        const data = await httpGet(`/v1/reports/stats/by-instrument`);
         const result = data.data || data;
         
         if (!Array.isArray(result)) {
@@ -60,7 +57,7 @@ export const getTopZonasPorRegistro = async (limit: number = 10) => {
   return getCachedData(
     `estadisticas:top-zonas:${limit}`,
     async () => {
-      const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/top-zonas-por-registro?limit=${limit}`);
+      const data = await httpGet(`/estadisticas/top-zonas-por-registro?limit=${limit}`);
       return data;
     },
     DEFAULT_TTL
@@ -72,7 +69,7 @@ export const getDistribucionInstrumentos = async () => {
   return getCachedData(
     'estadisticas:distribucion-instrumentos',
     async () => {
-      const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/distribucion-instrumentos`);
+      const data = await httpGet(`/estadisticas/distribucion-instrumentos`);
       return data;
     },
     DEFAULT_TTL
@@ -84,7 +81,7 @@ export const getReportesPorPeriodo = async () => {
   return getCachedData(
     'estadisticas:reportes-periodo',
     async () => {
-      const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/reportes-por-periodo`);
+      const data = await httpGet(`/estadisticas/reportes-por-periodo`);
       return data;
     },
     DEFAULT_TTL
@@ -99,9 +96,9 @@ export const getEvolucionPorZona = async (zonaId?: number) => {
     cacheKey,
     async () => {
       const url = zonaId 
-        ? `${API_URL_SERVICE}/estadisticas/evolucion-por-zona?zonaId=${zonaId}`
-        : `${API_URL_SERVICE}/estadisticas/evolucion-por-zona`;
-      const { data } = await axios.get(url);
+        ? `/estadisticas/evolucion-por-zona?zonaId=${zonaId}`
+        : `/estadisticas/evolucion-por-zona`;
+      const data = await httpGet(url);
       return data;
     },
     DEFAULT_TTL
@@ -115,7 +112,7 @@ export const getComparativaSitios = async (sitioIds: number[]) => {
   return getCachedData(
     cacheKey,
     async () => {
-      const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/comparativa-sitios`, {
+      const data = await httpGet(`/estadisticas/comparativa-sitios`, {
         params: { sitioIds: sitioIds.join(',') }
       });
       return data;
@@ -129,7 +126,7 @@ export const getTendenciaCaudal = async () => {
   return getCachedData(
     'estadisticas:tendencia-caudal',
     async () => {
-      const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/tendencia-caudal`);
+      const data = await httpGet(`/estadisticas/tendencia-caudal`);
       return data;
     },
     DEFAULT_TTL
@@ -141,7 +138,7 @@ export const getSeriePorTipo = async () => {
   return getCachedData(
     'estadisticas:serie-por-tipo',
     async () => {
-      const { data } = await axios.get(`${API_URL_SERVICE}/estadisticas/serie-por-tipo`);
+      const data = await httpGet(`/estadisticas/serie-por-tipo`);
       return data;
     },
     DEFAULT_TTL
@@ -156,9 +153,9 @@ export const getDistribucionPorTipo = async (periodo?: string) => {
     cacheKey,
     async () => {
       const url = periodo && periodo !== 'todos' 
-        ? `${API_URL_SERVICE}/eventos/distribucion-reportes?periodo=${periodo}`
-        : `${API_URL_SERVICE}/eventos/distribucion-reportes`;
-      const { data } = await axios.get(url);
+        ? `/v1/events/stats/distribution?periodo=${periodo}`
+        : `/v1/events/stats/distribution`;
+      const data = await httpGet(url);
       return data.data || data;
     },
     DEFAULT_TTL
@@ -172,7 +169,7 @@ export const getEvolucionMensual = async (periodo?: string, anio?: number) => {
   return getCachedData(
     cacheKey,
     async () => {
-      let url = `${API_URL_SERVICE}/reportes/evolucion-mensual`;
+      let url = `/v1/reports/stats/monthly-evolution`;
       
       if (anio) {
         url += `?anio=${anio}`;
@@ -180,7 +177,7 @@ export const getEvolucionMensual = async (periodo?: string, anio?: number) => {
         url += `?periodo=${periodo}`;
       }
       
-      const { data } = await axios.get(url);
+      const data = await httpGet(url);
       return data.data || data;
     },
     DEFAULT_TTL
@@ -194,7 +191,7 @@ export const getPrecipitacionCoordenadas = async (periodo?: string, tipoEvento?:
   return getCachedData(
     cacheKey,
     async () => {
-      let url = `${API_URL_SERVICE}/sitios/precipitacion-coordenadas`;
+      let url = `/v1/sites/stats/precipitation-coordinates`;
       const params = new URLSearchParams();
       
       if (periodo && periodo !== 'todos') {
@@ -210,15 +207,15 @@ export const getPrecipitacionCoordenadas = async (periodo?: string, tipoEvento?:
       }
 
       try {
-        const response = await axios.get(url);
+        const response = await httpGet(url);
         
         // Validar la estructura de la respuesta
-        if (response.data && Array.isArray(response.data.data)) {
-          return response.data.data;
-        } else if (Array.isArray(response.data)) {
+        if (response && Array.isArray(response.data)) {
           return response.data;
+        } else if (Array.isArray(response)) {
+          return response;
         } else {
-          devLog.warn('Datos de precipitación por coordenadas inválidos', response.data);
+          devLog.warn('Datos de precipitación por coordenadas inválidos', response);
           return [];
         }
       } catch (error) {
@@ -237,7 +234,7 @@ export const getPatronMensual = async (periodo?: string, tipoEvento?: string) =>
   return getCachedData(
     cacheKey,
     async () => {
-      let url = `${API_URL_SERVICE}/reportes/patron-mensual`;
+      let url = `/v1/reports/stats/monthly-pattern`;
       const params = new URLSearchParams();
       
       if (periodo && periodo !== 'todos') {
@@ -252,7 +249,7 @@ export const getPatronMensual = async (periodo?: string, tipoEvento?: string) =>
         url += `?${queryString}`;
       }
 
-      const { data } = await axios.get(url);
+      const data = await httpGet(url);
       return data.data || data;
     },
     DEFAULT_TTL
@@ -266,7 +263,7 @@ export const getAnalisisFrecuencia = async (periodo?: string, tipoEvento?: strin
   return getCachedData(
     cacheKey,
     async () => {
-      let url = `${API_URL_SERVICE}/histograma`;
+      let url = `/v1/reports/stats/histogram`;
       const params = new URLSearchParams();
       
       if (periodo && periodo !== 'todos') {
@@ -284,7 +281,7 @@ export const getAnalisisFrecuencia = async (periodo?: string, tipoEvento?: strin
         url += `?${queryString}`;
       }
 
-      const { data } = await axios.get(url);
+      const data = await httpGet(url);
       return data.data || data;
     },
     DEFAULT_TTL
@@ -298,7 +295,7 @@ export const getComparativaAnual = async (anios?: string, tipoEvento?: string, m
   return getCachedData(
     cacheKey,
     async () => {
-      let url = `${API_URL_SERVICE}/reportes/comparativa-anual`;
+      let url = `/v1/reports/stats/annual-comparison`;
       const params = new URLSearchParams();
       
       if (anios) {
@@ -319,7 +316,7 @@ export const getComparativaAnual = async (anios?: string, tipoEvento?: string, m
         url += `?${queryString}`;
       }
 
-      const { data } = await axios.get(url);
+      const data = await httpGet(url);
       return data;
     },
     DEFAULT_TTL

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { login } from '@features/user/services';
-import { storageService } from '@shared/services';
+import { storageService, tokenService } from '@shared/services';
 
 type User = {
   rol: string;
@@ -8,23 +8,37 @@ type User = {
 };
 
 function useUser() {
+  
   const [user, setUser] = useState<User | null>(null);
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-  // Cargar usuario desde localStorage al iniciar
+  // Load user and verify token on mount
   useEffect(() => {
     const storedUser = storageService.getUser();
-    if (storedUser) {
+    const hasToken = tokenService.hasToken();
+    
+    
+    if (storedUser && hasToken) {
       try {
         setUser(storedUser);
         validateLogin(storedUser);
       } catch (error) {
         storageService.removeUser();
+        tokenService.removeToken();
+      }
+    } else {
+      // If user exists but no token, or vice versa, clear both
+      if (storedUser || hasToken) {
+        storageService.removeUser();
+        tokenService.removeToken();
       }
     }
+    
+    setIsCheckingAuth(false);
   }, []);
 
   const validateLogin = (userData: User | null) => {
@@ -85,6 +99,7 @@ function useUser() {
     setError(null);
    
     storageService.removeUser();
+    tokenService.removeToken();
   };
 
   const getUsername = () => {
@@ -97,6 +112,7 @@ function useUser() {
     password,
     error,
     loading,
+    isCheckingAuth,
     handleSavePassword,
     fetchGetUserByPassword,
     handleLogout,

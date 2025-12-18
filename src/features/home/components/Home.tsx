@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Lock, LogOut, Wrench, CheckCircle, AlertCircle, ChevronLeft, ChevronRight, Droplet, Snowflake, BarChart3, MapPin } from "lucide-react";
 
-// Ruta absoluta para assets en /public/
-const conicet = "/assets/logo-CONICET_opt.png";
-const uncobariloche = "/assets/logo-unco-bariloche-azul-gris.png";
+import { logoConicet, logoUncoBariloche } from "../../../assets/index";
 
 import { useSitio } from "@features/site/hooks";
 import MapHTML from "@features/map/components/MapHTML";
@@ -13,7 +11,7 @@ import ViewComplementMenu from "@features/menu/components/ViewComplementMenu";
 
 import { useAuth } from "@features/auth";
 import { OPTION_INSTRUMENTS } from "@shared/utils/optionInstruments";
-import { btnPrimary, btnWarn } from "../constants/sidebarButtons";
+import { btnPrimary, btnMarino } from "../constants/sidebarButtons";
 import { getOptionComplements } from "../constants/optionComplements";
 import { useWelcomeMessage } from "../hooks/useWelcomeMessage";
 import { useLogout } from "../hooks/useLogout";
@@ -88,8 +86,8 @@ const Home = () => {
           {!sidebarCollapsed ? (
             <>
               <div className="flex items-center justify-center mb-2">
-                <img src={conicet} alt="Logo CONICET" className="h-14 w-16 object-contain drop-shadow-sm" />
-                <img src={uncobariloche} alt="Logo UNCO" className="h-14 w-28 object-contain drop-shadow-sm" />
+                <img src={logoConicet} alt="Logo logoConicet" className="h-14 w-16 object-contain drop-shadow-sm" />
+                <img src={logoUncoBariloche} alt="Logo UNCO" className="h-14 w-28 object-contain drop-shadow-sm" />
               </div>
               <h1 className="text-center text-xl font-semibold text-slate-600 tracking-tight">
                 Sistema de Monitoreo
@@ -97,7 +95,7 @@ const Home = () => {
             </>
           ) : (
             <div className="flex justify-center">
-              <img src={conicet} alt="Logo" className="h-10 w-10 object-contain drop-shadow-sm" />
+              <img src={logoConicet} alt="Logo" className="h-10 w-10 object-contain drop-shadow-sm" />
             </div>
           )}
         </div>
@@ -206,7 +204,7 @@ const Home = () => {
             !sidebarCollapsed ? (
               <button
                 onClick={handleLogout}
-                className={`${btnWarn} justify-center shadow-md`}
+                className={`${btnMarino} justify-center shadow-md`}
               >
                 <LogOut className="w-5 h-5" />
                 <span>Cerrar Sesión</span>
@@ -214,7 +212,7 @@ const Home = () => {
             ) : (
               <button
                 onClick={handleLogout}
-                className="w-full p-3 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
+                className="w-full p-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
                 title="Cerrar Sesión"
               >
                 <LogOut className="w-5 h-5" />
@@ -265,7 +263,7 @@ const Home = () => {
             </div>
           </div>
         ) : (
-          <div className="w-full h-full rounded-2xl overflow-hidden shadow-xl border border-slate-200/60">
+          <div className="w-full h-full overflow-hidden shadow-xl pl-3">
             <MapHTML position={pointsMap} loading={loading} />
           </div>
         )}

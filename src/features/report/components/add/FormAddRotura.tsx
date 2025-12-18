@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createReporteRotura } from "@features/report/services";
-import { getAllSitios } from "@features/site/services";
-import { getAllZonas } from "@features/zona/services";
+import { getAllSites } from "@features/site/services";
+import { getAllZonas } from "@features/zone/services";
 import { AlertTriangle, MapPin, Calendar, Loader2, Wrench, MessageSquare, Camera, Mic, Save } from "lucide-react";
 import { DashboardLayout } from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
 import {
@@ -47,7 +47,7 @@ const FormAddRotura = () => {
   const fetchInitialData = async () => {
     try {
       const [sitiosData, zonasData] = await Promise.all([
-        getAllSitios(),
+        getAllSites(),
         getAllZonas(),
       ]);
       setSitios(sitiosData);

@@ -1,5 +1,5 @@
 import { Navigation, Trash2, MousePointerClick } from "lucide-react";
-import type { Site } from "@features/site/services/siteService";
+import type { Site } from "@features/site/services";
 
 const EditSiteMapPanel = ({
   mapRef,
@@ -38,7 +38,7 @@ const EditSiteMapPanel = ({
             className="flex items-center justify-center w-8 h-8 bg-red-50 hover:bg-red-100 text-red-600 rounded-full transition border border-red-200 flex-shrink-0"
             title="Limpiar marcador"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 size={18} className="text-black-500" />
           </button>
         </div>
       </div>

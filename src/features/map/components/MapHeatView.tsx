@@ -20,7 +20,7 @@ const HeatMapView = () => {
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
   const [heatLayer, setHeatLayer] = useState<any>(null);
   const [baseLayer, setBaseLayer] = useState<L.TileLayer | null>(null);
-  const [reportes, setReportes] = useState([]);
+  const [reportes, setReportes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);
   const [markers, setMarkers] = useState<L.CircleMarker[]>([]);
@@ -50,8 +50,8 @@ const HeatMapView = () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await getReportes();
-        setReportes(data || []);
+        const response = await getReportes({ per_page: 100 }); // Backend limita a máximo 100 por página
+        setReportes(response.data || []); // Extraer el array de datos
       } catch (error) {
         devLog.error('Error al cargar reportes', error);
         setError(error);
@@ -359,7 +359,7 @@ const HeatMapView = () => {
       <BaseMapSelector 
         baseMap={baseMap} 
         setBaseMap={setBaseMap as any} 
-        position="right" 
+        positionClasses="top-6 right-4"
       />
 
 

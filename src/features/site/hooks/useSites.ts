@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
-import { getAllSites } from "../services/siteService";
-import type { Site } from "../services/siteService";
+import { useState, useEffect, useCallback } from "react";
+import { getAllSites } from "../services";
+import type { Site } from "../services";
 
 export const useSites = () => {
   const [sites, setSites] = useState<Site[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSites = async () => {
+  // ✅ OPTIMIZACIÓN: Memoizar fetchSites con useCallback
+  const fetchSites = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -18,11 +19,11 @@ export const useSites = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchSites();
-  }, []);
+  }, [fetchSites]);
 
   return {
     sites,

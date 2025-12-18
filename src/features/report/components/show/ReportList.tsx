@@ -1,4 +1,5 @@
 import { Search } from "lucide-react";
+import { memo } from "react";
 import { EmptyState } from "@shared/ui/Loading/LoadingState";
 import { ReportCard } from "./ReportCard";
 import type { Report } from "@features/report/types";
@@ -13,7 +14,8 @@ interface ReportListProps {
   buildAudioUrl: (path: string) => string;
 }
 
-export const ReportList = ({
+// ✅ OPTIMIZACIÓN: Memoizar ReportList para evitar re-renders innecesarios
+export const ReportList = memo(function ReportList({
   reports,
   onImageClick,
   onAudioPlay,
@@ -21,7 +23,7 @@ export const ReportList = ({
   onEdit,
   buildImageUrl,
   buildAudioUrl,
-}: ReportListProps) => {
+}: ReportListProps) {
   if (reports.length === 0) {
     return (
       <EmptyState
@@ -48,4 +50,4 @@ export const ReportList = ({
       ))}
     </div>
   );
-};
+});

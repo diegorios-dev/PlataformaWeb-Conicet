@@ -1,5 +1,5 @@
 import { X, Trash2 } from "lucide-react";
-import type { Site } from "../../services/siteService";
+import type { Site } from "../../services";
 
 interface SiteDeleteModalProps {
   isOpen: boolean;
@@ -29,7 +29,7 @@ export const SiteDeleteModal = ({
         </button>
         <div className="flex flex-col items-center text-center">
           <div className="p-4 rounded-2xl mb-4 bg-red-100">
-            <Trash2 className="w-12 h-12 text-red-600" />
+            <Trash2 size={18} className="text-black-500" />
           </div>
           <h3 className="text-2xl font-bold mb-2 text-red-900">
             Confirmar eliminación

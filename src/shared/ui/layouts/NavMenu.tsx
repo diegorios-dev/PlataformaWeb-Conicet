@@ -35,6 +35,7 @@ const NavMenu: React.FC = () => {
   }, []);
 
   const items: NavItemConfig[] = [
+
     {
       key: "map",
       label: "Ir al Mapa",
@@ -43,11 +44,7 @@ const NavMenu: React.FC = () => {
       action: go?.map || (() => window.location.assign("/dashboard/map")),
       // REPARACIÓN: antes usabas p.includes("/") lo que coincide siempre; ahora buscamos rutas específicas
       matches: (p) =>
-        p === "/" || // si quieres que '/' sea la home/mapa, mantenlo
-        p === "/map" ||
-        p.startsWith("/dashboard/map") ||
-        p.includes("/mapa") ||
-        p.includes("/Mapa"),
+        p === "/" , // si quieres que '/' sea la home/mapa, mantenlo
       color: "text-emerald-900",
     },
     {
@@ -68,8 +65,8 @@ const NavMenu: React.FC = () => {
       key: "heatmap",
       label: "Ver Mapa de Calor",
       icon: MapPin,
-      action: go?.heatmap || (() => window.location.assign("/dashboard/heatmap")),
-      matches: (p) => p.includes("/heatmap") || p.includes("/mapa-de-calor") || p.includes("/calor"),
+      action: go?.heatmap || (() => window.location.assign("/mapa-calor")),
+      matches: (p) => p.includes("/mapa-calor"),
       color: "text-indigo-800",
     },
   ];

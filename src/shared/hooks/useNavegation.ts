@@ -1,15 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { useReportSelection } from "@context/ReportContext";
 import type { Report } from "@features/report/types";
+import { useMemo, useCallback } from "react";
 
 const useNavigation = () => {
   const navigate = useNavigate();
   const { handleSelectReport } = useReportSelection();
 
   // ➤ Helper simple
-  const go = (path: string) => navigate(path);
+  const go = useCallback((path: string) => navigate(path), [navigate]);
 
-  return {
+  // ➤ OPTIMIZACIÓN: Memoizar el objeto go para evitar re-renders de componentes hijos
+  return useMemo(() => ({
     go: {
       home: () => go("/"),
       login: () => go("/login"),
@@ -17,35 +19,33 @@ const useNavigation = () => {
       dashboard: () => go("/dashboard"),
 
       sites: {
-        list: () => go("/dashboard/site"),
-        add: () => go("/dashboard/site/add"),
-        edit: (id: number) => go(`/dashboard/site/edit/${id}`),
+        list: () => go("/dashboard/sitios"),
+        add: () => go("/dashboard/sitios/nuevo"),
+        edit: (id: number) => go(`/dashboard/sitios/editar/${id}`),
       },
 
       zonas: {
-        list: () => go("/dashboard/Zona/FormAddZona.tsx"),
+        add: () => go("/dashboard/zonas/nuevo"),
       },
 
       reports: {
-
-        list: () => go("/dashboard/administration/report"),
-        addRotura: () => go("/dashboard/administration/report/rotura/add"),
-        resolveRotura: () => go("/dashboard/administration/report/rotura/resolve"),
+        list: () => go("/dashboard/reportes"),
+        addRotura: () => go("/dashboard/reportes/rotura/nuevo"),
+        resolveRotura: () => go("/dashboard/reportes/rotura/resolver"),
         edit: (report: Report) => {
           handleSelectReport(report);
-          go("/dashboard/administration/report/edit");
+          go("/dashboard/reportes/editar");
         }
-        
       },
 
       users: {
-        list: () => go("/dashboard/administration/user"),
-        add: () => go("/dashboard/administration/user/add"),
+        list: () => go("/dashboard/usuarios"),
+        add: () => go("/dashboard/usuarios/nuevo"),
       },
 
       excel: {
-        export: () => go("/dashboard/export/excel"),
-        import: () => go("/dashboard/import/excel"),
+        export: () => go("/dashboard/exportar/excel"),
+        import: () => go("/dashboard/importar/excel"),
       },
 
       histograma: {
@@ -57,7 +57,7 @@ const useNavigation = () => {
 
       stats: () => go("/estadisticas"),
 
-      heatmap: () => go("/components/MapHeatView.tsx"),
+      heatmap: () => go("/mapa-calor"),
 
       map : () => go("/"),
 
@@ -65,31 +65,31 @@ const useNavigation = () => {
       back: () => {
         const current = window.location.pathname;
 
-        if (current.includes("/dashboard/administration/report/edit"))
-          return go("/dashboard/administration/report");
+        if (current.includes("/dashboard/reportes/editar"))
+          return go("/dashboard/reportes");
 
-        if (current.includes("/dashboard/administration/user/add"))
-          return go("/dashboard/administration/user");
+        if (current.includes("/dashboard/reportes/rotura"))
+          return go("/dashboard/reportes");
 
-        if (current.includes("/dashboard/administration"))
-          return go("/dashboard");
+        if (current.includes("/dashboard/usuarios/nuevo"))
+          return go("/dashboard/usuarios");
 
         if (current.includes("/estadisticas"))
           return go("/dashboard");
 
-        if (current.includes("/dashboard/site/edit"))
-          return go("/dashboard/site");
+        if (current.includes("/dashboard/sitios/editar"))
+          return go("/dashboard/sitios");
 
-        if (current.includes("/dashboard/site/add"))
+        if (current.includes("/dashboard/sitios/nuevo"))
+          return go("/dashboard/sitios");
+
+        if (current.includes("/dashboard/zonas/nuevo"))
           return go("/dashboard");
 
-        if (current.includes("/dashboard/Zona"))
+        if (current.includes("/dashboard/importar/excel"))
           return go("/dashboard");
 
-        if (current.includes("/dashboard/import/excel"))
-          return go("/dashboard");
-
-        if (current.includes("/dashboard/export/excel"))
+        if (current.includes("/dashboard/exportar/excel"))
           return go("/dashboard");
 
         if (current.includes("/dashboard"))
@@ -104,7 +104,9 @@ const useNavigation = () => {
         return go("/");
       }
     }
-  };
+  }), [go, handleSelectReport]); // ➤ Dependencias: go y handleSelectReport
 };
 
 export default useNavigation;
+
+

@@ -1,27 +1,33 @@
-import { useState } from "react";
+import { useState, memo, useCallback } from "react";
 import { Search, X } from "lucide-react";
 
-function SearchUser({ onSearch }) {
+interface SearchUserProps {
+  onSearch: (word: string) => void;
+}
+
+// ✅ OPTIMIZACIÓN: Componente memoizado con TypeScript
+const SearchUser = memo(function SearchUser({ onSearch }: SearchUserProps) {
   const [word, setWord] = useState("");
 
-  const handleSearch = () => {
+  // ✅ OPTIMIZACIÓN: Memoizar handlers
+  const handleSearch = useCallback(() => {
     if (word.trim() !== "") {
       onSearch(word);
     } else {
       onSearch("");
     }
-  };
+  }, [word, onSearch]);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setWord("");
     onSearch("");
-  };
+  }, [onSearch]);
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
-  };
+  }, [handleSearch]);
 
   return (
     <div className="flex gap-2 items-stretch w-full">
@@ -52,6 +58,6 @@ function SearchUser({ onSearch }) {
       </button>
     </div>
   );
-}
+});
 
 export default SearchUser;

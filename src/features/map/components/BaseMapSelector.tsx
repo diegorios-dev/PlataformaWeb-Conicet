@@ -6,20 +6,19 @@ import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 interface Props {
   baseMap: string;
   setBaseMap: (b: string) => void;
-  position?: "left" | "right";
+  positionClasses?: string;
   className?: string;
 }
 
 export const BaseMapSelector: React.FC<Props> = ({ 
   baseMap, 
   setBaseMap, 
-  position = "left",
+  positionClasses,
   className = "" 
 }) => {
-  const positionClasses = position === "left" ? "left-6" : "right-6";
   
   return (
-    <div className={`absolute top-6 ${positionClasses} z-[999] w-60 ${className}`}>
+    <div className={`absolute ${positionClasses} z-[999] w-60 ${className}`}>
       <div className="bg-white/20 backdrop-blur-lg px-6 py-4 rounded-2xl border border-white/30 shadow-xl">
         <CustomSelect
           options={[

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSites } from "../../hooks/useSites";
 import { useSiteFilters } from "../../hooks/useSiteFilters";
 import  useSiteForm  from "../../hooks/useSiteForm";
@@ -13,39 +13,54 @@ import { SiteDeleteModal } from "./SiteDeleteModal";
 import { SiteEmptyState } from "./SiteEmptyState";
 import { SiteInfoBanner } from "./SiteInfoBanner";
 import { useNavegation as useNavigation } from "@shared/hooks";
-import { getAllZonas } from "@features/zona/services";
+import { getAllZonas } from "@features/zone/services";
 import { getAllEvents, type Event } from "@features/event/services";
 import { devLog } from "@shared/utils/errorHandler";
 
 const AdminSitios = () => {
-  const [toastOpen, setToastOpen] = useState(false);
-  const [toastType, setToastType] = useState<"success" | "error">("success");
-  const [toastMessage, setToastMessage] = useState("");
+  // ✅ OPTIMIZACIÓN: Consolidar estados de Toast
+  const [toast, setToast] = useState<{
+    open: boolean;
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+  
   const [zonas, setZonas] = useState<Array<{id: number; locality: string}>>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const { go } = useNavigation();
 
-  const showToast = (type: "success" | "error", message: string) => {
-    setToastType(type);
-    setToastMessage(message);
-    setToastOpen(true);
-  };
+  // ✅ OPTIMIZACIÓN: Memoizar showToast con useCallback
+  const showToast = useCallback((type: "success" | "error", message: string) => {
+    setToast({ open: true, type, message });
+  }, []);
   
-  // Cargar zonas y eventos al montar
+  // ✅ OPTIMIZACIÓN: useEffect con cleanup para evitar setState después de unmount
   useEffect(() => {
+    let cancelled = false;
+    
     const fetchData = async () => {
       try {
         const [zonasData, eventsData] = await Promise.all([
           getAllZonas(),
           getAllEvents()
         ]);
-        setZonas(zonasData);
-        setEvents(eventsData);
+        
+        if (!cancelled) {
+          setZonas(zonasData);
+          setEvents(eventsData);
+        }
       } catch (error) {
-        devLog.error('Error al cargar zonas y eventos', error);
+        if (!cancelled) {
+          devLog.error('Error al cargar zonas y eventos', error);
+        }
       }
     };
+    
     fetchData();
+    
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Hook para obtener sitios
@@ -76,10 +91,17 @@ const AdminSitios = () => {
     },
   });
 
-  // Mostrar error si falla la carga
-  if (error) {
-    showToast("error", error);
-  }
+  // ✅ OPTIMIZACIÓN: Mover error handling a useEffect (evitar side effect en render)
+  useEffect(() => {
+    if (error) {
+      showToast("error", error);
+    }
+  }, [error, showToast]);
+
+  // ✅ OPTIMIZACIÓN: Memoizar handler para addClick
+  const handleAddClick = useCallback(() => {
+    go.sites.add();
+  }, [go.sites]);
 
   return (
     <DashboardLayout contentClassName="">
@@ -90,7 +112,7 @@ const AdminSitios = () => {
         <SiteSearchBar
           search={search}
           onSearchChange={setSearch}
-          onAddClick={go.sites.add}
+          onAddClick={handleAddClick}
           resultCount={filteredSites.length}
         />
 
@@ -131,10 +153,10 @@ const AdminSitios = () => {
       />
 
       <Toast
-        isOpen={toastOpen}
-        type={toastType}
-        message={toastMessage}
-        onClose={() => setToastOpen(false)}
+        isOpen={toast?.open || false}
+        type={toast?.type || "success"}
+        message={toast?.message || ""}
+        onClose={() => setToast(null)}
       />
     </DashboardLayout>
   );

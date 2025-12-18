@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getAllZonas } from "@features/zona/services";
-import type { Zona } from "@features/zona/types";
+import { getAllZonas } from "@features/zone/services";
+import type { Zona } from "@features/zone/types";
 
 export const useZonas = () => {
   const [zonas, setZonas] = useState<Zona[]>([]);

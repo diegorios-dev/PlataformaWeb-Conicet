@@ -1,6 +1,6 @@
 import { useState } from 'react';
+import { httpGet, httpPost } from '@shared/services';
 import axios from 'axios';
-
 
 import type { ImportResponse, ImportResult } from '../types/interfaces';
 
@@ -34,7 +34,12 @@ export default function ImportarExcel() {
   // Descargar plantilla
   const descargarPlantilla = async () => {
     try {
-      const response = await axios.get(`${API_URL}/import/plantilla`, { responseType: 'blob' });
+      const response = await axios.get(`${API_URL}/v1/imports/template`, { 
+        responseType: 'blob',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        }
+      });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -97,12 +102,27 @@ export default function ImportarExcel() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const response = await axios.post<ImportResponse>(`${API_URL}/import/excel`, formData, {
+      const response = await httpPost<ImportResponse>(`/v1/imports`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      setResult(response.data);
+      setResult(response);
       setFile(null);
     } catch (err: any) {
+      // Detectar errores SQL/Base de datos
+      if (err?.response?.data?.message?.includes('SQLSTATE') || err?.response?.data?.message?.includes('SQL:')) {
+        const sqlError = err.response.data.message;
+        const columnMatch = sqlError.match(/Unknown column '([^']+)'/);
+        const column = columnMatch ? columnMatch[1] : 'desconocida';
+        
+        setError(
+          `Error de base de datos: La columna "${column}" no existe en la tabla. ` +
+          `Este es un problema del backend que debe ser corregido por el administrador del sistema.`
+        );
+        console.error('Error SQL completo:', sqlError);
+        return;
+      }
+      
+      // Errores normales
       setError(
         err.response?.data?.message ||
           err.response?.data?.error ||
@@ -207,7 +227,7 @@ export default function ImportarExcel() {
                     className="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl font-semibold border border-red-200 transition-colors"
                     title="Quitar archivo"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={18} className="text-black-500" />
                     Quitar
                   </button>
                 </div>

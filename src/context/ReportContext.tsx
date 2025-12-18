@@ -21,10 +21,7 @@ export const ReportProvider = ({ children }: ReportProviderProps) => {
   }, []);
 
   const value = useMemo(
-    () => ({
-      report,
-      handleSelectReport
-    }),
+    () => ({report,handleSelectReport}),
     [report, handleSelectReport]
   );
 

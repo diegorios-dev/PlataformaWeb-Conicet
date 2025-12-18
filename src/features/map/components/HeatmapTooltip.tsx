@@ -72,7 +72,7 @@ export const createHeatmapTooltipContent = (props: HeatmapTooltipProps): string 
         </div>
       </div>
 
-      <!-- Valor principal -->
+      <!-- Valor del Reporte -->
       <div style="
         background: #dbeafe;
         border: 1px solid #bfdbfe;
@@ -95,7 +95,7 @@ export const createHeatmapTooltipContent = (props: HeatmapTooltipProps): string 
             color: #475569;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-          ">Total Acumulado</span>
+          ">Precipitación</span>
         </div>
         <span style="
           font-size: 24px;
@@ -105,7 +105,7 @@ export const createHeatmapTooltipContent = (props: HeatmapTooltipProps): string 
         ">${valor.toFixed(2)} <span style="font-size: 14px; font-weight: 500;">${unidad}</span></span>
       </div>
 
-      <!-- Fecha -->
+      <!-- Fecha del Reporte -->
       <div style="
         background: #f8fafc;
         border: 1px solid #e2e8f0;
@@ -131,18 +131,12 @@ export const createHeatmapTooltipContent = (props: HeatmapTooltipProps): string 
             color: #475569;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-          ">Último Reporte</span>
-        </div>
-        <div style="margin-bottom: 4px;">
-          <span style="
-            font-size: 18px;
-            font-weight: 700;
-            color: #1e293b;
-          ">${valor.toFixed(2)} <span style="font-size: 12px; font-weight: 500; color: #64748b;">${unidad}</span></span>
+          ">Fecha</span>
         </div>
         <p style="
-          font-size: 12px;
-          color: #64748b;
+          font-size: 14px;
+          color: #1e293b;
+          font-weight: 500;
           margin: 0;
         ">${formattedDate}</p>
       </div>

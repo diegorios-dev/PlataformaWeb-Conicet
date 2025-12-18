@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { UserType, Zona, Site, Instrument } from '../types';
-import { getAllSitios } from '@features/site/services';
-import { getAllZonas } from '@features/zona/services';
+import { getAllSites } from '@features/site/services';
+import { getAllZonas } from '@features/zone/services';
 import {
   getAllInstruments,
   getUserInstruments
@@ -38,7 +38,7 @@ export const useUserFormState = ({
   useEffect(() => {
     const fetchSitios = async () => {
       try {
-        const data = await getAllSitios();
+        const data = await getAllSites();
         setSitios(data);
 
         if (selectedUser?.site_id) {

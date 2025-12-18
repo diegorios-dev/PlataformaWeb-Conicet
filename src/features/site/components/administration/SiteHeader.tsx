@@ -1,10 +1,18 @@
+import { memo, useMemo } from "react";
 import { MapPin } from "lucide-react";
 
 interface SiteHeaderProps {
   count: number;
 }
 
-export const SiteHeader = ({ count }: SiteHeaderProps) => {
+// ✅ OPTIMIZACIÓN: Componente memoizado
+export const SiteHeader = memo(function SiteHeader({ count }: SiteHeaderProps) {
+  // ✅ OPTIMIZACIÓN: Memoizar texto de conteo
+  const countText = useMemo(() => 
+    `${count} ${count === 1 ? "sitio registrado" : "sitios registrados"}`,
+    [count]
+  );
+
   return (
     <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div className="flex items-center gap-4">
@@ -16,10 +24,10 @@ export const SiteHeader = ({ count }: SiteHeaderProps) => {
             Gestión de Sitios
           </h1>
           <p className="text-base text-slate-600 mt-1 font-medium">
-            {count} {count === 1 ? "sitio registrado" : "sitios registrados"}
+            {countText}
           </p>
         </div>
       </div>
     </div>
   );
-};
+});

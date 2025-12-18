@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import type { Site } from "../services/siteService";
+import type { Site } from "../services";
 
 export const useSiteFilters = (sites: Site[]) => {
 

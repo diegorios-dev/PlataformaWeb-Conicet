@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Search, X, Plus } from "lucide-react";
 
 interface SiteSearchBarProps {
@@ -7,12 +8,13 @@ interface SiteSearchBarProps {
   resultCount: number;
 }
 
-export const SiteSearchBar = ({
+// ✅ OPTIMIZACIÓN: Componente memoizado
+export const SiteSearchBar = memo(function SiteSearchBar({
   search,
   onSearchChange,
   onAddClick,
   resultCount,
-}: SiteSearchBarProps) => {
+}: SiteSearchBarProps) {
   return (
     <div className="bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-3xl shadow-xl p-6 md:p-8 mb-6">
       <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between mb-6">
@@ -55,4 +57,4 @@ export const SiteSearchBar = ({
       </div>
     </div>
   );
-};
+});

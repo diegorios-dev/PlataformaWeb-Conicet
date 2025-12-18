@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { deleteSite } from "../services/siteService";
+import { deleteSite } from "../services";
 
 interface UseSiteDeleteProps {
   onSuccess?: (message: string) => void;

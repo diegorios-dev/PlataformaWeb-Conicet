@@ -14,8 +14,9 @@ import {
   CalendarDays
 } from "lucide-react";
 import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
-
+import { httpGet } from "@shared/services";
 import { API_URL } from "@config/api";
+
 import type { Zona, Usuario } from "../types/interfaces";
 import { DashboardLayout } from "@/shared/ui/layouts/DashboardLayout";
 
@@ -46,15 +47,11 @@ export default function ExportExcel() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [zonasRes, usuariosRes, yearsRes] = await Promise.all([
-          fetch(`${API_URL}/zonas`),
-          fetch(`${API_URL}/usuarios`),
-          fetch(`${API_URL}/reportes/available-years`),
+        const [zonasData, usuariosData, yearsData] = await Promise.all([
+          httpGet(`/v1/zones`),
+          httpGet(`/v1/users`),
+          httpGet(`/v1/reports/metadata/years`),
         ]);
-
-        const zonasData = await zonasRes.json();
-        const usuariosData = await usuariosRes.json();
-        const yearsData = await yearsRes.json();
 
         setZonas(Array.isArray(zonasData) ? zonasData : []);
         setUsuarios(usuariosData.users || []);
@@ -77,7 +74,7 @@ export default function ExportExcel() {
     setSuccess(false);
 
     try {
-      let url = `${API_URL}/download/reports`;
+      let url = `/v1/exports/download`;
       const params = new URLSearchParams();
 
       if (startDate) params.append("start_date", startDate);
@@ -90,7 +87,13 @@ export default function ExportExcel() {
 
       if (params.toString()) url += "?" + params.toString();
 
-      const response = await fetch(url, { method: "GET" });
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${API_URL}${url}`, { 
+        method: "GET",
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (!response.ok) throw new Error("Error al descargar el archivo");
 
       const blob = await response.blob();

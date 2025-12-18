@@ -1,8 +1,5 @@
-import axios from "axios";
-import { API_URL } from "@config/api";
+import { httpGet, httpPost, httpPut, httpDelete } from "@shared/services";
 import { devLog, getErrorMessage } from "@shared/utils/errorHandler";
-
-const API_URL_SERVICE = API_URL;
 
 export interface Event {
   id: number;
@@ -13,7 +10,7 @@ export interface Event {
 
 export const getAllEvents = async (): Promise<Event[]> => {
   try {
-    const { data } = await axios.get(`${API_URL_SERVICE}/eventos`);
+    const data = await httpGet(`/v1/events`);
     
     if (!Array.isArray(data)) {
       devLog.warn('Datos de eventos inválidos', data);
@@ -29,7 +26,7 @@ export const getAllEvents = async (): Promise<Event[]> => {
 
 export const getEventById = async (id: number): Promise<Event> => {
   try {
-    const { data } = await axios.get(`${API_URL_SERVICE}/eventos/${id}`);
+    const data = await httpGet(`/v1/events/${id}`);
     
     if (!data || typeof data !== 'object') {
       devLog.warn(`Evento ${id} no encontrado o inválido`, data);

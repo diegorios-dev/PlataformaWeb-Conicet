@@ -1,9 +1,11 @@
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { memo } from "react";
 
 import { colorSchemes } from "../config/ColorSchemes";
 import type {DashboardButtonProps} from "../types/dashboard";
 
+// ➤ OPTIMIZACIÓN: Mover variantes fuera del componente para evitar recreación
 const buttonVariants = {
   hidden: { 
     opacity: 0, 
@@ -33,7 +35,8 @@ const buttonVariants = {
   }
 };
 
-export default function DashboardButton({
+// ➤ OPTIMIZACIÓN: Memoizar componente para evitar re-renders innecesarios
+const DashboardButton = memo(function DashboardButton({
   onClick,
   icon: Icon,
   title,
@@ -94,4 +97,6 @@ export default function DashboardButton({
       </div>
     </motion.button>
   );
-}
+});
+
+export default DashboardButton;

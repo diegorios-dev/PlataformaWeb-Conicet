@@ -1,5 +1,6 @@
 import { Loader2, MapPin, BarChart3, FileText, Database, Lightbulb } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { conicetMapa } from "../../../assets";
 
 
 /**
@@ -75,7 +76,7 @@ export const LoadingMapConicet = ({
     <div className={containerClass}>
       {/* Imagen de fondo */}
       <img 
-        src="../../../public/assets/conicetMapa.png"
+        src={conicetMapa}
         alt="Background"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none"
       />

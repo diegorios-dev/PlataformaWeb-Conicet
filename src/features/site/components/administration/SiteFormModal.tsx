@@ -1,5 +1,5 @@
 import { X, Save, MapPin, CloudRain, Snowflake, Activity, Mountain, AlertCircle } from "lucide-react";
-import type { Site } from "../../services/siteService";
+import type { Site } from "../../services";
 import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 
 interface SiteFormModalProps {

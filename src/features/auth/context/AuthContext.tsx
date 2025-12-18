@@ -8,6 +8,7 @@ interface AuthContextType {
   error: string | null;
   loading: boolean;
   isLogin: boolean;
+  isCheckingAuth: boolean;
   fetchGetUserByPassword: (e: React.FormEvent) => Promise<void>;
   handleSavePassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleLogout: () => void;
@@ -28,6 +29,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     password, 
     error, 
     loading, 
+    isCheckingAuth,
     handleSavePassword, 
     handleLogout, 
     getUsername 
@@ -40,12 +42,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       error,
       loading,
       isLogin,
+      isCheckingAuth,
       fetchGetUserByPassword,
       handleSavePassword,
       handleLogout,
       getUsername,
     }),
-    [user, password, error, loading, isLogin, fetchGetUserByPassword, handleSavePassword, handleLogout, getUsername]
+    [user, password, error, loading, isLogin, isCheckingAuth, fetchGetUserByPassword, handleSavePassword, handleLogout, getUsername]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

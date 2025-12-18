@@ -1,63 +1,78 @@
 import { useEffect, useRef, useState } from "react";
-import { getReportsForSites } from "@features/site/services";
+import { getSiteReportsSummary } from "@features/site/services/sitesServices";
+import { devLog } from "@shared/utils/errorHandler";
 
-export function useSiteReports(position, siteIds, selectedYear) {
-    
-  const [siteReports, setSiteReports] = useState(new Map());
+interface SiteReportData {
+  totalAmount: number;
+  lastReportAmount: number;
+  lastReportDate: string | null;
+}
+
+/**
+ * Custom hook to fetch aggregated report summaries for multiple sites.
+ * Uses optimized backend endpoint that calculates totals in SQL instead of JavaScript.
+ * 
+ * @param position - Array of site coordinates (used for validation)
+ * @param siteIds - Array of site IDs to fetch reports for
+ * @param selectedYear - Optional year filter
+ * @returns Object containing siteReports Map and loading state
+ */
+export function useSiteReports(
+  position: any[], 
+  siteIds: number[], 
+  selectedYear: number | null
+) {
+  const [siteReports, setSiteReports] = useState<Map<number, SiteReportData>>(new Map());
   const [loadingReports, setLoadingReports] = useState(true);
-  const lastQueryKeyRef = useRef(null);
+  const lastQueryKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const fetchAllReports = async () => {
-      if (!position || position.length === 0) {
+    const fetchReportsSummary = async () => {
+      // Early return if no sites
+      if (!position || position.length === 0 || !siteIds || siteIds.length === 0) {
         setSiteReports(new Map());
         setLoadingReports(false);
         return;
       }
-      
-      // ✅ OPTIMIZACIÓN: Usar solo siteIds para la key (ya no necesitamos position)
+
+      // Generate cache key to avoid redundant fetches
       const queryKey = `${selectedYear ?? 'all'}|${siteIds.join(',')}`;
+      
+      // Skip if query hasn't changed and we have data
       if (lastQueryKeyRef.current === queryKey && siteReports.size > 0) {
         setLoadingReports(false);
         return;
       }
+
       setLoadingReports(true);
-      const reportsMap = new Map();
+
       try {
-        const batchResults = await getReportsForSites(siteIds, selectedYear || undefined);
-        batchResults.forEach(({ siteId, reports }) => {
-          if (!siteId) return;
-          if (reports && reports.length > 0) {
-            const totalAmount = reports.reduce((acc, report) => {
-              const amount = parseFloat(report.amount) || 0;
-              return acc + amount;
-            }, 0);
-            const lastReport = reports[reports.length - 1];
-            const lastReportAmount = parseFloat(lastReport.amount) || 0;
-            const lastReportDate = lastReport.report?.date || null;
-            reportsMap.set(siteId, {
-              totalAmount,
-              lastReportAmount,
-              lastReportDate
-            });
-          } else {
-            reportsMap.set(siteId, {
-              totalAmount: 0,
-              lastReportAmount: 0,
-              lastReportDate: null
-            });
-          }
+        // ✅ OPTIMIZED: Backend calculates SUM and finds last report in SQL
+        const summaries = await getSiteReportsSummary(siteIds, selectedYear || undefined);
+        
+        const reportsMap = new Map<number, SiteReportData>();
+
+        summaries.forEach((summary) => {
+          reportsMap.set(summary.siteId, {
+            totalAmount: summary.totalAmount,
+            lastReportAmount: summary.lastReport.amount,
+            lastReportDate: summary.lastReport.date
+          });
         });
+
         setSiteReports(reportsMap);
         lastQueryKeyRef.current = queryKey;
-      } catch {
-        // error
+      } catch (error) {
+        devLog.error('Error fetching site reports summary', error);
+        // Set empty map on error
+        setSiteReports(new Map());
       } finally {
         setLoadingReports(false);
       }
     };
-    fetchAllReports();
-  }, [siteIds, selectedYear]); // ✅ OPTIMIZACIÓN: Removido 'position' de dependencias
+
+    fetchReportsSummary();
+  }, [siteIds, selectedYear]); // Only depend on IDs and year, not position array
 
   return { siteReports, loadingReports };
 }

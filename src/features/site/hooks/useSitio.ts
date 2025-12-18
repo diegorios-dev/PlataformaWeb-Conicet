@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getSitio } from "@features/site/services";
+import { getSites } from "@features/site/services";
 import { devLog } from "@shared/utils/errorHandler";
 import type { Coord } from "@features/map/types/interfaces";
 
@@ -23,7 +23,7 @@ function useSitio (selectedInstrument : number | string | null) {
             setState(prev => ({ ...prev, loading: true, error: null }));
             
             try {
-                const data = await getSitio(selectedInstrument);
+                const data = await getSites(selectedInstrument);
                 
                 // Caso 1: No hay datos o respuesta vacía
                 if (!data) {

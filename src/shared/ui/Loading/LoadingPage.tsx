@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import img from "../assets/logo-CONICET_opt.png"
+import { logoConicet } from "../../../assets";
 
 
 const LoadingPage = () => {
@@ -8,7 +8,7 @@ const LoadingPage = () => {
       {/* Logo o símbolo */}
       <div className="flex items-center gap-3 mb-6">
         <img
-          src={img}
+          src={logoConicet}
           alt="Conicet"
           className="w-16 h-auto"
         />

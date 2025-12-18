@@ -1,5 +1,6 @@
 // src/utils/getCustomIcon.ts
 import L from "leaflet";
+import { iconReporteRegular, iconReporteRoto } from "../../../assets";
 
 /**
  * Ícono tradicional con imágenes PNG
@@ -8,8 +9,8 @@ import L from "leaflet";
 export const getCustomIcon = (_tipo: string, isHealthy: boolean) => {
   // Minimal icon: puedes reemplazar los paths por tus imágenes
   const iconUrl = isHealthy
-    ? "/assets/iconReporteRegular.png"
-    : "/assets/iconReporteIntrumentroRoto.png";
+    ? iconReporteRegular
+    : iconReporteRoto;
 
   return L.icon({
     iconUrl,

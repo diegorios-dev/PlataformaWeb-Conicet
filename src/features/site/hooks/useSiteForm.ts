@@ -1,6 +1,6 @@
-import { useState } from "react";
-import {createSite, updateSite, validateSiteData } from "../services/siteService";
-import type { Site } from "../services/siteService";
+import { useState, useCallback } from "react";
+import {createSite, updateSite, validateSiteData } from "../services";
+import type { Site } from "../services";
 
 interface UseSiteFormParams {
   onSuccess?: (message: string) => void;
@@ -15,26 +15,30 @@ const useSiteForm = ({ onSuccess, onError, onClose }: UseSiteFormParams = {}) =>
   const [formData, setFormData] = useState<Partial<Site>>({});
   const [loading, setLoading] = useState(false);
 
-  const openForm = (site?: Site) => {
+  // ✅ OPTIMIZACIÓN: Memoizar openForm con useCallback
+  const openForm = useCallback((site?: Site) => {
     setEditMode(!!site);
     setSelectedSite(site || null);
     setFormData(site ? { ...site } : {});
     setIsOpen(true);
-  };
+  }, []);
 
-  const closeForm = () => {
+  // ✅ OPTIMIZACIÓN: Memoizar closeForm con useCallback
+  const closeForm = useCallback(() => {
     setIsOpen(false);
     setSelectedSite(null);
     setFormData({});
     setEditMode(false);
     if (onClose) onClose();
-  };
+  }, [onClose]);
 
-  const handleChange = (field: keyof Site, value: any) => {
+  // ✅ OPTIMIZACIÓN: Memoizar handleChange con useCallback
+  const handleChange = useCallback((field: keyof Site, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  }, []);
 
-  const handleSubmit = async (e?: React.FormEvent) => {
+  // ✅ OPTIMIZACIÓN: Memoizar handleSubmit con useCallback
+  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
     // Validar datos
@@ -61,7 +65,7 @@ const useSiteForm = ({ onSuccess, onError, onClose }: UseSiteFormParams = {}) =>
     } finally {
       setLoading(false);
     }
-  };
+  }, [editMode, selectedSite, formData, onSuccess, onError, closeForm]);
 
   return {
     isOpen,

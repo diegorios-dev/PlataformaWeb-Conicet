@@ -55,7 +55,7 @@ const IconNavMenu: React.FC = () => {
       label: "Reportes",
       icon: FileText,
       action: go.reports.list,
-      matches: (p) => p.includes("/dashboard/administration/report"),
+      matches: (p) => p.includes("/dashboard/reportes"),
       color: "text-blue-600",
     },
     {
@@ -63,15 +63,15 @@ const IconNavMenu: React.FC = () => {
       label: "Usuarios",
       icon: Users,
       action: go.users.list,
-      matches: (p) => p.includes("/dashboard/administration/user"),
+      matches: (p) => p.includes("/dashboard/usuarios"),
       color: "text-indigo-600",
     },
     {
       key: "zonas",
       label: "Zonas",
       icon: MapPin,
-      action: go.zonas.list,
-      matches: (p) => p.includes("/dashboard/Zona"),
+      action: go.zonas.add,
+      matches: (p) => p.includes("/dashboard/zonas"),
       color: "text-violet-600",
     },
     {
@@ -79,7 +79,7 @@ const IconNavMenu: React.FC = () => {
       label: "Administrar Sitios",
       icon: MapPinned,
       action: go.sites.list,
-      matches: (p) => p.includes("/dashboard/site"),
+      matches: (p) => p.includes("/dashboard/sitios"),
       color: "text-blue-600",
     },
     {
@@ -87,7 +87,7 @@ const IconNavMenu: React.FC = () => {
       label: "Importar Excel",
       icon: Upload,
       action: go.excel.import,
-      matches: (p) => p.includes("/dashboard/import/excel"),
+      matches: (p) => p.includes("/dashboard/importar/excel"),
       color: "text-indigo-600",
     },
     {
@@ -95,7 +95,7 @@ const IconNavMenu: React.FC = () => {
       label: "Exportar Excel",
       icon: FileSpreadsheet,
       action: go.excel.export,
-      matches: (p) => p.includes("/dashboard/export/excel"),
+      matches: (p) => p.includes("/dashboard/exportar/excel"),
       color: "text-green-600",
     },
     {
@@ -325,25 +325,6 @@ const IconNavMenu: React.FC = () => {
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
               className="group relative w-full flex items-center rounded-xl border border-white/60 backdrop-blur-xl bg-gradient-to-r from-slate-200/40 to-slate-300/40 hover:from-red-100/60 hover:to-red-200/60 hover:border-red-300/70"
             >
-              <motion.div 
-                className="p-3"
-                whileHover={{ rotate: 180 }}
-                transition={{ duration: 0.3 }}
-              >
-                <LogOut className="w-5 h-5 text-white group-hover:text-red-700" />
-              </motion.div>
-              <AnimatePresence>
-                {hovered && (
-                  <motion.span
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    className="text-sm font-semibold text-white group-hover:text-red-700 pr-4"
-                  >
-                    Cerrar / Volver
-                  </motion.span>
-                )}
-              </AnimatePresence>
               {!hovered && (
                 <motion.span
                   initial={{ opacity: 0, x: -5 }}

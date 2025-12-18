@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getTotalAcumuladoPorZona, getTopZonasPorRegistro } from '@features/zona/services';
+import { getTotalAcumuladoPorZona, getTopZonasPorRegistro } from '@features/zone/services';
 import {
   getReportesPorInstrumento,
   getDistribucionPorTipo,
@@ -10,9 +10,6 @@ import {
   getComparativaAnual,
   invalidateEstadisticasCache,
 } from '@features/Charts/services';
-
-
-// 80/20: concentrar toda la lógica de carga y estados aquí para aligerar showCharts.tsx
 
 const ensureArray = (data: any) => {
   if (Array.isArray(data)) return data;
@@ -38,16 +35,16 @@ export function useChartsData() {
   const [totalesComparativa, setTotalesComparativa] = useState<any>(null);
   const [configuracionComparativa, setConfiguracionComparativa] = useState<any>(null);
 
-  // Periodos y filtros
-  const [periodoPrecipitacion, setPeriodoPrecipitacion] = useState('todos');
-  const [periodoTopZonas, setPeriodoTopZonas] = useState('anio');
-  const [periodoDistribucion, setPeriodoDistribucion] = useState('todos');
-  const [periodoEvolucion, setPeriodoEvolucion] = useState('anio');
-  const [periodoCoordenadas, setPeriodoCoordenadas] = useState('todos');
+  // Periodos y filtros - Configurados a trimestre (3 meses) por defecto
+  const [periodoPrecipitacion, setPeriodoPrecipitacion] = useState('trimestre');
+  const [periodoTopZonas, setPeriodoTopZonas] = useState('trimestre');
+  const [periodoDistribucion, setPeriodoDistribucion] = useState('trimestre');
+  const [periodoEvolucion, setPeriodoEvolucion] = useState('trimestre');
+  const [periodoCoordenadas, setPeriodoCoordenadas] = useState('trimestre');
   const [tipoEventoCoordenadas, setTipoEventoCoordenadas] = useState<string | undefined>();
-  const [periodoPatronMensual, setPeriodoPatronMensual] = useState('anio');
+  const [periodoPatronMensual, setPeriodoPatronMensual] = useState('trimestre');
   const [tipoEventoPatronMensual, setTipoEventoPatronMensual] = useState<string | undefined>();
-  const [periodoAnalisisFrecuencia, setPeriodoAnalisisFrecuencia] = useState('anio');
+  const [periodoAnalisisFrecuencia, setPeriodoAnalisisFrecuencia] = useState('trimestre');
   const [rangoAnalisisFrecuencia, setRangoAnalisisFrecuencia] = useState(10);
   const [selectedYearsComparativa, setSelectedYearsComparativa] = useState<number[]>([]);
 
@@ -59,9 +56,8 @@ export function useChartsData() {
 
   const fetchPrecipitacion = useCallback(async () => {
     try {
-      const zonasData = await getTotalAcumuladoPorZona(periodoPrecipitacion);
-      const zonasArray = ensureArray(zonasData);
-      const zonasFormateadas = zonasArray.map((zona: any) => ({
+      const zonasData = ensureArray(await getTotalAcumuladoPorZona(periodoPrecipitacion));
+      const zonasFormateadas = zonasData.map((zona: any) => ({
         zona: zona.locality || zona.nombre || 'Sin nombre',
         precipitacion: parseFloat((parseFloat(zona.total_acumulado) || 0).toFixed(2)),
       }));

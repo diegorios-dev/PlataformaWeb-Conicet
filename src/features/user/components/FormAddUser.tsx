@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { postNewUser } from "@features/user/services";
-import { getAllSitios } from "@features/site/services";
+import { getAllSites } from "@features/site/services";
 import { useNavegation } from "@shared/hooks";
 import { validateUserData } from "@shared/utils/validators";
 import { DashboardLayout } from "@shared/ui/layouts/DashboardLayout/DashboardLayout";
@@ -42,7 +42,7 @@ const FormAddUser = () => {
 
   const fetchSitios = async () => {
     try {
-      const data = await getAllSitios();
+      const data = await getAllSites();
       setSitios(data);
     } catch (error) {
     }

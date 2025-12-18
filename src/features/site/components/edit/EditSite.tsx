@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getSiteById, updateSite, type Site } from "@features/site/services/siteService";
-import { getAllZonas } from "@features/zona/services";
+import { getSiteById, updateSite, type Site } from "@features/site/services";
+import { getAllZonas } from "@features/zone/services";
 import { getAllEvents, type Event } from "@features/event/services";
 import Toast from "@shared/ui/Loading/Toast";
 import BackButton from "@shared/ui/buttons/BackButton";
@@ -405,9 +405,24 @@ const EditSite = () => {
       setToastMessage("Sitio actualizado exitosamente");
       setToastOpen(true);
       setTimeout(() => {
-        navigate("/dashboard/site");
+        navigate("/dashboard/sitios");
       }, 2000);
-    } catch (error: unknown) {
+    } catch (error: any) {
+      setSubmitting(false);
+      
+      // Detectar error de validación (422 Unprocessable Content)
+      if (error?.response?.status === 422) {
+        const validationErrors = error?.response?.data?.errors || error?.response?.data?.message;
+        const errorMsg = typeof validationErrors === 'string' 
+          ? validationErrors 
+          : 'Error de validación. Verifica los datos ingresados.';
+        setToastType("error");
+        setToastMessage(errorMsg);
+        setToastOpen(true);
+        return;
+      }
+      
+      // Error genérico
       const err = error as {message?: string};
       setToastType("error");
       setToastMessage(err.message || "Error al actualizar el sitio");

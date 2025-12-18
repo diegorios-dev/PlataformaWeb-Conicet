@@ -140,10 +140,14 @@ const ShowCharts = () => {
           'day': 'Último día',
           'week': 'Última semana',
           'month': 'Último mes',
+          'trimestre': 'Últimos 3 meses',
+          '6meses': 'Últimos 6 meses',
           'year': 'Último año',
+          'anio': 'Último año',
+          'año': 'Último año',
+          '5anios': 'Últimos 5 años',
+          '10anios': 'Últimos 10 años',
           'all': 'Todos',
-          'anio': 'Año actual',
-          'año': 'Año actual',
           'todos': 'Todos'
         };
         return periods[periodo] || periodo;

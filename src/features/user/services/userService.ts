@@ -1,9 +1,7 @@
-import axios from "axios";
-import { API_URL } from "@config/api";
+import { httpGet, httpPost, httpPut, httpDelete, httpPublic } from '@shared/services';
+import { tokenService } from '@shared/services';
 import { devLog, getErrorMessage } from "@shared/utils/errorHandler";
 import { validateUserData } from "@shared/utils/validators";
-
-const API_URL_SERVICE = API_URL;
 
 export const postNewUser = async (newUser) => {
   try {
@@ -22,7 +20,7 @@ export const postNewUser = async (newUser) => {
       zona_id: Number(newUser.zona_id)
     };
 
-    const { data } = await axios.post(`${API_URL_SERVICE}/user/register`, payload);
+    const data = await httpPost(`/v1/users`, payload);
     
     if (!data) {
       throw new Error('Respuesta inválida del servidor');
@@ -37,12 +35,21 @@ export const postNewUser = async (newUser) => {
 
 export const login = async (password) => {
   try {
-    const { data } = await axios.post(`${API_URL_SERVICE}/auth/login`, {
+    const data = await httpPublic.post(`/v1/auth/login`, {
       password, 
     });
     
     if (!data) {
       throw new Error('Respuesta inválida del servidor');
+    }
+    
+    // Store JWT token - support both 'token' and 'access_token' from backend
+    const token = data.token
+
+    if (token) {
+      tokenService.setToken(token);
+    } else {
+      console.warn('⚠️ Backend response does not contain token or access_token:', data);
     }
     
     return data;
@@ -54,7 +61,7 @@ export const login = async (password) => {
 
 export const getAllUsers = async () => {
   try {
-    const { data } = await axios.get(`${API_URL_SERVICE}/usuarios`);
+    const data = await httpGet(`/v1/users`);
     
     // El backend retorna {users: [...]} o directamente un array
     // Retornar data tal cual para que el componente maneje la estructura
@@ -67,7 +74,7 @@ export const getAllUsers = async () => {
 
 export const getUsersByWord = async (word = "") => {
   try {
-    const { data } = await axios.get(`${API_URL_SERVICE}/usuario?word=${encodeURIComponent(word)}`);
+    const data = await httpGet(`/v1/users/search?word=${encodeURIComponent(word)}`);
     
     // El backend retorna {users: [...]} o directamente un array
     // Retornar data tal cual para que el componente maneje la estructura
@@ -100,7 +107,7 @@ export const saveUser = async (user : any) => {
       zona_id: user.zona_id ? Number(user.zona_id) : null, // Enviar null si no tiene zona
     };
 
-    const { data } = await axios.put(`${API_URL_SERVICE}/usuario/${user.id}`, payload);
+    const data = await httpPut(`/v1/users/${user.id}`, payload);
     
     if (!data) {
       throw new Error('Respuesta inválida del servidor');
@@ -115,7 +122,7 @@ export const saveUser = async (user : any) => {
 
 export const deleteUser = async (userId : any) => {
   try {
-    const { data } = await axios.delete(`${API_URL_SERVICE}/usuario/${userId}`);
+    const data = await httpDelete(`/v1/users/${userId}`);
     
     if (!data) {
       throw new Error('Respuesta inválida del servidor');

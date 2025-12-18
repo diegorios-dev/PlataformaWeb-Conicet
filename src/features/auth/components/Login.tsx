@@ -3,11 +3,10 @@ import { useAuth } from "../context/AuthContext";
 import { useNavegation } from "@shared/hooks";
 import { storageService } from '@shared/services';
 import { Lock, LogIn, LogOut, ArrowLeft, AlertCircle } from "lucide-react";
-
-// Ruta absoluta para assets en /public/
-const img = "/assets/logo-CONICET_opt.png";
+import { logoConicet } from "../../../assets";
 
 const Login = () => {
+  
   const { password, handleSavePassword, fetchGetUserByPassword, isLogin, error, loading } = useAuth();
 
   const { go } = useNavegation();
@@ -106,7 +105,7 @@ const Login = () => {
       >
         <div className="flex flex-col items-center text-white animate-float">
           <img
-            src={img}
+            src={logoConicet}
             alt="CONICET"
             className="w-40 mb-6 drop-shadow-2xl animate-fade-in-slow"
           />
@@ -134,7 +133,7 @@ const Login = () => {
               <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="text-sm font-semibold text-red-900 mb-1">Error de autenticación</p>
-                <p className="text-xs text-red-700">{error}</p>
+                <p className="text-xs text-red-700">Ingrese otra contraseña</p>
               </div>
             </div>
           )}
@@ -182,141 +181,6 @@ const Login = () => {
           </button>
         </form>
       </div>
-
-      {/* CSS Animations */}
-      <style>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-
-        @keyframes fadeInSlow {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        @keyframes widthExpand {
-          from {
-            width: 0;
-          }
-          to {
-            width: 8rem;
-          }
-        }
-
-        @keyframes slideUpFade {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes scaleIn {
-          from {
-            transform: scale(0.8);
-            opacity: 0;
-          }
-          to {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-
-        @keyframes bounceIn {
-          0% {
-            transform: scale(0);
-          }
-          50% {
-            transform: scale(1.1);
-          }
-          100% {
-            transform: scale(1);
-          }
-        }
-
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-
-        .animate-fade-in-slow {
-          animation: fadeInSlow 1s ease-out forwards;
-        }
-
-        .animate-width-expand {
-          animation: widthExpand 1s ease-out 0.5s forwards;
-        }
-
-        .animate-slide-up-fade {
-          animation: slideUpFade 0.6s ease-out 0.3s forwards;
-          opacity: 0;
-        }
-
-        .animate-fade-in {
-          animation: fadeIn 0.5s ease-out forwards;
-        }
-
-        .animate-scale-in {
-          animation: scaleIn 0.5s ease-out forwards;
-        }
-
-        .animate-bounce-in {
-          animation: bounceIn 0.6s ease-out forwards;
-        }
-
-        .animate-shake {
-          animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes shake {
-          0%, 100% {
-            transform: translateX(0);
-          }
-          10%, 30%, 50%, 70%, 90% {
-            transform: translateX(-5px);
-          }
-          20%, 40%, 60%, 80% {
-            transform: translateX(5px);
-          }
-        }
-
-        @keyframes slide-down {
-          from {
-            opacity: 0;
-            transform: translate(-50%, -20px);
-          }
-          to {
-            opacity: 1;
-            transform: translate(-50%, 0);
-          }
-        }
-
-        .animate-slide-down {
-          animation: slide-down 0.4s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 };

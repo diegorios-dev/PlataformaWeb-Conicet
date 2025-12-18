@@ -1,6 +1,7 @@
+import { memo, useCallback } from "react";
 import { SearchCheck , Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { Site } from "../../services/siteService";
+import type { Site } from "../../services";
 
 interface SiteTableProps {
   sites: Site[];
@@ -10,18 +11,20 @@ interface SiteTableProps {
   deletingId?: number;
 }
 
-export const SiteTable = ({
+// ✅ OPTIMIZACIÓN: Componente memoizado
+export const SiteTable = memo(function SiteTable({
   sites,
   onEdit,
   onDelete,
   deleting,
   deletingId,
-}: SiteTableProps) => {
+}: SiteTableProps) {
   const navigate = useNavigate();
 
-  const handleEditClick = (site: Site) => {
-    navigate(`/dashboard/site/edit/${site.id}`);
-  };
+  // ✅ OPTIMIZACIÓN: Memoizar handleEditClick con useCallback
+  const handleEditClick = useCallback((site: Site) => {
+    navigate(`/dashboard/sitios/editar/${site.id}`);
+  }, [navigate]);
 
   return (
     <div className="bg-white/90 backdrop-blur-md border-2 border-slate-200 rounded-3xl shadow-xl overflow-hidden">
@@ -129,10 +132,7 @@ export const SiteTable = ({
                           />
                         </svg>
                       ) : (
-                        <Trash2
-                          size={14}
-                          className="transition-transform group-hover:scale-110"
-                        />
+                        <Trash2 size={18} className="text-black-500" />
                       )}
                       {deleting && deletingId === sitio.id ? "..." : "Eliminar"}
                     </button>
@@ -145,4 +145,4 @@ export const SiteTable = ({
       </div>
     </div>
   );
-};
+});

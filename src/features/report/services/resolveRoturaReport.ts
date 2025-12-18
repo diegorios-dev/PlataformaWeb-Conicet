@@ -18,7 +18,7 @@ export interface ResolveRoturaError {
 export const resolveRoturaReport = async ( breakageInstrumentId: number): Promise<ResolveRoturaResponse> => {
 
   try {
-    const response = await fetch(`${API_URL}/reportes/rotura/${breakageInstrumentId}/resolve`, {
+    const response = await fetch(`${API_URL}/v1/breakage-reports/${breakageInstrumentId}`, {
       method: "DELETE",
     });
     const data = await response.json();

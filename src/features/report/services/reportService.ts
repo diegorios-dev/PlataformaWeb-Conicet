@@ -1,27 +1,47 @@
 // services/reportes.ts (CORRECCIÓN)
 
-import axios from "axios";
-import { API_URL } from "@config/api";
+import { httpGet, httpPost, httpPut, httpDelete } from "@shared/services";
 import { invalidateEstadisticasCache } from "@features/Charts/services";
 import { devLog } from "@shared/utils/errorHandler";
 
-const API_URL_SERVICE = API_URL;
+export interface PaginatedReports {
+  current_page: number;
+  data: any[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
+}
 
-export const getReportes = async (order: 'asc' | 'desc' = 'asc') => {
-  const { data } = await axios.get(`${API_URL_SERVICE}/reportes`, {
-    params: { order }
+export interface ReportsParams {
+  order?: 'asc' | 'desc';
+  page?: number;
+  per_page?: number;
+}
+
+export const getReportes = async (params: ReportsParams = {}) => {
+  const { order = 'asc', page = 1, per_page = 15 } = params;
+  
+  const data = await httpGet<PaginatedReports>(`/v1/reports`, {
+    params: { order, page, per_page }
   });
   return data;
 };
 
 export const updateReporte = async (id: number, data: any) => {
   try {   
-    const response = await axios.put(`${API_URL_SERVICE}/reportes/${id}`, data);
+    const response = await httpPut(`/v1/reports/${id}`, data);
     
     // Invalidar cache de estadísticas cuando se actualiza un reporte
     invalidateEstadisticasCache();
     
-    return response.data;
+    return response;
   } catch (error: unknown) {
     throw error;
   }
@@ -33,7 +53,7 @@ export const updateReporte = async (id: number, data: any) => {
  */
 export const createReporteRotura = async (data: FormData) => {
   try {
-    const response = await axios.post(`${API_URL_SERVICE}/reportes/rotura`, data, {
+    const response = await httpPost(`/v1/breakage-reports`, data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -42,7 +62,7 @@ export const createReporteRotura = async (data: FormData) => {
     // Invalidar cache de estadísticas cuando se crea un reporte
     invalidateEstadisticasCache();
     
-    return response.data;
+    return response;
   } catch (error: unknown) {
     throw error;
   }
@@ -54,12 +74,12 @@ export const createReporteRotura = async (data: FormData) => {
  */
 export const resolveReporteRotura = async (id: number) => {
   try {
-    const response = await axios.delete(`${API_URL_SERVICE}/reportes/rotura/${id}/resolve`);
+    const response = await httpDelete(`/v1/breakage-reports/${id}`);
     
     // Invalidar cache de estadísticas cuando se resuelve un reporte
     invalidateEstadisticasCache();
     
-    return response.data;
+    return response;
   } catch (error: unknown) {
     throw error;
   }
@@ -105,14 +125,8 @@ export async function getHistograma(
       params.append('month', month.toString());
     }
     
-    const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
-    const res = await fetch(url);
-    
-    if (!res.ok) {
-      throw new Error(`Error al obtener histograma: ${res.status}`);
-    }
-
-    const json = await res.json();
+    const url = `/v1/reports/stats/histogram-temporal?${params.toString()}`;
+    const json = await httpGet(url);
     
     // Validar que tenga la estructura esperada
     if (!json.success || !json.data) {
@@ -158,14 +172,8 @@ export async function getHistogramaNieve(
     if (year) params.append('year', year.toString());
     if (month && periodo === 'dia') params.append('month', month.toString());
     
-    const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
-    const res = await fetch(url);
-    
-    if (!res.ok) {
-      throw new Error(`Error al obtener histograma de nieve: ${res.status}`);
-    }
-
-    const json = await res.json();
+    const url = `/v1/reports/stats/histogram-temporal?${params.toString()}`;
+    const json = await httpGet(url);
     
     if (!json.success || !json.data) {
       devLog.warn('Respuesta sin datos válidos para nieve', json);
@@ -209,14 +217,8 @@ export async function getHistogramaCaudalimetro(
     if (year) params.append('year', year.toString());
     if (month && periodo === 'dia') params.append('month', month.toString());
     
-    const url = `${API_URL_SERVICE}/histograma-temporal?${params.toString()}`;
-    const res = await fetch(url);
-    
-    if (!res.ok) {
-      throw new Error(`Error al obtener histograma de caudal: ${res.status}`);
-    }
-
-    const json = await res.json();
+    const url = `/v1/reports/stats/histogram-temporal?${params.toString()}`;
+    const json = await httpGet(url);
     
     if (!json.success || !json.data) {
       devLog.warn('Respuesta sin datos válidos para caudal', json);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getAllZonas } from "@features/zona/services";
-import { getAllSitios } from "@features/site/services";
+import { getAllZonas } from "@/features/zone/services";
+import { getAllSites } from "@features/site/services";
 
 export function useSitiosYzonas(reportSiteId?: number) {
   
@@ -29,7 +29,7 @@ export function useSitiosYzonas(reportSiteId?: number) {
 
   const loadSitios = async () => {
     try {
-      const data = await getAllSitios();
+      const data = await getAllSites();
       setSitios(data);
     } catch {
       setError("Error al cargar los sitios");

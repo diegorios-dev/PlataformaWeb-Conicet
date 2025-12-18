@@ -1,6 +1,6 @@
 // src/components/MapHTML.tsx
-import { useState, useMemo } from "react";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import { tileConfigs } from "../constants/tileConfigs";
 import { YearPicker } from "@shared/ui/molecules/YearPicker";
 import { BaseMapSelector } from "./BaseMapSelector";
@@ -69,6 +69,32 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
     ? validPositions[0].coordenadas 
     : [-38.95, -68.06]; // Neuquén, Argentina
 
+  // Componente para invalidar el tamaño del mapa cuando cambia el contenedor
+  function MapResizeHandler() {
+    const map = useMap();
+    
+    useEffect(() => {
+      // Invalidar tamaño cuando el componente se monta
+      const timer = setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
+
+      // Agregar listener para resize de ventana
+      const handleResize = () => {
+        map.invalidateSize();
+      };
+
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('resize', handleResize);
+      };
+    }, [map]);
+
+    return null;
+  }
+
   return (
     <div className="relative w-full h-full">
       <YearPicker 
@@ -81,6 +107,7 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
       <BaseMapSelector 
         baseMap={baseMap} 
         setBaseMap={(value) => setBaseMap(value as 'original' | 'vegetacion' | 'topografia')} 
+        positionClasses="top-40 right-4"
       />
 
       <MapContainer 
@@ -95,6 +122,7 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
         maxBoundsViscosity={1.0}
         worldCopyJump={false}
       >
+        <MapResizeHandler />
         <TileLayer
           attribution={tileConfigs[baseMap].attribution}
           url={tileConfigs[baseMap].url}

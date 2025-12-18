@@ -1,11 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useReports } from "@features/report/hooks";
 import { useNavegation as useNavigation } from "@shared/hooks";
 import { buildAudioUrl, buildImageUrl } from "@shared/utils/urlBuilder";
 import { useZonas } from "../../hooks/useZonas";
 import { useAudioPlayer } from "../../hooks/useAudioPlayer";
 import { useImageModal } from "../../hooks/useImageModal";
-import { filterByType, filterByPrecipitation, filterByZona, filterBySearch, sortByDate } from "../../utils/reportFilters";
+import { filterByType, filterByPrecipitation, filterByZona, filterBySearch } from "../../utils/reportFilters";
 import { ArrowUpDown, ArrowDown, ArrowUp } from "lucide-react";
 import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 import type { Report } from "@features/report/types";
@@ -19,38 +19,53 @@ import { ReportList } from "./ReportList";
 import { ImageModal } from "./ImageModal";
 import { EmptyReportsState } from "@shared/ui/Loading";
 import { LoadingSpinner, ErrorState } from "@shared/ui/Loading/index";
+import { PaginationControls } from "./PaginationControls";
 
 const ShowReport = () => {
   const { go } = useNavigation();
-  const { reports, loading, error } = useReports(); // Sin orden inicial, se ordena en frontend
+  const { 
+    reports, 
+    loading, 
+    error, 
+    pagination, 
+    currentParams,
+    goToPage, 
+    changePerPage, 
+    changeOrder 
+  } = useReports();
 
-  // Filtros
+  // Filtros (ahora solo para filtrado en el cliente)
+  // ⚠️ NOTA: Estos filtros se aplican DESPUÉS de la paginación del backend
+  // Para mejor UX, considera moverlos al backend
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterPrecipitation, setFilterPrecipitation] = useState("all");
   const [filterZona, setFilterZona] = useState("all");
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   // Hooks externos
   const zonas = useZonas();
   const { play, stop } = useAudioPlayer();
   const { openModal, open, closeModal, image } = useImageModal();
 
-  const handleEditClick = (reporte: Report) => {
+  // ✅ OPTIMIZACIÓN: Memoizar handleEditClick
+  const handleEditClick = useCallback((reporte: Report) => {
     go.reports.edit(reporte);
     if (reporte.type === "rotura") go.reports.resolveRotura();
-  };
+  }, [go.reports]);
 
-  // filtrado y ordenamiento optimizado
+  // ✅ OPTIMIZACIÓN: Memoizar funciones de URL builders
+  const memoizedBuildImageUrl = useCallback(buildImageUrl, []);
+  const memoizedBuildAudioUrl = useCallback(buildAudioUrl, []);
+
+  // filtrado optimizado (sin sorting, se hace en backend)
   const filtered = useMemo(() => {
     let result = [...reports];
     result = filterByType(result, filterType);
     result = filterByPrecipitation(result, filterPrecipitation);
     result = filterByZona(result, filterZona);
     result = filterBySearch(result, search);
-    result = sortByDate(result, sortOrder);
     return result;
-  }, [reports, search, filterType, filterPrecipitation, filterZona, sortOrder]);
+  }, [reports, search, filterType, filterPrecipitation, filterZona]);
 
   // Verificar si hay filtros activos
   const hasActiveFilters = useMemo(() => {
@@ -60,13 +75,14 @@ const ShowReport = () => {
        filterZona !== "all";
   }, [search, filterType, filterPrecipitation, filterZona]);
 
-  // Función para limpiar filtros
-  const clearFilters = () => {
+  // ✅ OPTIMIZACIÓN: Función para limpiar filtros + resetear página
+  const clearFilters = useCallback(() => {
     setSearch("");
     setFilterType("all");
     setFilterPrecipitation("all");
     setFilterZona("all");
-  };
+    goToPage(1); // Resetear a página 1
+  }, [goToPage]);
 
   return (
    <DashboardLayout contentClassName="">
@@ -108,7 +124,7 @@ const ShowReport = () => {
 
           {/* Resultados y ordenamiento */}
           <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-            <Badge count={filtered.length} />
+            <Badge count={pagination?.total || filtered.length} />
             
             <div className="space-y-2 min-w-[240px] relative z-50">
               <label className="flex items-center gap-2 text-xs font-semibold text-slate-600">
@@ -130,8 +146,8 @@ const ShowReport = () => {
                     icon: <ArrowUp className="w-4 h-4" /> 
                   }
                 ]}
-                value={sortOrder}
-                onChange={(value) => setSortOrder(value as 'asc' | 'desc')}
+                value={currentParams.order || 'desc'}
+                onChange={(value) => changeOrder(value as 'asc' | 'desc')}
                 placeholder="Ordenar por fecha"
                 icon={<ArrowUpDown className="w-5 h-5" />}
               />
@@ -146,15 +162,33 @@ const ShowReport = () => {
             onClearFilters={hasActiveFilters ? clearFilters : undefined}
           />
         ) : (
-          <ReportList
-            reports={filtered}
-            onImageClick={openModal}
-            onAudioPlay={play}
-            onAudioPause={stop}
-            onEdit={handleEditClick}
-            buildImageUrl={buildImageUrl}
-            buildAudioUrl={buildAudioUrl}
-          />
+          <>
+            <ReportList
+              reports={filtered}
+              onImageClick={openModal}
+              onAudioPlay={play}
+              onAudioPause={stop}
+              onEdit={handleEditClick}
+              buildImageUrl={memoizedBuildImageUrl}
+              buildAudioUrl={memoizedBuildAudioUrl}
+            />
+
+            {/* Pagination controls */}
+            {pagination && (
+              <div className="mt-6">
+                <PaginationControls
+                  currentPage={pagination.current_page}
+                  lastPage={pagination.last_page}
+                  total={pagination.total}
+                  perPage={pagination.per_page}
+                  from={pagination.from}
+                  to={pagination.to}
+                  onPageChange={goToPage}
+                  onPerPageChange={changePerPage}
+                />
+              </div>
+            )}
+          </>
         )}
 
         <ImageModal open={open} image={image} onClose={closeModal} />

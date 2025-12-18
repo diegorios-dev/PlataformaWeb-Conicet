@@ -1,6 +1,6 @@
 import { AlertCircle, Locate, MapPin, Mountain, Save } from "lucide-react";
 import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
-import type { Site } from "@features/site/services/siteService";
+import type { Site } from "@features/site/services";
 import type { Event } from "@features/event/services";
 import type { JSX } from "react";
 import ResumenCambios from "./ResumenCambios";
