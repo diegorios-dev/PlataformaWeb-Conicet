@@ -49,8 +49,8 @@ const Dashboard = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  src={conicet} 
-                  alt="CONICET Logo" 
+                  src={logoConicet} 
+                  alt="logoConicet Logo" 
                   className="h-12 md:h-16 w-16 object-contain" 
                 />
                 
@@ -67,8 +67,8 @@ const Dashboard = () => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  src={unco} 
-                  alt="UNCO Logo" 
+                  src={logoUnco} 
+                  alt="logoUnco Logo" 
                   className="h-12 md:h-16 w-auto object-contain" 
                 />
               </div>
