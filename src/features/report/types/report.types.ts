@@ -48,6 +48,17 @@ export interface BreakageInstrument {
   description_damage: string;
 }
 
+export interface Event {
+  id: number;
+  type: string;
+}
+
+export interface User {
+  id: number;
+  name: string;
+  rol: string;
+}
+
 export interface Report {
   id: number;
   date: string;
@@ -56,6 +67,8 @@ export interface Report {
   audio?: string;
   type: 'regular' | 'rotura';
   site: Site;
+  event?: Event;
+  user?: User;
   report_regular?: ReportRegular;
   breakage_instrument?: BreakageInstrument;
 }

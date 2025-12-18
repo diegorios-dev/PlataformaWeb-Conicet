@@ -13,9 +13,10 @@ interface Props {
   reports?: SiteData | null;
   status?: SiteStatus | null;
   selectedYear?: number | null;
+  userRole?: string;
 }
 
-export const MarkerSite: React.FC<Props> = ({ site, reports, status, selectedYear }) => {
+export const MarkerSite: React.FC<Props> = ({ site, reports, status, selectedYear, userRole }) => {
   const totalAmount = reports?.totalAmount || 0;
   const lastReportAmount = reports?.lastReportAmount || 0;
 
@@ -31,6 +32,11 @@ export const MarkerSite: React.FC<Props> = ({ site, reports, status, selectedYea
 
   // Un sitio está saludable solo si status es true Y NO tiene instrumentos averiados
   const isHealthy = status?.status !== false && !status?.tiene_instrumentos_averiados;
+  
+  // Si no es admin y el sitio no está saludable, no mostrar el marcador
+  if (userRole !== 'admin' && !isHealthy) {
+    return null;
+  }
 
   return (
     <Marker position={site.coordenadas} icon={getModernMarkerIcon(site.tipo, isHealthy)}>

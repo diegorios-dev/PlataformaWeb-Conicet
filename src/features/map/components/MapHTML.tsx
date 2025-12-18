@@ -14,7 +14,7 @@ import { isValidCoordinate } from "@shared/utils/coordinateValidation";
 import type { MapHTMLProps } from "../types/interfaces";
 
 
-export default function MapHTML({ position, loading: externalLoading }: MapHTMLProps) {
+export default function MapHTML({ position, loading: externalLoading, userRole }: MapHTMLProps) {
   
   const [baseMap, setBaseMap] = useState<'original' | 'vegetacion' | 'topografia'>('vegetacion');
   const { availableYears, selectedYear, setSelectedYear } = useAvailableYears();
@@ -136,6 +136,7 @@ export default function MapHTML({ position, loading: externalLoading }: MapHTMLP
             reports={siteReports?.get(site.idSitio) ?? null}
             status={siteStatus?.get(site.idSitio) ?? null}
             selectedYear={selectedYear}
+            userRole={userRole}
           />
         ))}
       </MapContainer>

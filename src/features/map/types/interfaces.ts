@@ -11,6 +11,7 @@ export interface MapHTMLProps {
   position: Coord[];
   loading?: boolean;
   error?: any;
+  userRole?: string;
 }
 
 export interface SiteData {

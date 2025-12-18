@@ -32,7 +32,7 @@ export const ReportCard = ({
       <ReportCardHeader 
         id={reporte.id} 
         type={reporte.type} 
-        eventId={reporte.site?.event_id} 
+        event={reporte.event} 
       />
 
       <div className="p-6 flex flex-col flex-1 gap-4">

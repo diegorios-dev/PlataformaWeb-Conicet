@@ -1,28 +1,29 @@
 import { AlertTriangle, Droplet, Snowflake, Waves } from "lucide-react";
+import type { Event } from "@features/report/types";
 
 interface ReportCardHeaderProps {
   id: number;
   type: string;
-  eventId?: number;
+  event?: Event;
 }
 
-export const ReportCardHeader = ({ id, type, eventId }: ReportCardHeaderProps) => {
+export const ReportCardHeader = ({ id, type, event }: ReportCardHeaderProps) => {
   const getEventIcon = () => {
-    if (eventId === 1) {
+    if (event?.id === 1) {
       return (
         <div className="bg-blue-100 p-3 rounded-xl shadow-md shadow-blue-500/20">
           <Droplet className="w-6 h-6 text-blue-600" />
         </div>
       );
     }
-    if (eventId === 2) {
+    if (event?.id === 2) {
       return (
         <div className="bg-cyan-100 p-3 rounded-xl shadow-md shadow-cyan-500/20">
           <Snowflake className="w-6 h-6 text-cyan-600" />
         </div>
       );
     }
-    if (eventId === 3) {
+    if (event?.id === 3) {
       return (
         <div className="bg-teal-100 p-3 rounded-xl shadow-md shadow-teal-500/20">
           <Waves className="w-6 h-6 text-teal-600" />

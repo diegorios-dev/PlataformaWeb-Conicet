@@ -22,7 +22,7 @@ const Home = () => {
   const [selectOptionMenu, setSelectOptionMenu] = useState("Lluvia");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { sitios, loading, error } = useSitio(selectOptionMenu);
-  const { isLogin, getUsername } = useAuth();
+  const { isLogin, getUsername, user } = useAuth();
   const { go } = useNavegation();
 
   const showWelcome = useWelcomeMessage(isLogin);
@@ -264,7 +264,7 @@ const Home = () => {
           </div>
         ) : (
           <div className="w-full h-full overflow-hidden shadow-xl pl-3">
-            <MapHTML position={pointsMap} loading={loading} />
+            <MapHTML position={pointsMap} loading={loading} userRole={user?.rol} />
           </div>
         )}
       </main>
