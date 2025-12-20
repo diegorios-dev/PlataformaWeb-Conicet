@@ -1,7 +1,7 @@
 import { useState, memo } from "react";
 import type { ReactNode } from "react";
 import { HelpCircle, ChevronDown, Check, Database, CalendarDays, CalendarClock, CalendarRange, TrendingUp as TrendingUpIcon } from "lucide-react";
-import { logoConicet } from "../../../../assets";
+import { logoConicet } from "../../../../assets/index";
 
 interface CardProps {
   title: string;
@@ -150,7 +150,7 @@ const Card = memo(({
           {showWatermark && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10">
               <img 
-                src={img} 
+                src={logoConicet} 
                 alt="Watermark"
                 className="w-27 h-20 opacity-70"
                 style={{ 
