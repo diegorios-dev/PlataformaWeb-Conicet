@@ -1,15 +1,25 @@
 import { httpGet, httpPost, httpDelete } from "@shared/services";
+import { getCachedData, cache } from "@shared/utils/simpleCache";
+
+const MAESTROS_TTL = 10 * 60 * 1000; // 10 minutos (datos relativamente estables)
 
 /**
- * Obtiene todos los instrumentos disponibles
+ * Obtiene todos los instrumentos disponibles (con cache)
+ * Cache: 10 minutos (datos relativamente estables)
  */
 export const getAllInstruments = async () => {
-  try {
-    const data = await httpGet(`/v1/instruments`);
-    return data;
-  } catch (error) {
-    throw error;
-  }
+  return getCachedData(
+    'maestros:instruments',
+    async () => {
+      try {
+        const data = await httpGet(`/v1/instruments`);
+        return data;
+      } catch (error) {
+        throw error;
+      }
+    },
+    MAESTROS_TTL
+  );
 };
 
 /**

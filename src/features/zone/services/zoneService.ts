@@ -1,10 +1,11 @@
 import { httpGet, httpPost, httpPut, httpDelete } from "@shared/services";
 import { invalidateEstadisticasCache } from "@features/Charts/services";
-import { getCachedData } from "@shared/utils/simpleCache";
+import { getCachedData, cache } from "@shared/utils/simpleCache";
 import { validateZonaData } from "@shared/utils/validators";
 import { devLog, getErrorMessage } from "@shared/utils/errorHandler";
 
 const DEFAULT_TTL = 5 * 60 * 1000; // 5 minutos
+const MAESTROS_TTL = 10 * 60 * 1000; // 10 minutos (datos más estables)
 
 
 export const postNewZona = async (newZona: { locality: string }) => {
@@ -34,6 +35,7 @@ export const postNewZona = async (newZona: { locality: string }) => {
     const data = await httpPost(`/v1/zones`, payload);
     
     // Invalidar cache cuando se crea una nueva zona
+    cache.invalidate('maestros:zonas');
     invalidateEstadisticasCache();
     
     return data;
@@ -42,13 +44,23 @@ export const postNewZona = async (newZona: { locality: string }) => {
   }
 };
 
+/**
+ * Obtiene todas las zonas del sistema (con cache)
+ * Cache: 10 minutos (datos relativamente estables)
+ */
 export const getAllZonas = async () => {
-  try {
-    const data = await httpGet(`/v1/zones`);
-    return data;
-  } catch (error) {
-    throw error;
-  }
+  return getCachedData(
+    'maestros:zonas',
+    async () => {
+      try {
+        const data = await httpGet(`/v1/zones`);
+        return data;
+      } catch (error) {
+        throw error;
+      }
+    },
+    MAESTROS_TTL
+  );
 };
 
 export const getZonaByLocality = async (zona: string) => {
@@ -107,7 +119,10 @@ export const updateZona = async (id: string | number, zonaData: { locality: stri
     };
 
     const data = await httpPut(`/v1/zones/${id}`, payload);
+    
+    cache.invalidate('maestros:zonas');
     invalidateEstadisticasCache();
+    
     return data;
   } catch (error) {
     devLog.error(`Error actualizando zona ${id}`, error);
@@ -118,7 +133,10 @@ export const updateZona = async (id: string | number, zonaData: { locality: stri
 export const deleteZona = async (id: string) => {
   try {
     const data = await httpDelete(`/v1/zones/${id}`);
+    
+    cache.invalidate('maestros:zonas');
     invalidateEstadisticasCache();
+    
     return data;
   } catch (error) {
     throw error;

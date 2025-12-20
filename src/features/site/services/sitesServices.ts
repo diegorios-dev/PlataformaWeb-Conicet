@@ -1,5 +1,6 @@
 import { httpGet, httpPost, httpPut, httpDelete } from "@shared/services";
 import { invalidateEstadisticasCache } from "@features/Charts/services";
+import { getCachedData, cache } from "@shared/utils/simpleCache";
 import { devLog, getErrorMessage } from "@shared/utils/errorHandler";
 import { 
   validateLatitude, 
@@ -11,6 +12,10 @@ import type {
   SiteReportSummary, 
   SiteReportsSummaryResponse 
 } from "./types/siteReportsSummary.types";
+
+// ==================== CONSTANTES ====================
+
+const MAESTROS_TTL = 10 * 60 * 1000; // 10 minutos (datos relativamente estables)
 
 // ==================== INTERFACES ====================
 
@@ -40,22 +45,29 @@ interface BatchSiteReports {
 // ==================== CRUD DE SITIOS ====================
 
 /**
- * Obtiene todos los sitios del sistema
+ * Obtiene todos los sitios del sistema (con cache)
+ * Cache: 10 minutos (datos relativamente estables)
  */
 export const getAllSites = async (): Promise<Site[]> => {
-  try {
-    const data = await httpGet<Site[]>(`/v1/sites`);
-    
-    if (!Array.isArray(data)) {
-      devLog.warn('Datos de sitios inválidos', data);
-      return [];
-    }
-    
-    return data;
-  } catch (error) {
-    devLog.error('Error obteniendo sitios', error);
-    throw new Error(getErrorMessage(error));
-  }
+  return getCachedData(
+    'maestros:sites',
+    async () => {
+      try {
+        const data = await httpGet<Site[]>(`/v1/sites`);
+        
+        if (!Array.isArray(data)) {
+          devLog.warn('Datos de sitios inválidos', data);
+          return [];
+        }
+        
+        return data;
+      } catch (error) {
+        devLog.error('Error obteniendo sitios', error);
+        throw new Error(getErrorMessage(error));
+      }
+    },
+    MAESTROS_TTL
+  );
 };
 
 /**
@@ -85,6 +97,7 @@ export const createSite = async (siteData: Site): Promise<SiteResponse> => {
   try {
     const data = await httpPost<any>(`/v1/sites`, siteData);
     
+    cache.invalidate('maestros:sites');
     invalidateEstadisticasCache();
     
     return {
@@ -104,6 +117,7 @@ export const postNewSite = async (newSite: Record<string, any>) => {
   try {
     const data = await httpPost(`/v1/sites`, newSite);
     
+    cache.invalidate('maestros:sites');
     invalidateEstadisticasCache();
     
     return data;
@@ -122,6 +136,7 @@ export const updateSite = async (
   try {
     const data = await httpPut<any>(`/v1/sites/${siteId}`, siteData);
     
+    cache.invalidate('maestros:sites');
     invalidateEstadisticasCache();
     
     return {
@@ -141,6 +156,7 @@ export const deleteSite = async (siteId: number): Promise<SiteResponse> => {
   try {
     const data = await httpDelete<any>(`/v1/sites/${siteId}`);
     
+    cache.invalidate('maestros:sites');
     invalidateEstadisticasCache();
     
     return {

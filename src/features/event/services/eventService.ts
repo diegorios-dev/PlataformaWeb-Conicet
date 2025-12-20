@@ -1,5 +1,8 @@
-import { httpGet, httpPost, httpPut, httpDelete } from "@shared/services";
+import { httpGet } from "@shared/services";
+import { getCachedData } from "@shared/utils/simpleCache";
 import { devLog, getErrorMessage } from "@shared/utils/errorHandler";
+
+const MAESTROS_TTL = 10 * 60 * 1000; // 10 minutos (datos relativamente estables)
 
 export interface Event {
   id: number;
@@ -8,20 +11,30 @@ export interface Event {
   updated_at?: string;
 }
 
+/**
+ * Obtiene todos los eventos del sistema (con cache)
+ * Cache: 10 minutos (datos relativamente estables)
+ */
 export const getAllEvents = async (): Promise<Event[]> => {
-  try {
-    const data = await httpGet(`/v1/events`);
-    
-    if (!Array.isArray(data)) {
-      devLog.warn('Datos de eventos inválidos', data);
-      return [];
-    }
-    
-    return data;
-  } catch (error) {
-    devLog.error('Error obteniendo todos los eventos', error);
-    throw new Error(getErrorMessage(error));
-  }
+  return getCachedData(
+    'maestros:events',
+    async () => {
+      try {
+        const data = await httpGet(`/v1/events`);
+        
+        if (!Array.isArray(data)) {
+          devLog.warn('Datos de eventos inválidos', data);
+          return [];
+        }
+        
+        return data;
+      } catch (error) {
+        devLog.error('Error obteniendo todos los eventos', error);
+        throw new Error(getErrorMessage(error));
+      }
+    },
+    MAESTROS_TTL
+  );
 };
 
 export const getEventById = async (id: number): Promise<Event> => {

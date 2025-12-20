@@ -1,7 +1,10 @@
 import { httpGet, httpPost, httpPut, httpDelete, httpPublic } from '@shared/services';
 import { tokenService } from '@shared/services';
+import { getCachedData, cache } from '@shared/utils/simpleCache';
 import { devLog, getErrorMessage } from "@shared/utils/errorHandler";
 import { validateUserData } from "@shared/utils/validators";
+
+const MAESTROS_TTL = 10 * 60 * 1000; // 10 minutos (datos relativamente estables)
 
 export const postNewUser = async (newUser) => {
   try {
@@ -25,6 +28,9 @@ export const postNewUser = async (newUser) => {
     if (!data) {
       throw new Error('Respuesta inválida del servidor');
     }
+    
+    // Invalidar cache de usuarios
+    cache.invalidate('maestros:users');
     
     return data;
   } catch (error) {
@@ -59,17 +65,27 @@ export const login = async (password) => {
   }
 };
 
+/**
+ * Obtiene todos los usuarios del sistema (con cache)
+ * Cache: 10 minutos (datos que cambian con moderación)
+ */
 export const getAllUsers = async () => {
-  try {
-    const data = await httpGet(`/v1/users`);
-    
-    // El backend retorna {users: [...]} o directamente un array
-    // Retornar data tal cual para que el componente maneje la estructura
-    return data;
-  } catch (error) {
-    devLog.error('Error obteniendo usuarios', error);
-    throw new Error(getErrorMessage(error));
-  }
+  return getCachedData(
+    'maestros:users',
+    async () => {
+      try {
+        const data = await httpGet(`/v1/users`);
+        
+        // El backend retorna {users: [...]} o directamente un array
+        // Retornar data tal cual para que el componente maneje la estructura
+        return data;
+      } catch (error) {
+        devLog.error('Error obteniendo usuarios', error);
+        throw new Error(getErrorMessage(error));
+      }
+    },
+    MAESTROS_TTL
+  );
 };
 
 export const getUsersByWord = async (word = "") => {
@@ -113,6 +129,9 @@ export const saveUser = async (user : any) => {
       throw new Error('Respuesta inválida del servidor');
     }
     
+    // Invalidar cache de usuarios
+    cache.invalidate('maestros:users');
+    
     return data;
   } catch (error) {
     devLog.error(`Error guardando usuario ${user.id}`, error);
@@ -127,6 +146,9 @@ export const deleteUser = async (userId : any) => {
     if (!data) {
       throw new Error('Respuesta inválida del servidor');
     }
+    
+    // Invalidar cache de usuarios
+    cache.invalidate('maestros:users');
     
     return data;
   } catch (error) {
