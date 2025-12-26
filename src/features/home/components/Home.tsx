@@ -85,8 +85,8 @@ const Home = () => {
         }`}>
           {!sidebarCollapsed ? (
             <>
-              <div className="flex items-center justify-center mb-2">
-                <img src={logoConicet} alt="Logo logoConicet" className="h-14 w-16 object-contain drop-shadow-sm" />
+              <div className="flex items-center justify-center mb-1">
+                <img src={logoConicet} alt="Logo logoConicet" className="h-18 w-20 object-contain drop-shadow-sm" />
                 <img src={logoUncoBariloche} alt="Logo UNCO" className="h-14 w-28 object-contain drop-shadow-sm" />
               </div>
               <h1 className="text-center text-xl font-semibold text-slate-600 tracking-tight">

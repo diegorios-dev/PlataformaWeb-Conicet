@@ -152,7 +152,7 @@ const Card = memo(({
               <img 
                 src={logoConicet} 
                 alt="Watermark"
-                className="w-27 h-20 opacity-70"
+                className="w-35 h-35 opacity-70"
                 style={{ 
                   filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))',
                 }}
