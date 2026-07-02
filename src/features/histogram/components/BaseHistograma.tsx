@@ -79,7 +79,7 @@ export default function BaseHistograma({ title, service, unidad, color, filename
       />
 
       {h.loading && <HistogramaLoading />}
-      {h.error && (
+      {Boolean(h.error) && (
         <HistogramaError
           error={h.error instanceof Error ? h.error.message : String(h.error)}
           onRetry={() => window.location.reload()}
