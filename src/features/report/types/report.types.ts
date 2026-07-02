@@ -71,6 +71,7 @@ export interface Report {
   user?: User;
   report_regular?: ReportRegular;
   breakage_instrument?: BreakageInstrument;
+  created_at?: string;
 }
 
 export interface ReportFormData {

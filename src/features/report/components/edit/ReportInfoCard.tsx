@@ -1,6 +1,12 @@
 import { Calendar, Droplet, Snowflake } from "lucide-react";
+import type { Report } from "@features/report/types";
 
-export const ReportInfoCard = ({ report, isPrecipitacionLluvia }) => {
+interface ReportInfoCardProps {
+  report: Report;
+  isPrecipitacionLluvia: boolean;
+}
+
+export const ReportInfoCard = ({ report, isPrecipitacionLluvia }: ReportInfoCardProps) => {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6 mb-6">
       <div className="flex items-start justify-between">

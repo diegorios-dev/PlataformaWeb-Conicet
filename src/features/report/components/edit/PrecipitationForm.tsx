@@ -1,8 +1,26 @@
 import { Droplets, FileText } from "lucide-react";
+import type { ChangeEvent } from "react";
 import DynamicsSelection from "./DynamicOptionsSelector";
 import LabelZone from "./ZoneLabel";
 import LabelCoords from "./CoordinatesLabel";
 import SummaryChange from "./ChangeSummary";
+import type { Report, Site } from "@features/report/types";
+
+interface PrecipitacionFormData {
+  note: string;
+  amount: string | number;
+  site_id: string | number;
+  zona_id: string | number;
+}
+
+interface PrecipitacionFormProps {
+  report: Report;
+  formData: PrecipitacionFormData;
+  handleChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  sitios: Site[];
+  zonaSeleccionada: Site["zona"] | null;
+  sitioSeleccionado: Site | null;
+}
 
 export const PrecipitacionForm = ({
   report,
@@ -11,7 +29,7 @@ export const PrecipitacionForm = ({
   sitios,
   zonaSeleccionada,
   sitioSeleccionado
-}) => {
+}: PrecipitacionFormProps) => {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6 md:p-8 space-y-6">
       <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-200">
@@ -28,7 +46,7 @@ export const PrecipitacionForm = ({
 
         <textarea
           name="note"
-          rows="3"
+          rows={3}
           value={formData.note}
           onChange={handleChange}
           className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-blue-500"

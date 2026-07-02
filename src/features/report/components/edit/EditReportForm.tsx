@@ -41,7 +41,7 @@ const FormEditReport = () => {
     zona_id: report.site?.zona_id || "",
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
 
     const { name, value } = e.target;
 
@@ -142,7 +142,7 @@ const FormEditReport = () => {
 
               {/* Resumen de Parámetros Ingresados */}
               <ResumenParametros
-                grupoSeleccionado={grupoSeleccionado}
+                grupoSeleccionado={grupoSeleccionado as "" | "grupo1" | "grupo2" | "grupo3"}
                 grupo1Data={grupo1Data}
                 grupo2Data={grupo2Data}
                 grupo3Data={grupo3Data}
@@ -166,5 +166,3 @@ const FormEditReport = () => {
 };
 
 export default FormEditReport;
-
-

@@ -1,4 +1,4 @@
-import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
+import { useState, useEffect, type ChangeEvent, type SyntheticEvent } from "react";
 import { postNewUser } from "@features/user/services";
 import { getAllSites } from "@features/site/services";
 import { useNavegation } from "@shared/hooks";
@@ -59,7 +59,7 @@ const FormAddUser = () => {
         setFormData(prev => ({
           ...prev,
           site_id: value,
-          zona_id: sitioSeleccionado.zona_id
+          zona_id: String(sitioSeleccionado.zona_id)
         }));
         // CAMBIO IMPORTANTE: Crear una copia del objeto zona para evitar mutaciones
         setZonaSeleccionada(sitioSeleccionado.zona ? { ...sitioSeleccionado.zona } : null);
@@ -72,7 +72,7 @@ const FormAddUser = () => {
     }
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     
     // Limpiar error previo
@@ -193,7 +193,7 @@ const FormAddUser = () => {
                     { value: "user", label: "Usuario", icon: <UserCog className="w-4 h-4" /> }
                   ]}
                   value={formData.rol}
-                  onChange={(value) => handleChange({ target: { id: "rol", value } })}
+                  onChange={(value) => handleChange({ target: { id: "rol", value: String(value) } })}
                   placeholder="Seleccione un rol"
                   icon={<Shield className="w-5 h-5" />}
                 />
@@ -232,7 +232,7 @@ const FormAddUser = () => {
                     icon: <MapPin className="w-4 h-4" />
                   }))}
                   value={formData.site_id}
-                  onChange={(value) => handleChange({ target: { id: "site_id", value } })}
+                  onChange={(value) => handleChange({ target: { id: "site_id", value: String(value) } })}
                   placeholder="Seleccione un sitio"
                   icon={<Locate className="w-5 h-5" />}
                 />

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import type { FormEvent } from "react";
 import { useSites } from "../../hooks/useSites";
 import { useSiteFilters } from "../../hooks/useSiteFilters";
 import  useSiteForm  from "../../hooks/useSiteForm";
@@ -138,10 +139,12 @@ const AdminSitios = () => {
         loading={siteForm.loading}
         onClose={siteForm.closeForm}
         onChange={siteForm.handleChange}
-        onSubmit={siteForm.handleSubmit}
+        onSubmit={(e: FormEvent<Element>) => {
+          void siteForm.handleSubmit(e as unknown as FormEvent<HTMLFormElement>);
+        }}
         zonas={zonas}
         events={events}
-        onCreateZona={go.zonas.list}
+        onCreateZona={(go.zonas as unknown as { list: () => void }).list}
       />
 
       <SiteDeleteModal

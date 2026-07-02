@@ -89,8 +89,8 @@ export const UserRow = memo(function UserRow({
           {user.site?.latitude && user.site?.longitude && (
             <button
               onClick={() => user.site && onViewMap(
-                user.site.latitude, 
-                user.site.longitude,
+                String(user.site.latitude), 
+                String(user.site.longitude),
                 user.site.nombre || "Ubicación"
               )}
               className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold hover:scale-105 transition-all duration-200"

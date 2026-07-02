@@ -39,7 +39,7 @@ const ShowReport = () => {
   // Para mejor UX, considera moverlos al backend
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("all");
-  const [filterPrecipitation, setFilterPrecipitation] = useState("all");
+  const [filterPrecipitation, setFilterPrecipitation] = useState<"all" | "lluvia" | "nieve" | "caudal">("all");
   const [filterZona, setFilterZona] = useState("all");
 
   // Hooks externos

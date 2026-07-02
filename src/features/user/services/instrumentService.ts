@@ -1,5 +1,5 @@
 import { httpGet, httpPost, httpDelete } from "@shared/services";
-import { getCachedData, cache } from "@shared/utils/simpleCache";
+import { getCachedData } from "@shared/utils/simpleCache";
 
 const MAESTROS_TTL = 10 * 60 * 1000; // 10 minutos (datos relativamente estables)
 
