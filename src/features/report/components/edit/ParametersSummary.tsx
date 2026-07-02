@@ -1,11 +1,17 @@
 
+interface ParametersSummaryProps {
+  grupoSeleccionado: "grupo1" | "grupo2" | "grupo3" | "";
+  grupo1Data: { ph: string; conductividad: string; na: string };
+  grupo2Data: { delta_2h: string; delta_18o: string };
+  grupo3Data: { nivel_freatico: string };
+}
 
 const ResumenParametros = ({
   grupoSeleccionado,
   grupo1Data,
   grupo2Data,
   grupo3Data,
-}) => {
+}: ParametersSummaryProps) => {
   const grupos = {
     grupo1: {
       title: "Muestras Químicas",
@@ -32,7 +38,7 @@ const ResumenParametros = ({
     },
   };
 
-  const grupo = grupos[grupoSeleccionado];
+  const grupo = grupoSeleccionado ? grupos[grupoSeleccionado] : null;
 
   return (
     <div className="bg-cyan-50 border border-cyan-100 rounded-xl p-4">
@@ -46,7 +52,7 @@ const ResumenParametros = ({
         </div>
       )}
 
-      {grupoSeleccionado && (
+      {grupoSeleccionado && grupo && (
         <>
           <div className="font-bold text-cyan-700 mb-2">{grupo.title}</div>
 

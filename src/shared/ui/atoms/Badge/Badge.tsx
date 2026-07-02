@@ -13,6 +13,8 @@ export const Badge = ({
   variant = "primary",
   className = ""
 }: BadgeProps) => {
+  void variant;
+
   return (
     <div className={`mt-7 pt-6 border-t border-slate-100 ${className}`}>
       <div className="inline-flex items-center gap-3 text-[15px] font-semibold text-slate-800 

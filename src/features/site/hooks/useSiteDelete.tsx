@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { deleteSite } from "../services";
+import type { Site } from "../services";
 
 interface UseSiteDeleteProps {
   onSuccess?: (message: string) => void;
@@ -8,10 +9,10 @@ interface UseSiteDeleteProps {
 
 export const useSiteDelete = ({ onSuccess, onError }: UseSiteDeleteProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedSite, setSelectedSite] = useState<any | null>(null);
+  const [selectedSite, setSelectedSite] = useState<Site | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const openDeleteModal = (site: any) => {
+  const openDeleteModal = (site: Site) => {
     setSelectedSite(site);
     setIsOpen(true);
   };

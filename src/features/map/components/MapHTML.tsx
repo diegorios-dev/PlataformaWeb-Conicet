@@ -1,5 +1,5 @@
 // src/components/MapHTML.tsx
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import { tileConfigs } from "../constants/tileConfigs";
 import { YearPicker } from "@shared/ui/molecules/YearPicker";

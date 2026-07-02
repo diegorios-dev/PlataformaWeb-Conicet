@@ -12,25 +12,14 @@ import type {
   SiteReportSummary, 
   SiteReportsSummaryResponse 
 } from "./types/siteReportsSummary.types";
+import type { Site, SiteFormData } from "../types/site.types";
+export type { Site, SiteFormData } from "../types/site.types";
 
 // ==================== CONSTANTES ====================
 
 const MAESTROS_TTL = 10 * 60 * 1000; // 10 minutos (datos relativamente estables)
 
 // ==================== INTERFACES ====================
-
-export interface Site {
-  id?: number;
-  nombre: string;
-  latitude: number;
-  longitude: number;
-  zona_id: string | number;
-  event_id: string | number;
-  cota?: string | number;
-  status?: boolean;
-  tiene_instrumentos_averiados?: boolean;
-  instrumentos_averiados?: any[];
-}
 
 export interface SiteResponse {
   message?: string;
@@ -113,7 +102,7 @@ export const createSite = async (siteData: Site): Promise<SiteResponse> => {
 /**
  * Crea un nuevo sitio (alias para compatibilidad)
  */
-export const postNewSite = async (newSite: Record<string, any>) => {
+export const postNewSite = async (newSite: SiteFormData) => {
   try {
     const data = await httpPost(`/v1/sites`, newSite);
     
@@ -225,8 +214,9 @@ export const getSiteReportsSummary = async (
 /**
  * Obtiene sitios por tipo
  */
-export const getSites = async (tipo: string) => {
-  const data = await httpGet(`/v1/reports/regular/type/${tipo}`);
+export const getSites = async (tipo: string | number | null | undefined) => {
+  const safeTipo = tipo == null ? "" : String(tipo);
+  const data = await httpGet(`/v1/reports/regular/type/${safeTipo}`);
   return data;
 };
 

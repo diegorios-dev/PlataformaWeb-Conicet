@@ -8,7 +8,6 @@ import {
   TrendingUp,
   FileSpreadsheet,
   Home,
-  LogOut,
   BarChart3,
   MapPinned,
 } from "lucide-react";

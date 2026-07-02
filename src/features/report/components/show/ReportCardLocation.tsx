@@ -2,7 +2,7 @@ import { MapPin } from "lucide-react";
 
 interface ReportCardLocationProps {
   siteName?: string;
-  locality: string;
+  locality?: string;
   latitude: number;
   longitude: number;
 }

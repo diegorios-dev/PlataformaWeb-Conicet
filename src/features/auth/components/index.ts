@@ -1,3 +1,3 @@
 export { default as Login } from './Login';
 export { default as ProtectedRoute } from './ProtectedRoute';
-export { default as LoadingPage } from './LoadingPage';
+export { default as LoadingPage } from '@shared/ui/Loading/LoadingPage';

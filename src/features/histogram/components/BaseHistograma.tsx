@@ -8,7 +8,7 @@ import HistogramaChart from "./HistogramaChart";
 import HistogramaEmpty from "./HistogramaEmpty";
 import HistogramaError from "./HistogramaError";
 import HistogramaLoading from "./HistogramaLoading";
-import NavMenu from "@/shared/ui/layouts/navMenu";
+import NavMenu from "@/shared/ui/layouts/NavMenu";
 import BackButton from "@shared/ui/buttons/BackButton";
 import { useNavegation } from "@shared/hooks";
 import { months } from "../contants/constants";

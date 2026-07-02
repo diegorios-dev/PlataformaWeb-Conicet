@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import { postNewUser } from "@features/user/services";
 import { getAllSites } from "@features/site/services";
 import { useNavegation } from "@shared/hooks";
@@ -16,6 +16,7 @@ import {
   UserCog,
   AlertCircle
 } from "lucide-react";
+import type { Site, Zona } from "../types";
 
 const FormAddUser = () => {
   const [formData, setFormData] = useState({
@@ -26,8 +27,8 @@ const FormAddUser = () => {
     zona_id: ""
   });
   
-  const [sitios, setSitios] = useState([]);
-  const [zonaSeleccionada, setZonaSeleccionada] = useState(null);
+  const [sitios, setSitios] = useState<Site[]>([]);
+  const [zonaSeleccionada, setZonaSeleccionada] = useState<Zona | null>(null);
   const [toastOpen, setToastOpen] = useState(false);
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [toastMessage, setToastMessage] = useState("");
@@ -48,7 +49,7 @@ const FormAddUser = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
 
     if (id === "site_id") {
@@ -71,7 +72,7 @@ const FormAddUser = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // Limpiar error previo

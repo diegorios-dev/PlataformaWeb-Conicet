@@ -1,4 +1,5 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 import { API_URL } from '@config/api';
 import { tokenService } from './tokenService';
 import { storageService } from './storageService';

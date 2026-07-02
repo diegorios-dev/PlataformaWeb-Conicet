@@ -3,9 +3,8 @@ import { motion } from "framer-motion";
 import { memo } from "react";
 
 import { colorSchemes } from "../config/ColorSchemes";
-import type {DashboardButtonProps} from "../types/dashboard";
+import type { DashboardButtonProps } from "../types/dashboard";
 
-// ➤ OPTIMIZACIÓN: Mover variantes fuera del componente para evitar recreación
 const buttonVariants = {
   hidden: { 
     opacity: 0, 
@@ -35,7 +34,6 @@ const buttonVariants = {
   }
 };
 
-// ➤ OPTIMIZACIÓN: Memoizar componente para evitar re-renders innecesarios
 const DashboardButton = memo(function DashboardButton({
   onClick,
   icon: Icon,

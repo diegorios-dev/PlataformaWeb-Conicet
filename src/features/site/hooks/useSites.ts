@@ -14,8 +14,8 @@ export const useSites = () => {
     try {
       const data = await getAllSites();
       setSites(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error al cargar sitios');
     } finally {
       setLoading(false);
     }

@@ -28,6 +28,8 @@ const CustomSelect = memo(({
   className = "",
   disabled = false
 }: CustomSelectProps) => {
+  void icon;
+
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

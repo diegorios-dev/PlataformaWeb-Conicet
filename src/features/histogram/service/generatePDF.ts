@@ -3,6 +3,19 @@ import autoTable from "jspdf-autotable";
 import html2canvas from "html2canvas";
 import { months } from "../contants/constants";
 import { devLog } from "@shared/utils/errorHandler";
+import { logoConicet, logoUnco } from "@/assets";
+import type { RefObject } from "react";
+
+interface GeneratePDFOptions {
+  title: string;
+  periodo: string;
+  year: number;
+  month: number | null;
+  data: Array<Record<string, unknown>>;
+  chartRef: RefObject<HTMLDivElement | null>;
+  filenamePrefix: string;
+  pdfQuality: number;
+}
 
 export async function generatePDF({
   title,
@@ -13,7 +26,7 @@ export async function generatePDF({
   chartRef,
   filenamePrefix,
   pdfQuality
-}) {
+}: GeneratePDFOptions) {
   if (!chartRef.current || !data) return;
 
   await new Promise(res => setTimeout(res, 300));

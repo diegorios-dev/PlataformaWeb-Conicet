@@ -8,7 +8,7 @@ interface SiteFormModalProps {
   formData: Partial<Site>;
   loading: boolean;
   onClose: () => void;
-  onChange: (field: keyof Site, value: any) => void;
+  onChange: (field: keyof Site, value: Site[keyof Site]) => void;
   onSubmit: (e: React.FormEvent) => void;
   zonas?: Array<{id: number | string; locality: string}>;
   events?: Array<{id: number | string; type: string}>;

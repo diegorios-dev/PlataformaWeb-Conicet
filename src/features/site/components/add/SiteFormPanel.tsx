@@ -1,9 +1,10 @@
 import { AlertCircle, CloudRain, Locate, MapPin, Mountain, Save } from "lucide-react";
 import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 import type { JSX } from "react";
+import type { Event } from "@features/event/services";
 
 const SiteFormPanel = ({handleSubmit,formData,handleChange,zonas,go,events,getEventIcon} : 
-  {handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void, formData: {nombre: string, latitude: string, longitude: string, zona_id: string, event_id: string, cota: string}, handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void, zonas: {id: string, locality: string}[], go: {zonas: {list: () => void}}, events: {id: string, name: string}[], getEventIcon: (eventId: string) => JSX.Element}) => {
+  {handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void, formData: {nombre: string, latitude: string, longitude: string, zona_id: string, event_id: string, cota: string}, handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void, zonas: {id: string | number, locality: string}[], go: {zonas: {add: () => void | Promise<void>}}, events: Event[], getEventIcon: (eventId: string) => JSX.Element}) => {
   return (
       <div className="w-[480px] h-full overflow-y-auto bg-gradient-to-br from-white/98 to-white/95 backdrop-blur-xl shadow-2xl border-l-2 border-white/80">
         <div className="p-5">
@@ -77,7 +78,7 @@ const SiteFormPanel = ({handleSubmit,formData,handleChange,zonas,go,events,getEv
                 </span>
                 <button
                   type="button"
-                  onClick={go.zonas.list}
+                  onClick={go.zonas.add}
                   className="inline-flex items-center gap-1 text-[10px] text-blue-600 bg-white border border-blue-200 hover:bg-blue-50 px-2 py-1 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition font-bold"
                 >
                   <MapPin className="w-3 h-3" />
@@ -99,7 +100,7 @@ const SiteFormPanel = ({handleSubmit,formData,handleChange,zonas,go,events,getEv
                   </p>
                   <button
                     type="button"
-                    onClick={go.zonas.list}
+                    onClick={go.zonas.add}
                     className="text-[10px] text-yellow-800 font-bold underline hover:text-yellow-900"
                   >
                     Ir a Registrar zona →

@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
 import { getAllUsers } from "@features/user/services";
+import type { UserType } from "../types";
 
 function useUsers() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<UserType[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const handleSetUser = (userList) => {
+  const handleSetUser = (userList: UserType[]) => {
     setUsers(userList);
   };
 
 const fetchUsers = async () => {
   try {
     const res = await getAllUsers();
-    setUsers(res.users); // <-- CAMBIO AQUÍ
+    setUsers(Array.isArray(res) ? res : res.users ?? []);
   } catch (error) {
   } finally {
     setLoading(false);

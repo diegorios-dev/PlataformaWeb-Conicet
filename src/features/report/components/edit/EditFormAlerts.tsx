@@ -1,6 +1,11 @@
 import { CheckCircle2, AlertCircle } from "lucide-react";
 
-export const Alerts = ({ success, error }) => {
+interface AlertsProps {
+  success: boolean;
+  error: string;
+}
+
+export const Alerts = ({ success, error }: AlertsProps) => {
   return (
     <>
       {success && (

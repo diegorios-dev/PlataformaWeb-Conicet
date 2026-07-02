@@ -19,7 +19,7 @@ const EditSiteFormPanel = ({
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   formData: Partial<Site>;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  zonas: Array<{id: number; locality: string}>;
+  zonas: Array<{id: number | string; locality: string}>;
   events: Event[];
   getEventIcon: (eventId: string) => JSX.Element;
   cambios: Record<string, {anterior: any, nuevo: any}>;
@@ -91,7 +91,7 @@ const EditSiteFormPanel = ({
                 icon: <MapPin className="w-4 h-4" />
               }))}
               value={String(formData.zona_id || "")}
-              onChange={(value) => handleChange({ target: { id: "zona_id", value } } as any)}
+              onChange={(value) => handleChange({ target: { id: "zona_id", value } } as React.ChangeEvent<HTMLInputElement | HTMLSelectElement>)}
               placeholder="Seleccione una zona"
               icon={<MapPin className="w-4 h-4" />}
               disabled={submitting}
@@ -162,7 +162,7 @@ const EditSiteFormPanel = ({
                 icon: getEventIcon(event.type)
               }))}
               value={String(formData.event_id || "")}
-              onChange={(value) => handleChange({ target: { id: "event_id", value } } as any)}
+              onChange={(value) => handleChange({ target: { id: "event_id", value } } as React.ChangeEvent<HTMLInputElement | HTMLSelectElement>)}
               placeholder={events.length === 0 ? "Cargando eventos..." : "Seleccione un tipo de evento"}
               disabled={submitting}
             />

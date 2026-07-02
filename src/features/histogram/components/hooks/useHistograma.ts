@@ -1,22 +1,28 @@
 import { useState, useRef, useCallback } from "react";
 import { useFetchData } from "@shared/hooks";
 
+type HistogramDataPoint = {
+  label: string;
+  value: number;
+};
 
-export function useHistograma(service) {
+type HistogramaService = (periodo: string, year: number, month: number | null) => Promise<HistogramDataPoint[]> | HistogramDataPoint[];
+
+export function useHistograma(service: HistogramaService) {
 
   const [periodo, setPeriodo] = useState("mes");
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [pdfQuality, setPdfQuality] = useState(2);
 
-  const chartRef = useRef(null);
+  const chartRef = useRef<HTMLDivElement | null>(null);
 
   const fetchData = useCallback(() => {
-    if (periodo === "dia") return service(periodo, year, month);
-    return service(periodo, year, null);
+    if (periodo === "dia") return Promise.resolve(service(periodo, year, month));
+    return Promise.resolve(service(periodo, year, null));
   }, [periodo, year, month, service]);
 
-  const { data, loading, error } = useFetchData(fetchData);
+  const { data, loading, error } = useFetchData<HistogramDataPoint[]>(fetchData);
 
   return {
     periodo,
@@ -28,7 +34,7 @@ export function useHistograma(service) {
     pdfQuality,
     setPdfQuality,
     chartRef,
-    data,
+    data: data ?? [],
     loading,
     error
   };

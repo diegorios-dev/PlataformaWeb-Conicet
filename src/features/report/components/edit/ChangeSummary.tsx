@@ -1,5 +1,19 @@
 
-const SummaryChange = ({ formData, report }) => {
+interface ChangeSummaryProps {
+  formData: {
+    note: string;
+    amount: string | number;
+    site_id: string | number;
+    zona_id: string | number;
+  };
+  report: {
+    note?: string;
+    report_regular?: { amount?: number } | null;
+    site?: { id?: number; zona_id?: number | string } | null;
+  };
+}
+
+const SummaryChange = ({ formData, report }: ChangeSummaryProps) => {
   const changes = [
     {
       condition: formData.note !== report.note,

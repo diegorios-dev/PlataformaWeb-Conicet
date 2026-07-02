@@ -3,10 +3,23 @@ import { tokenService } from '@shared/services';
 import { getCachedData, cache } from '@shared/utils/simpleCache';
 import { devLog, getErrorMessage } from "@shared/utils/errorHandler";
 import { validateUserData } from "@shared/utils/validators";
+import type { UserType } from "../types";
+
+interface NewUserPayload {
+  name: string;
+  password: string;
+  rol: string;
+  site_id: string | number;
+  zona_id: string | number;
+}
+
+interface UserListResponse {
+  users?: UserType[];
+}
 
 const MAESTROS_TTL = 10 * 60 * 1000; // 10 minutos (datos relativamente estables)
 
-export const postNewUser = async (newUser) => {
+export const postNewUser = async (newUser: NewUserPayload) => {
   try {
     // Validar datos antes de enviar
     const validationError = validateUserData(newUser);
@@ -39,7 +52,7 @@ export const postNewUser = async (newUser) => {
   }
 };
 
-export const login = async (password) => {
+export const login = async (password: string) => {
   try {
     const data = await httpPublic.post(`/v1/auth/login`, {
       password, 
@@ -69,7 +82,7 @@ export const login = async (password) => {
  * Obtiene todos los usuarios del sistema (con cache)
  * Cache: 10 minutos (datos que cambian con moderación)
  */
-export const getAllUsers = async () => {
+export const getAllUsers = async (): Promise<UserListResponse | UserType[]> => {
   return getCachedData(
     'maestros:users',
     async () => {
@@ -88,7 +101,7 @@ export const getAllUsers = async () => {
   );
 };
 
-export const getUsersByWord = async (word = "") => {
+export const getUsersByWord = async (word = ""): Promise<UserListResponse | UserType[]> => {
   try {
     const data = await httpGet(`/v1/users/search?word=${encodeURIComponent(word)}`);
     
@@ -101,7 +114,7 @@ export const getUsersByWord = async (word = "") => {
   }
 };
 
-export const saveUser = async (user : any) => {
+export const saveUser = async (user: UserType) => {
   try {
     // Validar solo campos requeridos (zona_id es opcional al editar)
     const validationError = validateUserData({
@@ -139,7 +152,7 @@ export const saveUser = async (user : any) => {
   }
 };
 
-export const deleteUser = async (userId : any) => {
+export const deleteUser = async (userId: number | string) => {
   try {
     const data = await httpDelete(`/v1/users/${userId}`);
     

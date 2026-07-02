@@ -5,7 +5,6 @@ import type { Site } from "../../services";
 
 interface SiteTableProps {
   sites: Site[];
-  onEdit?: (site: Site) => void;
   onDelete: (site: Site) => void;
   deleting: boolean;
   deletingId?: number;
@@ -14,7 +13,6 @@ interface SiteTableProps {
 // ✅ OPTIMIZACIÓN: Componente memoizado
 export const SiteTable = memo(function SiteTable({
   sites,
-  onEdit,
   onDelete,
   deleting,
   deletingId,

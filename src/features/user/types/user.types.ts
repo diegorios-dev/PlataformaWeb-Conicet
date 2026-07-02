@@ -7,14 +7,7 @@ export interface Zona {
   locality: string;
 }
 
-export interface Site {
-  id: number;
-  nombre?: string;
-  latitude: string;
-  longitude: string;
-  zona_id: number;
-  zona?: Zona;
-}
+export type Site = import("@features/site/types").Site;
 
 export interface Instrument {
   id: number;

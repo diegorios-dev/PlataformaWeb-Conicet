@@ -33,12 +33,12 @@ const useSiteForm = ({ onSuccess, onError, onClose }: UseSiteFormParams = {}) =>
   }, [onClose]);
 
   // ✅ OPTIMIZACIÓN: Memoizar handleChange con useCallback
-  const handleChange = useCallback((field: keyof Site, value: any) => {
+  const handleChange = useCallback((field: keyof Site, value: Site[keyof Site]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }, []);
 
   // ✅ OPTIMIZACIÓN: Memoizar handleSubmit con useCallback
-  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e?: React.FormEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();
 
     // Validar datos

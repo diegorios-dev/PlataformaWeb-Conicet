@@ -48,7 +48,7 @@ const FormResolveRotura = () => {
               Resolver Reporte de Rotura
             </h1>
             <p className="text-base text-slate-600 mt-1 font-medium">
-              Reporte #{report.id} - Marcar como resuelto
+              Reporte #{report?.id} - Marcar como resuelto
             </p>
           </div>
         </div>

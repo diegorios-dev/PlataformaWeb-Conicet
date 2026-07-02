@@ -69,7 +69,7 @@ export const ReportCard = ({
 
         <ReportCardLocation
           siteName={reporte.site.nombre}
-          locality={reporte.site.zona?.locality}
+          locality={reporte.site.zona?.locality ?? "Sin zona"}
           latitude={reporte.site.latitude}
           longitude={reporte.site.longitude}
         />

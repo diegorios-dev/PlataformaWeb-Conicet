@@ -1,5 +1,6 @@
 export type {
   Report,
+  Event,
   Site,
   ReportRegular,
   BreakageInstrument,

@@ -6,7 +6,7 @@ const EditSiteMapPanel = ({
   formData,
   onClearMap
 }: {
-  mapRef: React.RefObject<HTMLDivElement>;
+  mapRef: React.RefObject<HTMLDivElement | null>;
   formData: Partial<Site>;
   onClearMap: () => void;
 }) => (

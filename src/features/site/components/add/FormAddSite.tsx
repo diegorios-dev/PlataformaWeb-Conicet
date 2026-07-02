@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type ChangeEvent, type FormEvent } from "react";
 import { postNewSite } from "@features/site/services";
 import { getAllZonas } from "@features/zone/services";
 import { getAllEvents, type Event } from "@features/event/services";
@@ -16,6 +16,7 @@ import {
 
 import SiteFormPanel from "./SiteFormPanel";
 import SiteMapPanel from "./SiteMapPanel";
+import type { SiteFormData } from "@features/site/types";
 
 const FormAddSite = () => {
   
@@ -28,14 +29,14 @@ const FormAddSite = () => {
     cota: ""
   });
   
-  const [zonas, setZonas] = useState([]);
+  const [zonas, setZonas] = useState<Array<{id: number; locality: string}>>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [toastOpen, setToastOpen] = useState(false);
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [toastMessage, setToastMessage] = useState("");
-  const mapRef = useRef(null);
-  const mapInstanceRef = useRef(null);
-  const markerRef = useRef(null);
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const markerRef = useRef<L.Marker | null>(null);
   
   const { go } = useNavegation();
 
@@ -206,7 +207,7 @@ const FormAddSite = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -229,11 +230,11 @@ const FormAddSite = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     try {
-      await postNewSite(formData);
+      await postNewSite(formData as SiteFormData);
       setToastType("success");
       setToastMessage("Sitio creado exitosamente");
       setToastOpen(true);

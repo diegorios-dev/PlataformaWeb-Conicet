@@ -1,5 +1,6 @@
 import { useEffect , useState, useCallback} from "react";
-import { getReportes, PaginatedReports, ReportsParams } from "@features/report/services";
+import { getReportes } from "@features/report/services";
+import type { PaginatedReports, ReportsParams } from "@features/report/services";
 import { devLog } from "@shared/utils/errorHandler";
 import type { Report } from "@features/report/types";
 

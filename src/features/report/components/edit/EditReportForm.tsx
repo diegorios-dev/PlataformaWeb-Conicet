@@ -13,11 +13,16 @@ import { PrecipitacionForm } from "./PrecipitationForm";
 import { CalidadAguaForm } from "./WaterQualityForm";
 import ResumenParametros from "./ParametersSummary";
 import { ButtonLoading } from "@shared/ui/atoms/Button";
+import type { ChangeEvent, FormEvent } from "react";
 
 const FormEditReport = () => {
 
   const { report } = useReportSelection();
   const { go } = useNavegation();
+
+  if (!report) {
+    return null;
+  }
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -36,7 +41,7 @@ const FormEditReport = () => {
     zona_id: report.site?.zona_id || "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 
     const { name, value } = e.target;
 
@@ -58,14 +63,14 @@ const FormEditReport = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
     setLoading(true);
 
     try {
       const waterQuality = buildWaterQuality();
 
-      const payload: any = {
+      const payload: Record<string, unknown> = {
         note: formData.note,
         site_id: Number(formData.site_id),
         zona_id: Number(formData.zona_id),
@@ -88,7 +93,7 @@ const FormEditReport = () => {
         go.reports.list();
       }, 1200);
 
-    } catch (err: any) {
+    } catch {
       setError("Error al actualizar el reporte");
     } finally {
       setLoading(false);
@@ -148,7 +153,7 @@ const FormEditReport = () => {
           {/* Botones al final - full width */}
           <div className="mt-6">
             <ButtonLoading 
-              onSubmit={(e) => handleSubmit(e)} 
+              onSubmit={() => { void handleSubmit(); }} 
               onCancel={go.reports.list} 
               loading={loading} 
               success={success}

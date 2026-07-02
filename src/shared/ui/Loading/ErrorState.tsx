@@ -19,7 +19,7 @@ interface NetworkErrorDetails {
   icon: LucideIcon;
   title: string;
   description: string;
-  color: string;
+  color: "red" | "orange" | "yellow" | "amber" | "slate";
 }
 
 /**
@@ -147,7 +147,7 @@ export const ErrorState = ({
 
   const Icon = errorDetails.icon;
   
-  const colorClasses = {
+  const colorClasses: Record<NetworkErrorDetails["color"], string> = {
     red: "bg-red-100 text-red-600 border-red-200",
     orange: "bg-orange-100 text-orange-600 border-orange-200",
     yellow: "bg-yellow-100 text-yellow-600 border-yellow-200",
@@ -155,7 +155,7 @@ export const ErrorState = ({
     slate: "bg-slate-100 text-slate-600 border-slate-200"
   };
 
-  const buttonColorClasses = {
+  const buttonColorClasses: Record<NetworkErrorDetails["color"], string> = {
     red: "bg-red-600 hover:bg-red-700 focus:ring-red-500",
     orange: "bg-orange-600 hover:bg-orange-700 focus:ring-orange-500",
     yellow: "bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500",
@@ -208,7 +208,7 @@ export const ErrorState = ({
  * Hook para manejar estados de error de manera consistente
  */
 export function useErrorHandler() {
-  const handleError = (error: any): NetworkErrorType => {
+  const handleError = (error: unknown): NetworkErrorType => {
     const errorType = detectErrorType(error);
     return errorType;
   };

@@ -1,14 +1,15 @@
 import { Droplet, Snowflake, Waves } from "lucide-react";
 import { memo } from "react";
+import type { ViewOptionMenuProps } from "./types/interfaces";
 
-const icons = {
+const icons: Record<string, JSX.Element> = {
   Lluvia: <Droplet className="w-5 h-5" />,
   Nieve: <Snowflake className="w-5 h-5" />,
   Caudal: <Waves className="w-5 h-5" />,
 };
 
 // ⚡ Memorizar componente - Diseño modernizado
-const ViewOptionMenu = memo(({ instruments, selectedInstrument, onSelectInstrument }) => {
+const ViewOptionMenu = memo(({ instruments, selectedInstrument, onSelectInstrument }: ViewOptionMenuProps) => {
   return (
     <div className="space-y-2">
       {instruments.map((item, index) => (

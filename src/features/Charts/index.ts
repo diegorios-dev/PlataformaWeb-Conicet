@@ -11,4 +11,4 @@ export { default as PrecipitacionCoordenadas } from './PrecipitacionCoordenadas'
 export { default as PatronMensual } from './PatronMensual';
 export { default as AnalisisFrecuencia } from './AnalisisFrecuencia';
 export { default as ComparativaAnual } from './ComparativaAnual';
-export { default as ShowCharts } from './ShowCharts';
+export { default as ShowCharts } from './showCharts';

@@ -1,6 +1,6 @@
 import { Navigation, Trash2, MousePointerClick } from "lucide-react";
 
-const SiteMapPanel = ({mapRef,formData,onClearMap} : {mapRef: React.RefObject<HTMLDivElement>, formData: {latitude: string, longitude: string}, onClearMap: () => void}) => (
+const SiteMapPanel = ({mapRef,formData,onClearMap} : {mapRef: React.RefObject<HTMLDivElement | null>, formData: {latitude: string, longitude: string}, onClearMap: () => void}) => (
   <div className="flex-1 relative">
     {/* Mapa */}
     <div ref={mapRef} className="w-full h-full" />

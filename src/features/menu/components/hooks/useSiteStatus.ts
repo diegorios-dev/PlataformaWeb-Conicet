@@ -31,13 +31,13 @@ export function useSiteStatus(position: Coord[]) {
         position.forEach((coord) => {
           if (!coord?.idSitio) return;
           
-          const site = allSites.find((s: any) => s.id === coord.idSitio);
+          const site = allSites.find((s) => s.id === coord.idSitio);
           
           if (site) {
             statusMap.set(coord.idSitio, {
-              status: site.status,
-              tiene_instrumentos_averiados: site.tiene_instrumentos_averiados,
-              instrumentos_averiados: site.instrumentos_averiados || []
+              status: site.status ?? true,
+              tiene_instrumentos_averiados: site.tiene_instrumentos_averiados ?? false,
+              instrumentos_averiados: (site.instrumentos_averiados ?? []) as SiteStatus["instrumentos_averiados"]
             });
           } else {
             // Fallback si no se encuentra

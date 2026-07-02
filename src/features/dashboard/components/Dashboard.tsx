@@ -45,7 +45,7 @@ const Dashboard = () => {
               className="backdrop-blur-xl bg-white/80 border border-white/70 rounded-3xl p-4 md:p-8 mb-4"
             >
               <div className="flex items-center justify-center gap-6">
-                <motion.logoConicet 
+                <motion.img 
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
@@ -63,7 +63,7 @@ const Dashboard = () => {
                   Panel de Administración
                 </motion.h2>
                 
-                <motion.logoConicet 
+                <motion.img 
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}

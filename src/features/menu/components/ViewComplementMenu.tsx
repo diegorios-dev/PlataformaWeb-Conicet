@@ -1,13 +1,14 @@
 import { BarChart3, MapPin, ChevronRight } from "lucide-react";
 import { memo } from "react";
+import type { ViewComplementMenuProps } from "./types/interfaces";
 
-const icons = {
+const icons: Record<string, JSX.Element> = {
   "Ver Histograma": <BarChart3 className="w-5 h-5" />,
   "Ver Mapa de Calor": <MapPin className="w-5 h-5" />
 };
 
 // ⚡ Memorizar componente - Diseño modernizado
-const ViewComplementMenu = memo(({ complements }) => {
+const ViewComplementMenu = memo(({ complements }: ViewComplementMenuProps) => {
   return (
     <div className="space-y-2">
       {complements.map((item, index) => {

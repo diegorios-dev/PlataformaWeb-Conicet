@@ -1,6 +1,11 @@
 import { FileText } from "lucide-react";
 
-export default function HistogramaHeader({ title, unidad }) {
+interface HistogramaHeaderProps {
+  title: string;
+  unidad: string;
+}
+
+export default function HistogramaHeader({ title, unidad }: HistogramaHeaderProps) {
   return (
     <div className="mb-6 flex items-center gap-4">
       <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/30 ">

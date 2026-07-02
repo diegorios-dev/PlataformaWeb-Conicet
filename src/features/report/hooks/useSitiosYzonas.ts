@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { getAllZonas } from "@/features/zone/services";
 import { getAllSites } from "@features/site/services";
+import type { Site } from "@features/site/services";
+import type { Zona } from "@features/zone/types";
 
 export function useSitiosYzonas(reportSiteId?: number) {
   
-  const [sitios, setSitios] = useState([]);
-  const [zonas, setZonas] = useState([]);
+  const [sitios, setSitios] = useState<Site[]>([]);
+  const [zonas, setZonas] = useState<Zona[]>([]);
 
-  const [sitioSeleccionado, setSitioSeleccionado] = useState<any>(null);
-  const [zonaSeleccionada, setZonaSeleccionada] = useState<any>(null);
+  const [sitioSeleccionado, setSitioSeleccionado] = useState<Site | null>(null);
+  const [zonaSeleccionada, setZonaSeleccionada] = useState<Zona | null>(null);
 
   const [error, setError] = useState("");
 

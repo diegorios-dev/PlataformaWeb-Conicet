@@ -1,8 +1,34 @@
 import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 import { Droplets, Beaker, Activity } from "lucide-react";
 
+interface WaterQualityGroup1 {
+  ph: string;
+  conductividad: string;
+  na: string;
+}
+
+interface WaterQualityGroup2 {
+  delta_2h: string;
+  delta_18o: string;
+}
+
+interface WaterQualityGroup3 {
+  nivel_freatico: string;
+}
+
+interface WaterQualityFormProps {
+  grupoSeleccionado: string;
+  setGrupoSeleccionado: (value: string) => void;
+  grupo1Data: WaterQualityGroup1;
+  setGrupo1Data: (value: WaterQualityGroup1) => void;
+  grupo2Data: WaterQualityGroup2;
+  setGrupo2Data: (value: WaterQualityGroup2) => void;
+  grupo3Data: WaterQualityGroup3;
+  setGrupo3Data: (value: WaterQualityGroup3) => void;
+}
+
 // Componente INPUT reutilizable
-const InputField = ({ label, value, placeholder, onChange }) => (
+const InputField = ({ label, value, placeholder, onChange }: { label: string; value: string; placeholder: string; onChange: (value: string) => void }) => (
   <div>
     <label className="text-sm font-semibold text-slate-700 mb-1 block">{label}</label>
     <input
@@ -26,7 +52,7 @@ export const CalidadAguaForm = ({
   setGrupo2Data,
   grupo3Data,
   setGrupo3Data,
-}) => {
+  }: WaterQualityFormProps) => {
   const resetAll = () => {
     setGrupo1Data({ ph: "", conductividad: "", na: "" });
     setGrupo2Data({ delta_2h: "", delta_18o: "" });
