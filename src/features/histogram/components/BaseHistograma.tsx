@@ -13,7 +13,15 @@ import BackButton from "@shared/ui/buttons/BackButton";
 import { useNavegation } from "@shared/hooks";
 import { months } from "../contants/constants";
 
-export default function BaseHistograma({ title, service, unidad, color, filenamePrefix }) {
+interface BaseHistogramaProps {
+  title: string;
+  service: Parameters<typeof useHistograma>[0];
+  unidad: string;
+  color: string;
+  filenamePrefix: string;
+}
+
+export default function BaseHistograma({ title, service, unidad, color, filenamePrefix }: BaseHistogramaProps) {
   const h = useHistograma(service);
   const { go } = useNavegation();
   const [generandoPDF, setGenerandoPDF] = useState(false);
@@ -71,7 +79,12 @@ export default function BaseHistograma({ title, service, unidad, color, filename
       />
 
       {h.loading && <HistogramaLoading />}
-      {h.error && <HistogramaError error={h.error} onRetry={() => window.location.reload()} />}
+      {h.error && (
+        <HistogramaError
+          error={h.error instanceof Error ? h.error.message : String(h.error)}
+          onRetry={() => window.location.reload()}
+        />
+      )}
       {!h.loading && !h.error && h.data?.length === 0 && (
         <HistogramaEmpty 
           periodo={h.periodo}

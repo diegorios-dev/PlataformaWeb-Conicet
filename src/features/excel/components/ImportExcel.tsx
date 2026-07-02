@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { httpGet, httpPost } from '@shared/services';
+import { httpPost } from '@shared/services';
 import axios from 'axios';
 
 import type { ImportResponse, ImportResult } from '../types/interfaces';

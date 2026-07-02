@@ -1,8 +1,9 @@
 import { BarChart3, MapPin, ChevronRight } from "lucide-react";
 import { memo } from "react";
+import type { ReactElement } from "react";
 import type { ViewComplementMenuProps } from "./types/interfaces";
 
-const icons: Record<string, JSX.Element> = {
+const icons: Record<string, ReactElement> = {
   "Ver Histograma": <BarChart3 className="w-5 h-5" />,
   "Ver Mapa de Calor": <MapPin className="w-5 h-5" />
 };

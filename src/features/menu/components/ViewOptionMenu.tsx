@@ -1,8 +1,9 @@
 import { Droplet, Snowflake, Waves } from "lucide-react";
 import { memo } from "react";
+import type { ReactElement } from "react";
 import type { ViewOptionMenuProps } from "./types/interfaces";
 
-const icons: Record<string, JSX.Element> = {
+const icons: Record<string, ReactElement> = {
   Lluvia: <Droplet className="w-5 h-5" />,
   Nieve: <Snowflake className="w-5 h-5" />,
   Caudal: <Waves className="w-5 h-5" />,

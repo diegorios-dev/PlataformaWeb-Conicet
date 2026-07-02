@@ -1,5 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import type { RowInput } from "jspdf-autotable";
 import html2canvas from "html2canvas";
 import { months } from "../contants/constants";
 import { devLog } from "@shared/utils/errorHandler";
@@ -97,10 +98,17 @@ export async function generatePDF({
     const columns = Object.keys(data[0]).map(key => ({ header: key, dataKey: key }));
     const rows = data.map(row => ({ ...row }));
 
+    const body: RowInput[] = rows.map(r =>
+      columns.map(c => {
+        const cell = r[c.dataKey];
+        return cell === null || cell === undefined ? "" : String(cell);
+      })
+    );
+
     autoTable(pdf, {
       startY: 40 + imgHeight,
       head: [columns.map(col => col.header)],
-      body: rows.map(r => columns.map(c => r[c.dataKey])),
+      body,
       theme: "grid",
       styles: { fontSize: 10 }
     });

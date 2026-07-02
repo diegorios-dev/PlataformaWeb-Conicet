@@ -1,11 +1,12 @@
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { memo } from "react";
 
 import { colorSchemes } from "../config/ColorSchemes";
 import type { DashboardButtonProps } from "../types/dashboard";
 
-const buttonVariants = {
+const buttonVariants: Variants = {
   hidden: { 
     opacity: 0, 
     y: 20,

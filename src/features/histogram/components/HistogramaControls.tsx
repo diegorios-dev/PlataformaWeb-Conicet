@@ -3,6 +3,22 @@ import { months } from "../contants/constants";
 import { CustomSelect } from "@shared/ui/molecules/CustomSelect";
 import { PDFGenerator } from "@shared/ui/Loading/FileGenerators";
 
+interface HistogramaControlsProps {
+  periodo: string;
+  setPeriodo: (value: string) => void;
+  month: number | null;
+  setMonth: (value: number) => void;
+  year: number;
+  setYear: (value: number) => void;
+  pdfQuality: number;
+  setPdfQuality: (value: number) => void;
+  generandoPDF: boolean;
+  pdfProgress: number;
+  loading: boolean;
+  data: unknown[] | null | undefined;
+  onGeneratePDF: () => void;
+}
+
 export default function HistogramaControls({
   periodo,
   setPeriodo,
@@ -17,7 +33,7 @@ export default function HistogramaControls({
   loading,
   data,
   onGeneratePDF
-}) {
+}: HistogramaControlsProps) {
   return (
     <div className="relative z-50 bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-3xl shadow-xl p-6 md:p-8 mb-6">
       {/* Config */}

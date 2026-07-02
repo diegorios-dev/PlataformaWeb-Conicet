@@ -70,3 +70,7 @@ export const colorSchemes = {
     chevron: "text-slate-400 group-hover:text-red-500",
   },
 };
+
+// Tipo derivado automáticamente de las claves reales de colorSchemes.
+// Si agregás/quitás un color acá, este tipo se actualiza solo.
+export type ColorSchemeKey = keyof typeof colorSchemes;

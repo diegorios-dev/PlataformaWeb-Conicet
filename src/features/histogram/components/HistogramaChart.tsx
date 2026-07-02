@@ -1,6 +1,20 @@
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
+import type { RefObject } from "react";
 
-export default function HistogramaChart({ data, color, unidad, chartRef }) {
+interface HistogramaDataPoint {
+  label: string;
+  value: number;
+  [key: string]: unknown;
+}
+
+interface HistogramaChartProps {
+  data: HistogramaDataPoint[];
+  color: string;
+  unidad: string;
+  chartRef: RefObject<HTMLDivElement | null>;
+}
+
+export default function HistogramaChart({ data, color, unidad, chartRef }: HistogramaChartProps) {
   return (
     <div className="bg-white/85 backdrop-blur-md border border-white/70 rounded-2xl p-4 shadow-lg">
       <div ref={chartRef} className="bg-white rounded-xl p-2">
