@@ -49,12 +49,10 @@ const FormAddUser = () => {
     }
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { id, value } = e.target;
-
+  const updateField = (id: string, value: string) => {
     if (id === "site_id") {
       const sitioSeleccionado = sitios.find(s => s.id === parseInt(value));
-      
+
       if (sitioSeleccionado) {
         setFormData(prev => ({
           ...prev,
@@ -70,6 +68,11 @@ const FormAddUser = () => {
         [id]: value
       }));
     }
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
+    updateField(id, value);
   };
 
   const handleSubmit = async (e: SyntheticEvent) => {
@@ -193,7 +196,7 @@ const FormAddUser = () => {
                     { value: "user", label: "Usuario", icon: <UserCog className="w-4 h-4" /> }
                   ]}
                   value={formData.rol}
-                  onChange={(value) => handleChange({ target: { id: "rol", value: String(value) } })}
+                  onChange={(value) => updateField("rol", String(value))}
                   placeholder="Seleccione un rol"
                   icon={<Shield className="w-5 h-5" />}
                 />
@@ -232,7 +235,7 @@ const FormAddUser = () => {
                     icon: <MapPin className="w-4 h-4" />
                   }))}
                   value={formData.site_id}
-                  onChange={(value) => handleChange({ target: { id: "site_id", value: String(value) } })}
+                  onChange={(value) => updateField("site_id", String(value))}
                   placeholder="Seleccione un sitio"
                   icon={<Locate className="w-5 h-5" />}
                 />

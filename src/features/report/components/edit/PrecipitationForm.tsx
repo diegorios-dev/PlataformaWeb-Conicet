@@ -4,7 +4,8 @@ import DynamicsSelection from "./DynamicOptionsSelector";
 import LabelZone from "./ZoneLabel";
 import LabelCoords from "./CoordinatesLabel";
 import SummaryChange from "./ChangeSummary";
-import type { Report, Site } from "@features/report/types";
+import type { Report } from "@features/report/types";
+import type { Site } from "@features/site/types/site.types";
 
 interface PrecipitacionFormData {
   note: string;
@@ -71,7 +72,7 @@ export const PrecipitacionForm = ({
               className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-blue-500"
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium">
-              {report.report_regular.united_measure.abbreviation}
+              {report.report_regular.united_measure?.abbreviation}
             </span>
           </div>
         </div>

@@ -116,7 +116,7 @@ const ShowReport = () => {
             filterType={filterType}
             setFilterType={setFilterType}
             filterPrecipitation={filterPrecipitation}
-            setFilterPrecipitation={setFilterPrecipitation}
+            setFilterPrecipitation={(value) => setFilterPrecipitation(value as "all" | "lluvia" | "nieve" | "caudal")}
             filterZona={filterZona}
             setFilterZona={setFilterZona}
             zonas={zonas}
