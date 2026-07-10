@@ -216,7 +216,7 @@ export const getSiteReportsSummary = async (
  */
 export const getSites = async (tipo: string | number | null | undefined) => {
   const safeTipo = tipo == null ? "" : String(tipo);
-  const data = await httpGet(`/v1/reports/regular/type/${safeTipo}`);
+  const data = await httpGet(`/reports/regular/type/${safeTipo}`);
   return data;
 };
 
@@ -225,8 +225,8 @@ export const getSites = async (tipo: string | number | null | undefined) => {
  */
 export const getReportsForSite = async (siteId: number, year?: number) => {
   const url = year 
-    ? `/v1/reports/regular/site/${siteId}/${year}`
-    : `/v1/reports/regular/site/${siteId}`;
+    ? `/reports/regular/site/${siteId}/${year}`
+    : `/reports/regular/site/${siteId}`;
   const data = await httpGet(url);
   return data;
 };
@@ -278,7 +278,7 @@ export const getReportsForSites = async (siteIds: number[], year?: number): Prom
  * Obtiene los años disponibles con reportes
  */
 export const getAvailableYears = async () => {
-  const data = await httpGet(`/v1/reports/metadata/years`);
+  const data = await httpGet(`/reports/metadata/years`);
   return data;
 };
 

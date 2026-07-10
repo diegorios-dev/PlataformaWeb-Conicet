@@ -50,7 +50,7 @@ export default function ExportExcel() {
         const [zonasData, usuariosData, yearsData] = await Promise.all([
           httpGet(`/v1/zones`),
           httpGet(`/v1/users`),
-          httpGet(`/v1/reports/metadata/years`),
+          httpGet(`/reports/metadata/years`),
         ]);
 
         setZonas(Array.isArray(zonasData) ? zonasData : []);
