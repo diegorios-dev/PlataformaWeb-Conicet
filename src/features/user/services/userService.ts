@@ -57,13 +57,13 @@ export const login = async (password: string) => {
     const data = await httpPublic.post(`/auth/login`, {
       password, 
     });
-    
+
     if (!data) {
       throw new Error('Respuesta inválida del servidor');
     }
     
     // Store JWT token - support both 'token' and 'access_token' from backend
-    const token = data.token
+    const token = data.token || data.access_token;
 
     if (token) {
       tokenService.setToken(token);
