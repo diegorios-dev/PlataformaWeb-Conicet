@@ -12,7 +12,7 @@ export const getAllInstruments = async () => {
     'maestros:instruments',
     async () => {
       try {
-        const data = await httpGet(`/v1/instruments`);
+        const data = await httpGet(`/instruments`);
         return data;
       } catch (error) {
         throw error;
@@ -27,7 +27,7 @@ export const getAllInstruments = async () => {
  */
 export const getUserInstruments = async (userId: number) => {
   try {
-    const data = await httpGet(`/v1/users/${userId}/instruments`);
+    const data = await httpGet(`/users/${userId}/instruments`);
     return data;
   } catch (error) {
     throw error;
@@ -40,7 +40,7 @@ export const getUserInstruments = async (userId: number) => {
 export const assignInstrumentToUser = async (userId: number, instrumentId: number) => {
   try {
     const data = await httpPost(
-      `/v1/users/${userId}/instruments`,
+      `/users/${userId}/instruments`,
       { instrument_id: instrumentId }
     );
     return data;
@@ -55,7 +55,7 @@ export const assignInstrumentToUser = async (userId: number, instrumentId: numbe
 export const removeInstrumentFromUser = async (userId: number, instrumentId: number) => {
   try {
     const data = await httpDelete(
-      `/v1/users/${userId}/instruments/${instrumentId}`
+      `/users/${userId}/instruments/${instrumentId}`
     );
     return data;
   } catch (error: unknown) {

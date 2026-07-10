@@ -32,7 +32,7 @@ export const postNewZona = async (newZona: { locality: string }) => {
       locality: newZona.locality.trim()
     };
     
-    const data = await httpPost(`/v1/zones`, payload);
+    const data = await httpPost(`/zones`, payload);
     
     // Invalidar cache cuando se crea una nueva zona
     cache.invalidate('maestros:zonas');
@@ -53,7 +53,7 @@ export const getAllZonas = async () => {
     'maestros:zonas',
     async () => {
       try {
-        const data = await httpGet(`/v1/zones`);
+        const data = await httpGet(`/zones`);
         return data;
       } catch (error) {
         throw error;
@@ -65,7 +65,7 @@ export const getAllZonas = async () => {
 
 export const getZonaByLocality = async (zona: string) => {
   try {
-    const data = await httpGet(`/v1/zones/locality/${encodeURIComponent(zona)}`);
+    const data = await httpGet(`/zones/locality/${encodeURIComponent(zona)}`);
     return data;
   } catch (error) {
     throw error;
@@ -79,7 +79,7 @@ export const getTotalAcumuladoPorZona = async (periodo?: string) => {
   return getCachedData(
     cacheKey,
     async () => {
-      let url = `/v1/zones/stats/accumulated`;
+      let url = `/zones/stats/accumulated`;
       if (periodo && periodo !== 'todos') {
         url += `?periodo=${periodo}`;
       }
@@ -98,7 +98,7 @@ export const getTopZonasPorRegistro = async (periodo = "anio", limit = 8) => {
     cacheKey,
     async () => {
       const data = await httpGet(
-        `/v1/zones/stats/top-records?periodo=${periodo}&limit=${limit}`
+        `/zones/stats/top-records?periodo=${periodo}&limit=${limit}`
       );
       return data.data || data;
     },
@@ -118,7 +118,7 @@ export const updateZona = async (id: string | number, zonaData: { locality: stri
       locality: zonaData.locality.trim()
     };
 
-    const data = await httpPut(`/v1/zones/${id}`, payload);
+    const data = await httpPut(`/zones/${id}`, payload);
     
     cache.invalidate('maestros:zonas');
     invalidateEstadisticasCache();
@@ -132,7 +132,7 @@ export const updateZona = async (id: string | number, zonaData: { locality: stri
 
 export const deleteZona = async (id: string) => {
   try {
-    const data = await httpDelete(`/v1/zones/${id}`);
+    const data = await httpDelete(`/zones/${id}`);
     
     cache.invalidate('maestros:zonas');
     invalidateEstadisticasCache();

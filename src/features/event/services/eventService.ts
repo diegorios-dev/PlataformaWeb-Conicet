@@ -20,7 +20,7 @@ export const getAllEvents = async (): Promise<Event[]> => {
     'maestros:events',
     async () => {
       try {
-        const data = await httpGet(`/v1/events`);
+        const data = await httpGet(`/events`);
         
         if (!Array.isArray(data)) {
           devLog.warn('Datos de eventos inválidos', data);
@@ -39,7 +39,7 @@ export const getAllEvents = async (): Promise<Event[]> => {
 
 export const getEventById = async (id: number): Promise<Event> => {
   try {
-    const data = await httpGet(`/v1/events/${id}`);
+    const data = await httpGet(`/events/${id}`);
     
     if (!data || typeof data !== 'object') {
       devLog.warn(`Evento ${id} no encontrado o inválido`, data);

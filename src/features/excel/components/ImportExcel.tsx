@@ -34,7 +34,7 @@ export default function ImportarExcel() {
   // Descargar plantilla
   const descargarPlantilla = async () => {
     try {
-      const response = await axios.get(`${API_URL}/v1/imports/template`, { 
+      const response = await axios.get(`${API_URL}/imports/template`, { 
         responseType: 'blob',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
@@ -102,7 +102,7 @@ export default function ImportarExcel() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const response = await httpPost<ImportResponse>(`/v1/imports`, formData, {
+      const response = await httpPost<ImportResponse>(`/imports`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setResult(response);

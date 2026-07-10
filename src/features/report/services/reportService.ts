@@ -28,7 +28,7 @@ export interface ReportsParams {
 export const getReportes = async (params: ReportsParams = {}) => {
   const { order = 'asc', page = 1, per_page = 15 } = params;
   
-  const data = await httpGet<PaginatedReports>(`/v1/reports`, {
+  const data = await httpGet<PaginatedReports>(`/reports`, {
     params: { order, page, per_page }
   });
   return data;
@@ -36,7 +36,7 @@ export const getReportes = async (params: ReportsParams = {}) => {
 
 export const updateReporte = async (id: number, data: any) => {
   try {   
-    const response = await httpPut(`/v1/reports/${id}`, data);
+    const response = await httpPut(`/reports/${id}`, data);
     
     // Invalidar cache de estadísticas cuando se actualiza un reporte
     invalidateEstadisticasCache();
@@ -53,7 +53,7 @@ export const updateReporte = async (id: number, data: any) => {
  */
 export const createReporteRotura = async (data: FormData) => {
   try {
-    const response = await httpPost(`/v1/breakage-reports`, data, {
+    const response = await httpPost(`/breakage-reports`, data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -74,7 +74,7 @@ export const createReporteRotura = async (data: FormData) => {
  */
 export const resolveReporteRotura = async (id: number) => {
   try {
-    const response = await httpDelete(`/v1/breakage-reports/${id}`);
+    const response = await httpDelete(`/breakage-reports/${id}`);
     
     // Invalidar cache de estadísticas cuando se resuelve un reporte
     invalidateEstadisticasCache();
@@ -125,7 +125,7 @@ export async function getHistograma(
       params.append('month', month.toString());
     }
     
-    const url = `/v1/reports/stats/histogram-temporal?${params.toString()}`;
+    const url = `/reports/stats/histogram-temporal?${params.toString()}`;
     const json = await httpGet(url);
     
     // Validar que tenga la estructura esperada
@@ -172,7 +172,7 @@ export async function getHistogramaNieve(
     if (year) params.append('year', year.toString());
     if (month && periodo === 'dia') params.append('month', month.toString());
     
-    const url = `/v1/reports/stats/histogram-temporal?${params.toString()}`;
+    const url = `/reports/stats/histogram-temporal?${params.toString()}`;
     const json = await httpGet(url);
     
     if (!json.success || !json.data) {
@@ -217,7 +217,7 @@ export async function getHistogramaCaudalimetro(
     if (year) params.append('year', year.toString());
     if (month && periodo === 'dia') params.append('month', month.toString());
     
-    const url = `/v1/reports/stats/histogram-temporal?${params.toString()}`;
+    const url = `/reports/stats/histogram-temporal?${params.toString()}`;
     const json = await httpGet(url);
     
     if (!json.success || !json.data) {

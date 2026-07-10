@@ -34,7 +34,7 @@ export const getReportesPorInstrumento = async () => {
     'estadisticas:reportes-instrumento',
     async () => {
       try {
-        const data = await httpGet(`/v1/reports/stats/by-instrument`);
+        const data = await httpGet(`/reports/stats/by-instrument`);
         const result = data.data || data;
         
         if (!Array.isArray(result)) {
@@ -153,8 +153,8 @@ export const getDistribucionPorTipo = async (periodo?: string) => {
     cacheKey,
     async () => {
       const url = periodo && periodo !== 'todos' 
-        ? `/v1/events/stats/distribution?periodo=${periodo}`
-        : `/v1/events/stats/distribution`;
+        ? `/events/stats/distribution?periodo=${periodo}`
+        : `/events/stats/distribution`;
       const data = await httpGet(url);
       return data.data || data;
     },
@@ -169,7 +169,7 @@ export const getEvolucionMensual = async (periodo?: string, anio?: number) => {
   return getCachedData(
     cacheKey,
     async () => {
-      let url = `/v1/reports/stats/monthly-evolution`;
+      let url = `/reports/stats/monthly-evolution`;
       
       if (anio) {
         url += `?anio=${anio}`;
@@ -191,7 +191,7 @@ export const getPrecipitacionCoordenadas = async (periodo?: string, tipoEvento?:
   return getCachedData(
     cacheKey,
     async () => {
-      let url = `/v1/sites/stats/precipitation-coordinates`;
+      let url = `/sites/stats/precipitation-coordinates`;
       const params = new URLSearchParams();
       
       if (periodo && periodo !== 'todos') {
@@ -234,7 +234,7 @@ export const getPatronMensual = async (periodo?: string, tipoEvento?: string) =>
   return getCachedData(
     cacheKey,
     async () => {
-      let url = `/v1/reports/stats/monthly-pattern`;
+      let url = `/reports/stats/monthly-pattern`;
       const params = new URLSearchParams();
       
       if (periodo && periodo !== 'todos') {
@@ -263,7 +263,7 @@ export const getAnalisisFrecuencia = async (periodo?: string, tipoEvento?: strin
   return getCachedData(
     cacheKey,
     async () => {
-      let url = `/v1/reports/stats/histogram`;
+      let url = `/reports/stats/histogram`;
       const params = new URLSearchParams();
       
       if (periodo && periodo !== 'todos') {
@@ -295,7 +295,7 @@ export const getComparativaAnual = async (anios?: string, tipoEvento?: string, m
   return getCachedData(
     cacheKey,
     async () => {
-      let url = `/v1/reports/stats/annual-comparison`;
+      let url = `/reports/stats/annual-comparison`;
       const params = new URLSearchParams();
       
       if (anios) {

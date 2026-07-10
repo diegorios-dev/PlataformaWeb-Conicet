@@ -36,7 +36,7 @@ export const postNewUser = async (newUser: NewUserPayload) => {
       zona_id: Number(newUser.zona_id)
     };
 
-    const data = await httpPost(`/v1/users`, payload);
+    const data = await httpPost(`/users`, payload);
     
     if (!data) {
       throw new Error('Respuesta inválida del servidor');
@@ -54,7 +54,7 @@ export const postNewUser = async (newUser: NewUserPayload) => {
 
 export const login = async (password: string) => {
   try {
-    const data = await httpPublic.post(`/v1/auth/login`, {
+    const data = await httpPublic.post(`/auth/login`, {
       password, 
     });
     
@@ -87,7 +87,7 @@ export const getAllUsers = async (): Promise<UserListResponse | UserType[]> => {
     'maestros:users',
     async () => {
       try {
-        const data = await httpGet(`/v1/users`);
+        const data = await httpGet(`/users`);
         
         // El backend retorna {users: [...]} o directamente un array
         // Retornar data tal cual para que el componente maneje la estructura
@@ -103,7 +103,7 @@ export const getAllUsers = async (): Promise<UserListResponse | UserType[]> => {
 
 export const getUsersByWord = async (word = ""): Promise<UserListResponse | UserType[]> => {
   try {
-    const data = await httpGet(`/v1/users/search?word=${encodeURIComponent(word)}`);
+    const data = await httpGet(`/users/search?word=${encodeURIComponent(word)}`);
     
     // El backend retorna {users: [...]} o directamente un array
     // Retornar data tal cual para que el componente maneje la estructura
@@ -136,7 +136,7 @@ export const saveUser = async (user: UserType) => {
       zona_id: user.zona_id ? Number(user.zona_id) : null, // Enviar null si no tiene zona
     };
 
-    const data = await httpPut(`/v1/users/${user.id}`, payload);
+    const data = await httpPut(`/users/${user.id}`, payload);
     
     if (!data) {
       throw new Error('Respuesta inválida del servidor');
@@ -154,7 +154,7 @@ export const saveUser = async (user: UserType) => {
 
 export const deleteUser = async (userId: number | string) => {
   try {
-    const data = await httpDelete(`/v1/users/${userId}`);
+    const data = await httpDelete(`/users/${userId}`);
     
     if (!data) {
       throw new Error('Respuesta inválida del servidor');

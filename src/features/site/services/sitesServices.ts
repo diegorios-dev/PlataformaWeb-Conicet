@@ -42,7 +42,7 @@ export const getAllSites = async (): Promise<Site[]> => {
     'maestros:sites',
     async () => {
       try {
-        const data = await httpGet<Site[]>(`/v1/sites`);
+        const data = await httpGet<Site[]>(`/sites`);
         
         if (!Array.isArray(data)) {
           devLog.warn('Datos de sitios inválidos', data);
@@ -84,7 +84,7 @@ export const getSiteById = async (siteId: number): Promise<Site> => {
  */
 export const createSite = async (siteData: Site): Promise<SiteResponse> => {
   try {
-    const data = await httpPost<any>(`/v1/sites`, siteData);
+    const data = await httpPost<any>(`/sites`, siteData);
     
     cache.invalidate('maestros:sites');
     invalidateEstadisticasCache();
@@ -104,7 +104,7 @@ export const createSite = async (siteData: Site): Promise<SiteResponse> => {
  */
 export const postNewSite = async (newSite: SiteFormData) => {
   try {
-    const data = await httpPost(`/v1/sites`, newSite);
+    const data = await httpPost(`/sites`, newSite);
     
     cache.invalidate('maestros:sites');
     invalidateEstadisticasCache();
@@ -123,7 +123,7 @@ export const updateSite = async (
   siteData: Partial<Site>
 ): Promise<SiteResponse> => {
   try {
-    const data = await httpPut<any>(`/v1/sites/${siteId}`, siteData);
+    const data = await httpPut<any>(`/sites/${siteId}`, siteData);
     
     cache.invalidate('maestros:sites');
     invalidateEstadisticasCache();
@@ -143,7 +143,7 @@ export const updateSite = async (
  */
 export const deleteSite = async (siteId: number): Promise<SiteResponse> => {
   try {
-    const data = await httpDelete<any>(`/v1/sites/${siteId}`);
+    const data = await httpDelete<any>(`/sites/${siteId}`);
     
     cache.invalidate('maestros:sites');
     invalidateEstadisticasCache();
@@ -188,7 +188,7 @@ export const getSiteReportsSummary = async (
     });
 
     const response = await httpGet<SiteReportsSummaryResponse>(
-      `/v1/sites/reports-summary?${params.toString()}`
+      `/sites/reports-summary?${params.toString()}`
     );
 
     // Normalize response structure
@@ -244,7 +244,7 @@ export const getReportsForSites = async (siteIds: number[], year?: number): Prom
   if (year) params.append('year', String(year));
 
   try {
-    const data = await httpGet(`/v1/reports/regular/sites/batch?${params.toString()}`);
+    const data = await httpGet(`/reports/regular/sites/batch?${params.toString()}`);
     // Normalizamos a array de { siteId, reports }
     if (Array.isArray(data)) {
       return data.map(item => ({ 

@@ -48,8 +48,8 @@ export default function ExportExcel() {
     const fetchData = async () => {
       try {
         const [zonasData, usuariosData, yearsData] = await Promise.all([
-          httpGet(`/v1/zones`),
-          httpGet(`/v1/users`),
+          httpGet(`/zones`),
+          httpGet(`/users`),
           httpGet(`/reports/metadata/years`),
         ]);
 
@@ -74,7 +74,7 @@ export default function ExportExcel() {
     setSuccess(false);
 
     try {
-      let url = `/v1/exports/download`;
+      let url = `/exports/download`;
       const params = new URLSearchParams();
 
       if (startDate) params.append("start_date", startDate);
